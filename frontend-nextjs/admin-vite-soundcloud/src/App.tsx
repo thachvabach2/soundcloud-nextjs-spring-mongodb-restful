@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 // import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import UsersPage from './screens/users.page'
 
 function App() {
     const [count, setCount] = useState(0)
@@ -39,7 +40,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<AppVite />} />
-                    <Route path="/users" element={<div>Manage Users</div>} />
+                    <Route path="/users" element={<UsersPage />} />
                     <Route path="/tracks" element={<div>Manage Tracks</div>} />
                 </Routes>
             </BrowserRouter>
