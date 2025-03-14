@@ -1,4 +1,4 @@
-package vn.bachdao.soundcloud.util.errors;
+package vn.bachdao.soundcloud.web.rest.errors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

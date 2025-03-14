@@ -19,7 +19,8 @@ import com.mongodb.client.result.DeleteResult;
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.service.UserService;
-import vn.bachdao.soundcloud.util.errors.IdInvalidException;
+import vn.bachdao.soundcloud.util.annotation.ApiMessage;
+import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -32,11 +33,13 @@ public class UserResource {
     }
 
     @PostMapping("/users")
+    @ApiMessage("Create a user")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
     }
 
     @GetMapping("/users/{id}")
+    @ApiMessage("Get user by Id")
     public ResponseEntity<User> getAUser(@PathVariable("id") String id) throws IdInvalidException {
         Optional<User> userOptional = this.userService.getUserById(id);
 
@@ -48,18 +51,21 @@ public class UserResource {
     }
 
     @GetMapping("/users")
+    @ApiMessage("Get all user with pagination")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(this.userService.getAllUser());
     }
 
     @PutMapping("/users")
+    @ApiMessage("Update a user")
     public ResponseEntity<User> updateAUser(@RequestBody User reqUser) {
         Optional<User> currentUserOptional = this.userService.getUserById(reqUser.getId());
         User updatedUser = this.userService.updateAUser(reqUser, currentUserOptional.get());
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
+        return ResponseEntity.ok().body(updatedUser);
     }
 
     @DeleteMapping("/users/{id}")
+    @ApiMessage("Delete user by Id")
     public ResponseEntity<DeleteResult> deleteAUser(@PathVariable("id") String id) throws IdInvalidException {
         Optional<User> userOptional = this.userService.getUserById(id);
         if (userOptional.isEmpty()) {

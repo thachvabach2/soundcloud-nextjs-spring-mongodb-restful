@@ -1,4 +1,4 @@
-package vn.bachdao.soundcloud.util.errors;
+package vn.bachdao.soundcloud.web.rest.errors;
 
 public class IdInvalidException extends Exception {
     public IdInvalidException(String errorMessage) {
