@@ -7,5 +7,5 @@ import vn.bachdao.soundcloud.domain.User;
 
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
-
+    User findByEmail(String email);
 }
