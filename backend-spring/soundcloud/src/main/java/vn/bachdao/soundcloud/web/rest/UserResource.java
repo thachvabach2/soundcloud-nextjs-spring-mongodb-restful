@@ -3,6 +3,8 @@ package vn.bachdao.soundcloud.web.rest;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.service.UserService;
+import vn.bachdao.soundcloud.util.errors.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
 public class UserResource {
+
     private final UserService userService;
 
     public UserResource(UserService userService) {
@@ -26,13 +30,17 @@ public class UserResource {
     }
 
     @PostMapping("/users")
-    public User createUser(@Valid @RequestBody User user) {
-        return this.userService.createUser(user);
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
     }
 
     @GetMapping("/users/{id}")
-    public User getAUser(@PathVariable("id") String id) {
+    public User getAUser(@PathVariable("id") String id) throws IdInvalidException {
         Optional<User> userOptional = this.userService.getUserById(id);
+
+        if (userOptional.isEmpty()) {
+            throw new IdInvalidException("User với Id = " + id + " không tồn tại");
+        }
 
         return userOptional.get();
     }
