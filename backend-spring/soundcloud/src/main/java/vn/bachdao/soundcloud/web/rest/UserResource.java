@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mongodb.client.result.DeleteResult;
+
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.service.UserService;
@@ -35,30 +37,35 @@ public class UserResource {
     }
 
     @GetMapping("/users/{id}")
-    public User getAUser(@PathVariable("id") String id) throws IdInvalidException {
+    public ResponseEntity<User> getAUser(@PathVariable("id") String id) throws IdInvalidException {
         Optional<User> userOptional = this.userService.getUserById(id);
 
         if (userOptional.isEmpty()) {
             throw new IdInvalidException("User với Id = " + id + " không tồn tại");
         }
 
-        return userOptional.get();
+        return ResponseEntity.ok(userOptional.get());
     }
 
     @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return this.userService.getAllUser();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(this.userService.getAllUser());
     }
 
     @PutMapping("/users")
-    public User updateAUser(@RequestBody User reqUser) {
+    public ResponseEntity<User> updateAUser(@RequestBody User reqUser) {
         Optional<User> currentUserOptional = this.userService.getUserById(reqUser.getId());
-
-        return this.userService.updateAUser(reqUser, currentUserOptional.get());
+        User updatedUser = this.userService.updateAUser(reqUser, currentUserOptional.get());
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
     }
 
     @DeleteMapping("/users/{id}")
-    public void deleteAUser(@PathVariable("id") String id) {
-        this.userService.deleteAUser(id);
+    public ResponseEntity<DeleteResult> deleteAUser(@PathVariable("id") String id) throws IdInvalidException {
+        Optional<User> userOptional = this.userService.getUserById(id);
+        if (userOptional.isEmpty()) {
+            throw new IdInvalidException("User với Id = " + id + " không tồn tại");
+        }
+
+        return ResponseEntity.ok(this.userService.deleteAUser(id));
     }
 }

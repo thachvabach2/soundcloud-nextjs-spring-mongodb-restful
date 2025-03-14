@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.mongodb.client.result.DeleteResult;
+
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.repository.UserRepository;
 
@@ -41,7 +43,8 @@ public class UserService {
         return this.userRepository.save(DbUser);
     }
 
-    public void deleteAUser(String id) {
+    public DeleteResult deleteAUser(String id) {
         this.userRepository.deleteById(id);
+        return DeleteResult.acknowledged(1);
     }
 }
