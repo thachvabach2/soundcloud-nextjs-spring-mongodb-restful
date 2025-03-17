@@ -1,8 +1,9 @@
 package vn.bachdao.soundcloud.web.rest;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.bson.Document;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,11 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mongodb.client.result.DeleteResult;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
+import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.user.ResCreateUserDTO;
 import vn.bachdao.soundcloud.service.UserService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
+import vn.bachdao.soundcloud.util.mapper.UserMapper;
+import vn.bachdao.soundcloud.web.rest.errors.EmailAlreadyUsedException;
 import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 
 @RestController
@@ -29,18 +35,26 @@ public class UserResource {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
-    public UserResource(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserResource(UserService userService, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/users")
     @ApiMessage("Create a user")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<ResCreateUserDTO> createUser(@Valid @RequestBody User user) throws EmailAlreadyUsedException {
+        Optional<User> DbUser = this.userService.getUserByEmail(user.getEmail());
+        if (DbUser.isPresent()) {
+            throw new EmailAlreadyUsedException("User với email = " + user.getEmail() + " đã tồn tại");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
+        ResCreateUserDTO resCreateUserDTO = this.userMapper.toResCreateUserDTO(this.userService.createUser(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(resCreateUserDTO);
     }
 
     @GetMapping("/users/{id}")
@@ -57,14 +71,27 @@ public class UserResource {
 
     @GetMapping("/users")
     @ApiMessage("Get all user with pagination")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(this.userService.getAllUser());
+    public ResponseEntity<ResPaginationDTO> getAllUsers(
+            @Filter(entityClass = User.class) Document document,
+            Pageable pageable) {
+
+        return ResponseEntity.ok(this.userService.getAllUser(document, pageable));
     }
 
     @PutMapping("/users")
     @ApiMessage("Update a user")
-    public ResponseEntity<User> updateAUser(@RequestBody User reqUser) {
+    public ResponseEntity<User> updateAUser(@RequestBody User reqUser) throws IdInvalidException {
         Optional<User> currentUserOptional = this.userService.getUserById(reqUser.getId());
+
+        // check exist id
+        if (currentUserOptional.isEmpty()) {
+            throw new IdInvalidException("User với Id = " + reqUser.getId() + " không tồn tại");
+        }
+
+        if (reqUser.getPassword() != null) {
+            reqUser.setPassword(this.passwordEncoder.encode(reqUser.getPassword()));
+        }
+
         User updatedUser = this.userService.updateAUser(reqUser, currentUserOptional.get());
         return ResponseEntity.ok().body(updatedUser);
     }

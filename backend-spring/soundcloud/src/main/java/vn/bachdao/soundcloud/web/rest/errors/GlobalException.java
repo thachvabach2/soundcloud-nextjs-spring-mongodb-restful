@@ -10,7 +10,11 @@ import vn.bachdao.soundcloud.domain.dto.response.RestResponse;
 
 @RestControllerAdvice
 public class GlobalException {
-    @ExceptionHandler(value = { IdInvalidException.class, BadCredentialsException.class })
+    @ExceptionHandler(value = {
+            IdInvalidException.class,
+            BadCredentialsException.class,
+            EmailAlreadyUsedException.class,
+    })
     public ResponseEntity<RestResponse<Object>> handleException(Exception ex) {
         RestResponse<Object> rs = new RestResponse<>();
         rs.setStatusCode(HttpStatus.BAD_REQUEST.value());

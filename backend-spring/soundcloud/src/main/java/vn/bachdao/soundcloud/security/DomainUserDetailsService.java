@@ -1,6 +1,7 @@
 package vn.bachdao.soundcloud.security;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -21,11 +22,12 @@ public class DomainUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        vn.bachdao.soundcloud.domain.User user = this.userRepository.findByEmail(username);
+        Optional<vn.bachdao.soundcloud.domain.User> userOptional = this.userRepository
+                .findOneByEmailIgnoreCase(username);
 
         return new User(
-                user.getEmail(),
-                user.getPassword(),
+                userOptional.get().getEmail(),
+                userOptional.get().getPassword(),
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
     }
 

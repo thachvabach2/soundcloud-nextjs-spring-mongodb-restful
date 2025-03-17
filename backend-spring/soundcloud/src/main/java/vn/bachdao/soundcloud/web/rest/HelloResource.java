@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HelloResource {
     @GetMapping("/")
     public String getHello() {
-        return "Hello World le haha sdfas dsfasdd";
+        return "Hello World";
     }
 }
