@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.dto.request.ReqLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResLoginDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
 
 @RestController
@@ -28,7 +29,7 @@ public class AuthenticateController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
+    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
         // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(),
@@ -43,6 +44,9 @@ public class AuthenticateController {
         // create token
         String access_token = this.securityUtils.createAccessToken(authentication);
 
-        return ResponseEntity.ok(access_token);
+        ResLoginDTO res = new ResLoginDTO();
+        res.setAccessToken(access_token);
+
+        return ResponseEntity.ok(res);
     }
 }
