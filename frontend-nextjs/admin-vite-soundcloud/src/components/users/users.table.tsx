@@ -28,13 +28,13 @@ const UsersTable = () => {
         )
 
         const d = await res.json();
-        setListUser(d.data);
+        setListUser(d.data.result);
     }
 
     console.log('>>>> check List user: ', listUser);
     return (
         <div>
-            <h2>HTML Table</h2>
+            <h2>Table Users</h2>
 
             <table>
                 <thead>
@@ -46,12 +46,12 @@ const UsersTable = () => {
                 </thead>
                 <tbody>
                     {
-                        listUser?.map((item: IUsers, index) => {
+                        listUser.map((item: IUsers, index) => {
                             return (
                                 <tr key={index}>
                                     <td>{item.email}</td>
                                     <td>{item.name}</td>
-                                    <td>{item.name}</td>
+                                    <td>{item.role}</td>
                                 </tr>
                             )
                         })

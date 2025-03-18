@@ -1,9 +1,54 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-// import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import './App.css'
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import UsersPage from './screens/users.page'
+import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Menu } from 'antd';
+import { Link } from "react-router";
+
+type MenuItem = Required<MenuProps>['items'][number];
+
+const items: MenuItem[] = [
+    {
+        label: <Link to="/">Home</Link>,
+        key: 'home',
+        icon: <HomeOutlined />,
+    },
+    {
+        label: <Link to="/users">Manage Users</Link>,
+        key: 'users',
+        icon: <UserOutlined />,
+    },
+];
+
+const Header: React.FC = () => {
+    const [current, setCurrent] = useState('home');
+
+    const onClick: MenuProps['onClick'] = (e) => {
+        setCurrent(e.key);
+    };
+
+    return (
+        <Menu
+            onClick={onClick}
+            selectedKeys={[current]}
+            mode="horizontal"
+            items={items}
+        />
+    );
+};
+
+const LayoutAdmin = () => {
+    return (
+        <>
+            <Header />
+            <Outlet />
+        </>
+    )
+}
 
 function App() {
     const [count, setCount] = useState(0)
@@ -39,8 +84,10 @@ function App() {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<AppVite />} />
-                    <Route path="/users" element={<UsersPage />} />
+                    <Route path="/" element={<LayoutAdmin />} >
+                        <Route index element={<AppVite />} />
+                        <Route path="users" element={<UsersPage />} />
+                    </Route>
                     <Route path="/tracks" element={<div>Manage Tracks</div>} />
                 </Routes>
             </BrowserRouter>
