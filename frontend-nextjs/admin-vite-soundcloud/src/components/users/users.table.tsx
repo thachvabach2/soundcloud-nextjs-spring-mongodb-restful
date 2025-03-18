@@ -1,6 +1,8 @@
 
 import { useEffect, useState } from 'react';
-import '../../styles/users.css'
+// import '../../styles/users.css'
+import { Table } from 'antd';
+import type { TableProps } from 'antd';
 
 interface IUsers {
     email: string;
@@ -31,33 +33,39 @@ const UsersTable = () => {
         setListUser(d.data.result);
     }
 
+    //
+    interface DataType {
+        email: string;
+        name: number;
+        role: string;
+    }
+
+    const columns: TableProps<DataType>['columns'] = [
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            render: (value, record, index) => {
+                return (
+                    <>{record.email}</>
+                )
+            },
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role',
+        },
+    ]
+
     console.log('>>>> check List user: ', listUser);
     return (
         <div>
-            <h2>Table Users</h2>
+            <h2 className='text-4xl font-semibold'>Table Users</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        listUser.map((item: IUsers, index) => {
-                            return (
-                                <tr key={index}>
-                                    <td>{item.email}</td>
-                                    <td>{item.name}</td>
-                                    <td>{item.role}</td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
+            <Table<DataType> columns={columns} dataSource={listUser} rowKey={"_id"} />
         </div>
     )
 }
