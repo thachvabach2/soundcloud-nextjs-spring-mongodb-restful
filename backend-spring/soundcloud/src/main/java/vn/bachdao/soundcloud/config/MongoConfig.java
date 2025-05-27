@@ -12,7 +12,7 @@ import com.mongodb.client.MongoClients;
 public class MongoConfig {
     @Bean
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://root:123456@localhost:27017/soundcloud?authSource=admin");
+        return MongoClients.create("mongodb+srv://ngocbach12a1:VXL2QqwQcpRSIrzX@cluster0.qfttq.mongodb.net/");
     }
 
     @Bean
