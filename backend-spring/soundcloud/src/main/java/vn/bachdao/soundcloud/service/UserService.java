@@ -1,29 +1,42 @@
 package vn.bachdao.soundcloud.service;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.bson.Document;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.user.ResUpdateUserDTO;
 import vn.bachdao.soundcloud.repository.UserRepository;
+import vn.bachdao.soundcloud.web.rest.errors.EmailAlreadyUsedException;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private ObjectMapper objectMapper;
+    private MongoTemplate mongoTemplate;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ObjectMapper objectMapper, MongoTemplate mongoTemplate) {
         this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
+        this.mongoTemplate = mongoTemplate;
     }
 
     public User createUser(User user) {
-        user.setVerify(true);
+        user.setIsVerify(true);
         return userRepository.save(user);
     }
 
@@ -47,16 +60,48 @@ public class UserService {
         return res;
     }
 
-    public User updateAUser(User reqUser, User DbUser) {
-        DbUser.setEmail(reqUser.getEmail());
-        DbUser.setPassword(reqUser.getPassword());
-        DbUser.setName(reqUser.getName());
-        DbUser.setAge(reqUser.getAge());
-        DbUser.setGender(reqUser.getGender());
-        DbUser.setAddress(reqUser.getAddress());
-        DbUser.setRole(reqUser.getRole());
+    public ResUpdateUserDTO updateAUser(User reqUser) throws EmailAlreadyUsedException {
 
-        return this.userRepository.save(DbUser);
+        // Validate email
+        validateEmailUnique(reqUser.getId(), reqUser.getEmail());
+
+        Query query = new Query(Criteria.where("id").is(reqUser.getId()));
+
+        // Tạo Update object
+        Update update = new Update();
+
+        // Convert reqUser to Map để dễ xử lý
+        Map<String, Object> updateFields = objectMapper.convertValue(reqUser, Map.class);
+
+        // Loại bỏ các field null
+        updateFields.entrySet().stream()
+                .filter(entry -> entry.getValue() != null)
+                .filter(entry -> !entry.getKey().equals("password"))
+                .forEach(entry -> update.set(entry.getKey(), entry.getValue()));
+
+        // update DB
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
+
+        ResUpdateUserDTO res = new ResUpdateUserDTO();
+        res.setAcknowledged(updateResult.wasAcknowledged());
+        res.setModifiedCount(updateResult.getModifiedCount());
+        res.setUpsertId(updateResult.getUpsertedId());
+        res.setUpsertCount(updateResult.getUpsertedId() != null ? 1 : 0);
+        res.setMatchedCount(updateResult.getMatchedCount());
+
+        return res;
+    }
+
+    // Validate email update
+    private void validateEmailUnique(String currentUserId, String email) throws EmailAlreadyUsedException {
+        Query query = new Query(Criteria.where("email").is(email)
+                .and("id").ne(currentUserId)); // Loại trừ user hiện tại
+
+        boolean emailExists = mongoTemplate.exists(query, User.class);
+
+        if (emailExists) {
+            throw new EmailAlreadyUsedException("User với email = " + email + " đã tồn tại");
+        }
     }
 
     public DeleteResult deleteAUser(String id) {

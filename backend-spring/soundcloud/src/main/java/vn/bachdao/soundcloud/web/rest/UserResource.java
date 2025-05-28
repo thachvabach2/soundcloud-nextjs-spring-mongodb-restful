@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +23,7 @@ import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResCreateUserDTO;
+import vn.bachdao.soundcloud.domain.dto.response.user.ResUpdateUserDTO;
 import vn.bachdao.soundcloud.service.UserService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
 import vn.bachdao.soundcloud.util.mapper.UserMapper;
@@ -37,7 +38,9 @@ public class UserResource {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    public UserResource(UserService userService, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserResource(UserService userService,
+            PasswordEncoder passwordEncoder,
+            UserMapper userMapper) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
@@ -78,9 +81,10 @@ public class UserResource {
         return ResponseEntity.ok(this.userService.getAllUser(document, pageable));
     }
 
-    @PutMapping("/users")
+    @PatchMapping("/users")
     @ApiMessage("Update a user")
-    public ResponseEntity<User> updateAUser(@RequestBody User reqUser) throws IdInvalidException {
+    public ResponseEntity<ResUpdateUserDTO> updateAUser(@RequestBody User reqUser)
+            throws IdInvalidException, EmailAlreadyUsedException {
         Optional<User> currentUserOptional = this.userService.getUserById(reqUser.getId());
 
         // check exist id
@@ -88,12 +92,8 @@ public class UserResource {
             throw new IdInvalidException("User với Id = " + reqUser.getId() + " không tồn tại");
         }
 
-        if (reqUser.getPassword() != null) {
-            reqUser.setPassword(this.passwordEncoder.encode(reqUser.getPassword()));
-        }
-
-        User updatedUser = this.userService.updateAUser(reqUser, currentUserOptional.get());
-        return ResponseEntity.ok().body(updatedUser);
+        ResUpdateUserDTO updateUserDTO = this.userService.updateAUser(reqUser);
+        return ResponseEntity.ok().body(updateUserDTO);
     }
 
     @DeleteMapping("/users/{id}")

@@ -35,14 +35,14 @@ public class User {
     @NotBlank(message = "Password không được để trống")
     private String password;
 
-    private boolean isVerify;
+    private Boolean isVerify;
 
     @NotBlank(message = "Name không được để trống")
     private String name;
 
     @NotNull()
     @Range(min = 1, message = "Age không được để trống")
-    private int age;
+    private Integer age;
 
     @EnumValidator(enumClazz = GenderEnum.class, message = "Gender không được để trống hoặc không đúng format")
     private String gender;
