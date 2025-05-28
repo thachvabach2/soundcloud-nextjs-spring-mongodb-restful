@@ -67,4 +67,12 @@ public class UserService {
     public Optional<User> getUserByEmail(String email) {
         return this.userRepository.findOneByEmailIgnoreCase(email);
     }
+
+    public void updateUserToken(String token, String email) {
+        User currentUser = this.getUserByEmail(email).get();
+        if (currentUser != null) {
+            currentUser.setRefreshToken(token);
+            this.userRepository.save(currentUser);
+        }
+    }
 }

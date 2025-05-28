@@ -53,6 +53,8 @@ public class User {
     @EnumValidator(enumClazz = RoleEnum.class, message = "Role không được để trống hoặc không đúng format")
     private String role;
 
+    private String refreshToken;
+
     @CreatedDate
     private Instant createdAt;
 

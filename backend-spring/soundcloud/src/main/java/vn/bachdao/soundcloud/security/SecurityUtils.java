@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import vn.bachdao.soundcloud.domain.dto.response.ResLoginDTO;
+
 @Service
 public class SecurityUtils {
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
@@ -22,6 +24,9 @@ public class SecurityUtils {
 
     @Value("${soundcloud.security.authentication.jwt.access-token-validity-in-seconds}")
     private long accessTokenValidityInSeconds;
+
+    @Value("${soundcloud.security.authentication.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenValidityInSeconds;
 
     public SecurityUtils(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
@@ -46,6 +51,29 @@ public class SecurityUtils {
 
         // signature = jwk + jwsHeader(header) + claims(payload)
         // jwk = jwtKey(secret key) + alg
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    public String createRefreshToken(String email, ResLoginDTO.ResultResLoginDTO dto) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.refreshTokenValidityInSeconds, ChronoUnit.SECONDS);
+
+        ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken();
+        userInsideToken.setId(dto.getId());
+        userInsideToken.setEmail(dto.getEmail());
+        userInsideToken.setName(dto.getName());
+
+        // payload
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email)
+                .claim("user", userInsideToken)
+                .build();
+
+        // header
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 }
