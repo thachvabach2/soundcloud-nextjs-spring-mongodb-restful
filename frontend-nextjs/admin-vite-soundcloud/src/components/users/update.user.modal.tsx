@@ -39,37 +39,38 @@ const UpdateUserModal = (props: IPops) => {
     }, [dataUpdate])
 
     const handleOk = async () => {
-        setIsLoading(true);
-        const data = {
-            name, email, password, age, gender, role, address
-        }
-
-        const res = await fetch('http://localhost:8080/api/v1/users',
-            {
-                method: "POST",
-                headers: {
-                    'Content-Type': "application/json",
-                    'Authorization': `Bearer ${access_token}`
-                },
-                body: JSON.stringify({ ...data })
+        if (dataUpdate) {
+            const data = {
+                _id: dataUpdate._id, name, email, age, gender, role, address
             }
-        )
 
-        const d = await res.json();
-        if (d.data) {
-            await getData();
-            notificationApi.success({
-                message: "Tạo mới user thành công",
-            })
-            handleCloseCreateModal();
-        } else {
-            notificationApi.error({
-                message: "Có lỗi xảy ra",
-                description: JSON.stringify(d.message),
-            })
+            const res = await fetch('http://localhost:8080/api/v1/users',
+                {
+                    method: "PATCH",
+                    headers: {
+                        'Content-Type': "application/json",
+                        'Authorization': `Bearer ${access_token}`
+                    },
+                    body: JSON.stringify(data)
+                }
+            )
+
+            const d = await res.json();
+            if (d.data) {
+                setIsLoading(true);
+                await getData();
+                setIsLoading(false);
+                notificationApi.success({
+                    message: "Cập nhật user thành công",
+                })
+                handleCloseCreateModal();
+            } else {
+                notificationApi.error({
+                    message: "Có lỗi xảy ra",
+                    description: JSON.stringify(d.message),
+                })
+            }
         }
-
-        setIsLoading(false);
     };
 
     const handleCloseCreateModal = () => {
