@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // import '../../styles/users.css'
 import { PlusCircleOutlined } from '@ant-design/icons';
 import type { TableProps } from 'antd';
-import { Button, notification, Table } from 'antd';
+import { Button, notification, Popconfirm, Table } from 'antd';
 import CreateUserModal from './create.user.modal';
 import UpdateUserModal from './update.user.modal';
 
@@ -83,19 +83,60 @@ const UsersTable = () => {
             render: (value, record, index) => {
                 return (
                     <div>
-                        <button
+                        <Button
+                            color="primary"
+                            variant="solid"
                             onClick={() => {
                                 setDataUpdate(record);
                                 setIsUpdateModalOpen(true);
                             }}
+                            className='mr-5'
                         >
                             Edit
-                        </button>
+                        </Button>
+
+                        <Popconfirm
+                            title="Delete the user"
+                            description={`Are you sure to delete this user. name = ${record.name}?`}
+                            onConfirm={() => handleDeleteUser(record)}
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <Button color="danger" variant="solid" >
+                                Delete
+                            </Button>
+                        </Popconfirm>
                     </div>
                 )
             },
         },
     ]
+
+    const handleDeleteUser = async (user: IUsers) => {
+        const res = await fetch(`http://localhost:8080/api/v1/users/${user._id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': "application/json",
+                    'Authorization': `Bearer ${access_token}`
+                },
+            }
+        )
+
+        const d = await res.json();
+        console.log('>>>> check res delete: ', d);
+        if (d.data) {
+            await getData();
+            notificationApi.success({
+                message: "Xóa user thành công",
+            })
+        } else {
+            notificationApi.error({
+                message: "Có lỗi xảy ra",
+                description: JSON.stringify(d.message),
+            })
+        }
+    };
 
     return (
         <div>
