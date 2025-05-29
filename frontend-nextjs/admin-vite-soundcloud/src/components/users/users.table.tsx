@@ -31,7 +31,7 @@ const UsersTable = () => {
 
     const [dataUpdate, setDataUpdate] = useState<null | IUsers>(null);
 
-    const access_token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJleHAiOjE3NDg1OTQ3OTgsImF1dGgiOiJST0xFX1VTRVIiLCJpYXQiOjE3NDg1MDgzOTh9.NRQydziiS-y8hlEufb1HfhZTf6865CrDOCyOpYqGUF5APnvkpOnLy14XYiTDsAkz_YHOUfEGEhYX4VTP7SnlvA';
+    const access_token = localStorage.getItem('access_token') as string;
 
     useEffect(() => {
         getData();

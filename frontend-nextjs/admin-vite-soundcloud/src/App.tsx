@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -51,9 +51,36 @@ const LayoutAdmin = () => {
 }
 
 function App() {
-    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        getData();
+    }, [])
+
+    const getData = async () => {
+
+        const res = await fetch('http://localhost:8080/api/v1/auth/login',
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json",
+                },
+                body: JSON.stringify({
+                    email: 'admin@gmail.com',
+                    password: '123456'
+                })
+            }
+        )
+
+        const d = await res.json();
+        if (d.data) {
+            localStorage.setItem('access_token', d.data.access_token);
+        }
+    }
+
 
     const AppVite = () => {
+        const [count, setCount] = useState(0)
+
         return (
             <>
                 <div className='flex justify-center'>

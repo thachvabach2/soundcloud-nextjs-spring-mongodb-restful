@@ -10,7 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,71 +27,71 @@ import vn.bachdao.soundcloud.util.annotation.ApiMessage;
 @RequestMapping("/api/v1/auth")
 public class AuthenticateController {
 
-        @Value("${soundcloud.security.authentication.jwt.refresh-token-validity-in-seconds}")
-        private long refreshTokenValidityInSeconds;
+    @Value("${soundcloud.security.authentication.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenValidityInSeconds;
 
-        private final AuthenticationManagerBuilder authenticationManagerBuilder;
-        private final SecurityUtils securityUtils;
-        private final UserService userService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final SecurityUtils securityUtils;
+    private final UserService userService;
 
-        public AuthenticateController(AuthenticationManagerBuilder authenticationManagerBuilder,
-                        SecurityUtils securityUtils, UserService userService) {
-                this.authenticationManagerBuilder = authenticationManagerBuilder;
-                this.securityUtils = securityUtils;
-                this.userService = userService;
-        }
+    public AuthenticateController(AuthenticationManagerBuilder authenticationManagerBuilder,
+            SecurityUtils securityUtils, UserService userService) {
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.securityUtils = securityUtils;
+        this.userService = userService;
+    }
 
-        @GetMapping("/login")
-        @ApiMessage("User Login")
-        public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
-                // Nạp input gồm username/password vào Security
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                                loginDTO.getEmail(),
-                                loginDTO.getPassword());
+    @PostMapping("/login")
+    @ApiMessage("User Login")
+    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
+        // Nạp input gồm username/password vào Security
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginDTO.getEmail(),
+                loginDTO.getPassword());
 
-                // Xác thực người dùng => cần viết hàm loadUserByUsername
-                Authentication authentication = authenticationManagerBuilder.getObject()
-                                .authenticate(authenticationToken);
+        // Xác thực người dùng => cần viết hàm loadUserByUsername
+        Authentication authentication = authenticationManagerBuilder.getObject()
+                .authenticate(authenticationToken);
 
-                // lưu vào Spring security context
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        // lưu vào Spring security context
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                // create access token
-                String access_token = this.securityUtils.createAccessToken(authentication);
+        // create access token
+        String access_token = this.securityUtils.createAccessToken(authentication);
 
-                Optional<User> userOptional = this.userService.getUserByEmail(loginDTO.getEmail());
-                User currUser = userOptional.get();
+        Optional<User> userOptional = this.userService.getUserByEmail(loginDTO.getEmail());
+        User currUser = userOptional.get();
 
-                ResLoginDTO res = new ResLoginDTO();
-                ResLoginDTO.ResultResLoginDTO userResult = new ResLoginDTO.ResultResLoginDTO();
-                userResult.setId(currUser.getId());
-                userResult.setUserName("");
-                userResult.setEmail(currUser.getEmail());
-                userResult.setAddress(currUser.getAddress());
-                userResult.setVerify(currUser.getIsVerify());
-                userResult.setType("SYSTEM");
-                userResult.setName(currUser.getName());
-                userResult.setRole(currUser.getRole());
+        ResLoginDTO res = new ResLoginDTO();
+        ResLoginDTO.ResultResLoginDTO userResult = new ResLoginDTO.ResultResLoginDTO();
+        userResult.setId(currUser.getId());
+        userResult.setUserName("");
+        userResult.setEmail(currUser.getEmail());
+        userResult.setAddress(currUser.getAddress());
+        userResult.setVerify(currUser.getIsVerify());
+        userResult.setType("SYSTEM");
+        userResult.setName(currUser.getName());
+        userResult.setRole(currUser.getRole());
 
-                // create refresh token
-                String refresh_token = this.securityUtils.createRefreshToken(loginDTO.getEmail(), userResult);
-                // update user's refresh token in DB
-                this.userService.updateUserToken(refresh_token, loginDTO.getEmail());
+        // create refresh token
+        String refresh_token = this.securityUtils.createRefreshToken(loginDTO.getEmail(), userResult);
+        // update user's refresh token in DB
+        this.userService.updateUserToken(refresh_token, loginDTO.getEmail());
 
-                res.setAccessToken(access_token);
-                res.setRefreshToken(refresh_token);
-                res.setUser(userResult);
+        res.setAccessToken(access_token);
+        res.setRefreshToken(refresh_token);
+        res.setUser(userResult);
 
-                // set cookies
-                ResponseCookie resCookies = ResponseCookie.from("refresh_token", refresh_token)
-                                .httpOnly(true)
-                                .secure(true)
-                                .path("/")
-                                .maxAge(refreshTokenValidityInSeconds)
-                                .build();
+        // set cookies
+        ResponseCookie resCookies = ResponseCookie.from("refresh_token", refresh_token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenValidityInSeconds)
+                .build();
 
-                return ResponseEntity.ok()
-                                .header(HttpHeaders.SET_COOKIE, resCookies.toString())
-                                .body(res);
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, resCookies.toString())
+                .body(res);
+    }
 }
