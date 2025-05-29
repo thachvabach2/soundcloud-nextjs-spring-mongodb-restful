@@ -1,5 +1,6 @@
 package vn.bachdao.soundcloud.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -54,7 +55,10 @@ public class UserService {
         meta.setTotalPage(userPage.getTotalPages());
         meta.setTotalElement(userPage.getTotalElements());
 
-        res.setResult(userPage.getContent());
+        List<User> users = userPage.getContent();
+        users.stream().forEach(user -> user.setPassword(""));
+
+        res.setResult(users);
         res.setMeta(meta);
 
         return res;

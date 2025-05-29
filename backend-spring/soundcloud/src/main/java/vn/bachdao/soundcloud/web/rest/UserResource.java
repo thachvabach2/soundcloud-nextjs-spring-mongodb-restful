@@ -69,6 +69,8 @@ public class UserResource {
             throw new IdInvalidException("User với Id = " + id + " không tồn tại");
         }
 
+        userOptional.get().setPassword("");
+
         return ResponseEntity.ok(userOptional.get());
     }
 
