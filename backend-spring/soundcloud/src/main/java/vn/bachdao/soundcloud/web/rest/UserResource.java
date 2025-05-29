@@ -23,6 +23,7 @@ import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResCreateUserDTO;
+import vn.bachdao.soundcloud.domain.dto.response.user.ResGetUserDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResUpdateUserDTO;
 import vn.bachdao.soundcloud.service.UserService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
@@ -62,16 +63,15 @@ public class UserResource {
 
     @GetMapping("/users/{id}")
     @ApiMessage("Get user by Id")
-    public ResponseEntity<User> getAUser(@PathVariable("id") String id) throws IdInvalidException {
+    public ResponseEntity<ResGetUserDTO> getAUser(@PathVariable("id") String id) throws IdInvalidException {
         Optional<User> userOptional = this.userService.getUserById(id);
 
         if (userOptional.isEmpty()) {
             throw new IdInvalidException("User với Id = " + id + " không tồn tại");
         }
 
-        userOptional.get().setPassword("");
-
-        return ResponseEntity.ok(userOptional.get());
+        ResGetUserDTO res = this.userMapper.toResGetUserDTO(userOptional.get());
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/users")

@@ -19,8 +19,10 @@ import com.mongodb.client.result.UpdateResult;
 
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.user.ResGetUserDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResUpdateUserDTO;
 import vn.bachdao.soundcloud.repository.UserRepository;
+import vn.bachdao.soundcloud.util.mapper.UserMapper;
 import vn.bachdao.soundcloud.web.rest.errors.EmailAlreadyUsedException;
 
 @Service
@@ -29,11 +31,14 @@ public class UserService {
     private final UserRepository userRepository;
     private ObjectMapper objectMapper;
     private MongoTemplate mongoTemplate;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, ObjectMapper objectMapper, MongoTemplate mongoTemplate) {
+    public UserService(UserRepository userRepository, ObjectMapper objectMapper, MongoTemplate mongoTemplate,
+            UserMapper userMapper) {
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
         this.mongoTemplate = mongoTemplate;
+        this.userMapper = userMapper;
     }
 
     public User createUser(User user) {
@@ -55,8 +60,7 @@ public class UserService {
         meta.setTotalPage(userPage.getTotalPages());
         meta.setTotalElement(userPage.getTotalElements());
 
-        List<User> users = userPage.getContent();
-        users.stream().forEach(user -> user.setPassword(""));
+        List<ResGetUserDTO> users = this.userMapper.toResGetUserDTOs(userPage.getContent());
 
         res.setResult(users);
         res.setMeta(meta);
