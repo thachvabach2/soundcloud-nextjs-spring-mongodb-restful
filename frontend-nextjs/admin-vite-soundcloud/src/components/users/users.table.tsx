@@ -31,16 +31,20 @@ const UsersTable = () => {
 
     const [dataUpdate, setDataUpdate] = useState<null | IUsers>(null);
 
+    const [current, setCurrent] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(5);
+    const [total, setTotal] = useState<number>(0);
+
     const access_token = localStorage.getItem('access_token') as string;
 
     useEffect(() => {
         getData();
-    }, []);
+    }, [current, pageSize]);
 
     const getData = async () => {
         setIsLoading(true);
 
-        const res = await fetch('http://localhost:8080/api/v1/users',
+        const res = await fetch(`http://localhost:8080/api/v1/users?page=${current}&size=${pageSize}`,
             {
                 headers: {
                     'Content-Type': "application/json",
@@ -56,6 +60,7 @@ const UsersTable = () => {
             })
         }
         setListUser(d.data.result);
+        setTotal(d.data.meta.totalElement)
         setIsLoading(false);
     }
 
@@ -138,6 +143,14 @@ const UsersTable = () => {
         }
     };
 
+    const handleOnChange = (page: number, pageSizeChange: number) => {
+        setCurrent(page);
+        if (pageSize != pageSizeChange) {
+            setPageSize(pageSizeChange);
+            setCurrent(1);
+        }
+    }
+
     return (
         <div>
             {contextHolder}
@@ -153,9 +166,23 @@ const UsersTable = () => {
             </div>
 
             <Table<IUsers>
+                rowKey={"_id"}
                 columns={columns}
                 dataSource={listUser}
-                rowKey={"_id"}
+                pagination={
+                    {
+                        defaultCurrent: 1,
+                        current: current,
+                        pageSize: pageSize,
+                        total: total,
+                        showSizeChanger: true,
+                        pageSizeOptions: [5, 10, 20, 50, 100],
+                        responsive: true,
+                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} items</div>) },
+                        onChange: (page: number, pageSize: number) => handleOnChange(page, pageSize)
+                    }
+                }
+
                 loading={isLoading}
             />
 
