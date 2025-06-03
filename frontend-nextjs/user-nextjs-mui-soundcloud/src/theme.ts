@@ -9,14 +9,24 @@ const roboto = Roboto({
 });
 
 const theme = createTheme({
-    colorSchemes: { light: true, dark: false },
+    colorSchemes: { light: true },
     cssVariables: {
         colorSchemeSelector: 'class',
     },
+
     typography: {
         fontFamily: roboto.style.fontFamily,
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    maxWidth: '1248px',
+                    margin: '0 auto',
+                    color: '#121212'
+                }
+            }
+        },
         MuiAlert: {
             styleOverrides: {
                 root: {
@@ -31,7 +41,21 @@ const theme = createTheme({
                 },
             },
         },
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: '#ffffff',
+                    color: '#121212',
+                    boxShadow: 'none',
+                },
+            }
+        },
     },
+    palette: {
+        background: {
+            default: '#ffffff'
+        },
+    }
 });
 
 export default theme;
