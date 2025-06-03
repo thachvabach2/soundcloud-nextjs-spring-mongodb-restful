@@ -59,6 +59,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const AppHeader = () => {
+
+    const router = useRouter();
+
     //
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -85,7 +88,9 @@ const AppHeader = () => {
     };
 
     //
-    const router = useRouter();
+    const handleRedirectHome = () => {
+        router.push('/');
+    }
 
     return (
         <>
@@ -132,7 +137,11 @@ const AppHeader = () => {
                             variant="h6"
                             noWrap
                             component="div"
-                            sx={{ display: { xs: 'none', sm: 'block' } }}
+                            sx={{
+                                display: { xs: 'none', sm: 'block' },
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => handleRedirectHome()}
                         >
                             SoundCloud
                         </Typography>

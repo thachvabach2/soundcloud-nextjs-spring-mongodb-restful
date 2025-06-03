@@ -2,6 +2,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import theme from '@/theme';
 import "./globals.css";
+import AppHeader from "@/components/header/app.header";
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
     return (
@@ -10,6 +11,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                 <AppRouterCacheProvider>
                     <ThemeProvider theme={theme}>
                         <CssBaseline />
+                        <AppHeader />
                         {children}
                     </ThemeProvider>
                 </AppRouterCacheProvider>
