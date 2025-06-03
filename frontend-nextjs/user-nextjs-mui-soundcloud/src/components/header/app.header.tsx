@@ -11,7 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Container, Tab, Tabs, Tooltip } from '@mui/material';
+import { Avatar, Tab, Tabs, Tooltip } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 const settings = ['Profile', 'My Account'];
@@ -77,11 +78,14 @@ const AppHeader = () => {
     };
 
     //
-    const [value, setValue] = React.useState('Playlists');
+    const [value, setValue] = React.useState('playlist');
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
+
+    //
+    const router = useRouter();
 
     return (
         <>
@@ -157,11 +161,30 @@ const AppHeader = () => {
                                 //     }
                                 // }}
                                 aria-label="basic tabs example"
-                                sx={{ paddingRight: '20px' }}
+                                sx={{
+                                    paddingRight: '20px',
+                                    "button": {
+                                        textTransform: 'none',
+                                        fontSize: '1rem',
+                                    }
+                                }}
                             >
-                                {pages.map((page) => (
-                                    <Tab value={page} label={page} sx={{ textTransform: 'none', fontSize: '1rem' }} key={page} />
-                                ))}
+                                <Tab
+                                    value={'playlist'}
+                                    label={'Playlists'}
+                                    onClick={() => router.push('/playlist')}
+                                />
+                                <Tab
+                                    value={'like'}
+                                    label={'Likes'}
+                                    onClick={() => router.push('/like')}
+                                />
+                                <Tab
+                                    value={'upload'}
+                                    label={'Upload'}
+                                    // sx={{ textTransform: 'none', fontSize: '1rem' }}
+                                    onClick={() => router.push('/upload')}
+                                />
                             </Tabs>
                         </Box>
 
@@ -210,13 +233,13 @@ const AppHeader = () => {
                                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                             >
-                                {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography sx={{ textAlign: 'center' }}>
-                                            {setting}
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
+                                <MenuItem onClick={() => router.push('/profile')}>
+                                    Profile
+                                </MenuItem>
+                                <MenuItem onClick={handleCloseUserMenu}>
+                                    My Account
+                                </MenuItem>
+
                             </Menu>
                         </Box>
                     </Toolbar>
