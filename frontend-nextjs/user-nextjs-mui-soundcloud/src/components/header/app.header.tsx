@@ -93,168 +93,174 @@ const AppHeader = () => {
     }
 
     return (
-        <>
-            <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="static">
-                    <Toolbar>
-                        {/* Pages Mobile */}
-                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                            <IconButton
-                                size="large"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleOpenNavMenu}
-                                color="inherit"
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                            <Menu
-                                id="menu-appbar"
-                                anchorEl={anchorElNav}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'left',
-                                }}
-                                open={Boolean(anchorElNav)}
-                                onClose={handleCloseNavMenu}
-                                sx={{ display: { xs: 'block', md: 'none' } }}
-                            >
-                                {pages.map((page) => (
-                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                        <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
-                                    </MenuItem>
-                                ))}
-                            </Menu>
-                        </Box>
-
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            component="div"
-                            sx={{
-                                display: { xs: 'none', sm: 'block' },
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => handleRedirectHome()}
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar
+                position='fixed'
+                sx={{
+                    maxWidth: 'var(--custom-mui-width-container)',
+                    left: 0,
+                    right: 0,
+                    margin: '0 auto',
+                }}
+            >
+                <Toolbar>
+                    {/* Pages Mobile */}
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleOpenNavMenu}
+                            color="inherit"
                         >
-                            SoundCloud
-                        </Typography>
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorElNav}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            open={Boolean(anchorElNav)}
+                            onClose={handleCloseNavMenu}
+                            sx={{ display: { xs: 'block', md: 'none' } }}
+                        >
+                            {pages.map((page) => (
+                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                    <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Box>
 
-                        {/* Search */}
-                        <Search>
-                            <SearchIconWrapper>
-                                <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="Search…"
-                                inputProps={{ 'aria-label': 'search' }}
+                    <Typography
+                        variant="h6"
+                        noWrap
+                        component="div"
+                        sx={{
+                            display: { xs: 'none', sm: 'block' },
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => handleRedirectHome()}
+                    >
+                        SoundCloud
+                    </Typography>
+
+                    {/* Search */}
+                    <Search>
+                        <SearchIconWrapper>
+                            <SearchIcon />
+                        </SearchIconWrapper>
+                        <StyledInputBase
+                            placeholder="Search…"
+                            inputProps={{ 'aria-label': 'search' }}
+                        />
+                    </Search>
+
+                    <Box sx={{ flexGrow: 1 }} />
+
+                    {/* Pages PC */}
+                    <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            // slotProps={{
+                            //     indicator: {
+                            //         style: { display: 'none' }
+                            //     }
+                            // }}
+                            aria-label="basic tabs example"
+                            sx={{
+                                paddingRight: '20px',
+                                "button": {
+                                    textTransform: 'none',
+                                    fontSize: '1rem',
+                                }
+                            }}
+                        >
+                            <Tab
+                                value={'playlist'}
+                                label={'Playlists'}
+                                onClick={() => router.push('/playlist')}
                             />
-                        </Search>
+                            <Tab
+                                value={'like'}
+                                label={'Likes'}
+                                onClick={() => router.push('/like')}
+                            />
+                            <Tab
+                                value={'upload'}
+                                label={'Upload'}
+                                // sx={{ textTransform: 'none', fontSize: '1rem' }}
+                                onClick={() => router.push('/upload')}
+                            />
+                        </Tabs>
+                    </Box>
 
-                        <Box sx={{ flexGrow: 1 }} />
+                    {/* avatar */}
+                    <Box sx={{ flexGrow: 0 }}>
+                        <Tooltip title="Open settings">
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                <Avatar>BD</Avatar>
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            anchorEl={anchorElUser}
+                            id="account-menu"
+                            open={Boolean(anchorElUser)}
+                            onClose={handleCloseUserMenu}
 
-                        {/* Pages PC */}
-                        <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-                            <Tabs
-                                value={value}
-                                onChange={handleChange}
-                                // slotProps={{
-                                //     indicator: {
-                                //         style: { display: 'none' }
-                                //     }
-                                // }}
-                                aria-label="basic tabs example"
-                                sx={{
-                                    paddingRight: '20px',
-                                    "button": {
-                                        textTransform: 'none',
-                                        fontSize: '1rem',
-                                    }
-                                }}
-                            >
-                                <Tab
-                                    value={'playlist'}
-                                    label={'Playlists'}
-                                    onClick={() => router.push('/playlist')}
-                                />
-                                <Tab
-                                    value={'like'}
-                                    label={'Likes'}
-                                    onClick={() => router.push('/like')}
-                                />
-                                <Tab
-                                    value={'upload'}
-                                    label={'Upload'}
-                                    // sx={{ textTransform: 'none', fontSize: '1rem' }}
-                                    onClick={() => router.push('/upload')}
-                                />
-                            </Tabs>
-                        </Box>
-
-                        {/* avatar */}
-                        <Box sx={{ flexGrow: 0 }}>
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar>BD</Avatar>
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                anchorEl={anchorElUser}
-                                id="account-menu"
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}
-
-                                keepMounted
-                                slotProps={{
-                                    paper: {
-                                        elevation: 0,
-                                        sx: {
-                                            overflow: 'visible',
-                                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                                            mt: 1.5,
-                                            '& .MuiAvatar-root': {
-                                                width: 32,
-                                                height: 32,
-                                                ml: -0.5,
-                                                mr: 1,
-                                            },
-                                            '&::before': {
-                                                content: '""',
-                                                display: 'block',
-                                                position: 'absolute',
-                                                top: 0,
-                                                right: 14,
-                                                width: 10,
-                                                height: 10,
-                                                bgcolor: 'background.paper',
-                                                transform: 'translateY(-50%) rotate(45deg)',
-                                                zIndex: 0,
-                                            },
+                            keepMounted
+                            slotProps={{
+                                paper: {
+                                    elevation: 0,
+                                    sx: {
+                                        overflow: 'visible',
+                                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                        mt: 1.5,
+                                        '& .MuiAvatar-root': {
+                                            width: 32,
+                                            height: 32,
+                                            ml: -0.5,
+                                            mr: 1,
+                                        },
+                                        '&::before': {
+                                            content: '""',
+                                            display: 'block',
+                                            position: 'absolute',
+                                            top: 0,
+                                            right: 14,
+                                            width: 10,
+                                            height: 10,
+                                            bgcolor: 'background.paper',
+                                            transform: 'translateY(-50%) rotate(45deg)',
+                                            zIndex: 0,
                                         },
                                     },
-                                }}
-                                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                            >
-                                <MenuItem onClick={() => router.push('/profile')}>
-                                    Profile
-                                </MenuItem>
-                                <MenuItem onClick={handleCloseUserMenu}>
-                                    My Account
-                                </MenuItem>
+                                },
+                            }}
+                            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                        >
+                            <MenuItem onClick={() => router.push('/profile')}>
+                                Profile
+                            </MenuItem>
+                            <MenuItem onClick={handleCloseUserMenu}>
+                                My Account
+                            </MenuItem>
 
-                            </Menu>
-                        </Box>
-                    </Toolbar>
-                </AppBar>
-            </Box>
-        </>
+                        </Menu>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+        </Box>
     )
 }
 

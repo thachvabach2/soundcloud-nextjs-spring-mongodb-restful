@@ -13,15 +13,17 @@ const theme = createTheme({
     cssVariables: {
         colorSchemeSelector: 'class',
     },
-
     typography: {
         fontFamily: roboto.style.fontFamily,
     },
     components: {
         MuiCssBaseline: {
             styleOverrides: {
+                ":root": {
+                    '--custom-mui-width-container': '1248px',
+                },
                 body: {
-                    maxWidth: '1248px',
+                    maxWidth: 'var(--custom-mui-width-container)',
                     margin: '0 auto',
                     color: '#121212'
                 }

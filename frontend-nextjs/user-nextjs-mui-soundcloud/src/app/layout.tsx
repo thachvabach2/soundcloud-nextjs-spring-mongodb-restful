@@ -3,6 +3,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import theme from '@/theme';
 import "./globals.css";
 import AppHeader from "@/components/header/app.header";
+import AppFooter from "@/components/footer/app.footer";
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
     return (
@@ -13,6 +14,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                         <CssBaseline />
                         <AppHeader />
                         {children}
+                        <AppFooter />
                     </ThemeProvider>
                 </AppRouterCacheProvider>
             </body>
