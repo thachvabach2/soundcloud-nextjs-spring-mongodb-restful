@@ -2,7 +2,7 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider, { Settings } from "react-slick";
-import { Box, Button, Divider, Stack, Toolbar } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 
 const MainSlider = () => {
@@ -51,122 +51,42 @@ const MainSlider = () => {
 
 
     return (
-        <Stack
-            spacing={5}
+        <Box
             sx={{
-                paddingTop: '24px',
-                paddingBottom: '60px'
-            }}
-        >
-            <Box
-                sx={{
-                    paddingX: '24px',
-                    ".abc": {
-                        padding: "0 10px",
-                    },
-                    "h3": {
-                        border: "1px solid #ccc",
-                        padding: "20px",
-                        height: "200px",
-                    }
-                }}>
-                <h2 className="text-2xl font-medium">Multiple tracks</h2>
+                paddingX: '24px',
+                ".abc": {
+                    padding: "0 10px",
+                },
+                "h3": {
+                    border: "1px solid #ccc",
+                    padding: "20px",
+                    height: "200px",
+                }
+            }}>
+            <h2 className="text-2xl font-medium">Multiple tracks</h2>
 
-                <Slider {...settings} className="pt-4">
-                    <div className="abc">
-                        <h3>Track 1</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 2</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 3</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 4</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 5</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 6</h3>
-                    </div>
-                </Slider>
-                <Divider sx={{ marginTop: 2 }} />
-            </Box>
-            <Box
-                sx={{
-                    paddingX: '24px',
-                    ".abc": {
-                        padding: "0 10px",
-                    },
-                    "h3": {
-                        border: "1px solid #ccc",
-                        padding: "20px",
-                        height: "200px",
-                    }
-                }}>
-                <h2 className="text-2xl font-medium">Multiple tracks</h2>
-
-                <Slider {...settings} className="pt-4">
-                    <div className="abc">
-                        <h3>Track 1</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 2</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 3</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 4</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 5</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 6</h3>
-                    </div>
-                </Slider>
-                <Divider sx={{ marginTop: 2 }} />
-            </Box>
-            <Box
-                sx={{
-                    paddingX: '24px',
-                    ".abc": {
-                        padding: "0 10px",
-                    },
-                    "h3": {
-                        border: "1px solid #ccc",
-                        padding: "20px",
-                        height: "200px",
-                    }
-                }}>
-                <h2 className="text-2xl font-medium">Multiple tracks</h2>
-
-                <Slider {...settings} className="pt-4">
-                    <div className="abc">
-                        <h3>Track 1</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 2</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 3</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 4</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 5</h3>
-                    </div>
-                    <div className="abc">
-                        <h3>Track 6</h3>
-                    </div>
-                </Slider>
-                <Divider sx={{ marginTop: 2 }} />
-            </Box>
-        </Stack>
+            <Slider {...settings} className="pt-4">
+                <div className="abc">
+                    <h3>Track 1</h3>
+                </div>
+                <div className="abc">
+                    <h3>Track 2</h3>
+                </div>
+                <div className="abc">
+                    <h3>Track 3</h3>
+                </div>
+                <div className="abc">
+                    <h3>Track 4</h3>
+                </div>
+                <div className="abc">
+                    <h3>Track 5</h3>
+                </div>
+                <div className="abc">
+                    <h3>Track 6</h3>
+                </div>
+            </Slider>
+            <Divider sx={{ marginTop: 2 }} />
+        </Box>
     );
 }
 
