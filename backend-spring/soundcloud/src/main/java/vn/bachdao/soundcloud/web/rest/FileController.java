@@ -21,14 +21,14 @@ import vn.bachdao.soundcloud.web.rest.errors.StorageException;
 
 @RestController
 @RequestMapping("/api/v1")
-public class FileUploadController {
+public class FileController {
 
     @Value("${soundcloud.upload.upload-file.base-uri}")
     private String baseURI;
 
     private FileService fileService;
 
-    public FileUploadController(FileService fileService) {
+    public FileController(FileService fileService) {
         this.fileService = fileService;
     }
 
