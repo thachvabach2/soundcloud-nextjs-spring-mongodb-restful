@@ -4,6 +4,10 @@ spring:
         web:
             pageable:
                 one-indexed-parameters: true
+    servlet:
+        multipart:
+            max-file-size: 50MB
+            max-request-size: 50MB
 
 soundcloud:
     security:
@@ -12,3 +16,6 @@ soundcloud:
                 base64-secret: MzFhMWIyNDQxYTljM2FmNjE4NWFkNWI4OTIxOWM0NTg4ZjYxYWFmOWY3ZWIwMmRjZTExNGYxMjMxMmIxNGJhOWQ5ZWU0NmM1Y2Q1ZmVmOTliNTc2Njc1ZjdhYmZkYWZjZGMwYThjNGM4MzJhNDk3ZmU5M2Q3ZjA2NzcxM2U3OTU=
                 access-token-validity-in-seconds: 86400
                 refresh-token-validity-in-seconds: 86400
+    upload:
+        upload-file:
+            base-path: file:///E:/SelfLearingIT/PersonalProject/01-nextjs-spring-mongodb-restful-soundcloud/backend-spring/upload/tracks
