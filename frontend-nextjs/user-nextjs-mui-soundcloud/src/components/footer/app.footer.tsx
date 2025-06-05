@@ -35,7 +35,7 @@ const AppFooter = () => {
                             // autoPlay
                             volume={0.8}
                             layout='horizontal-reverse'
-                            src="https://samplelib.com/lib/preview/mp3/sample-3s.mp3"
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/tracks/1749119997799-phep-mau.mp3`}
                             onPlay={e => console.log("onPlay")}
                             style={{
                                 boxShadow: 'unset',

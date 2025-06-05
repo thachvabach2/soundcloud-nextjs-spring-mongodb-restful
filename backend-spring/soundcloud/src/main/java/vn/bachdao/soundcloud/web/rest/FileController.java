@@ -32,7 +32,7 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping("/files")
+    @PostMapping("/files/upload")
     @ApiMessage("Upload single file")
     public ResponseEntity<ResUploadFileDTO> upload(
             @RequestParam(name = "fileUpload", required = false) MultipartFile file)
