@@ -18,4 +18,4 @@ soundcloud:
                 refresh-token-validity-in-seconds: 86400
     upload:
         upload-file:
-            base-path: file:///E:/SelfLearingIT/PersonalProject/01-nextjs-spring-mongodb-restful-soundcloud/backend-spring/upload/tracks
+            base-uri: file:///E:/SelfLearingIT/PersonalProject/01-nextjs-spring-mongodb-restful-soundcloud/backend-spring/upload/tracks
