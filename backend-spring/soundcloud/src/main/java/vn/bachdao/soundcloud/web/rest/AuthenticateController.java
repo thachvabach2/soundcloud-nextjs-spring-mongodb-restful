@@ -56,9 +56,6 @@ public class AuthenticateController {
         // lưu vào Spring security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // create access token
-        String access_token = this.securityUtils.createAccessToken(authentication);
-
         Optional<User> userOptional = this.userService.getUserByEmail(loginDTO.getEmail());
         User currUser = userOptional.get();
 
@@ -72,6 +69,9 @@ public class AuthenticateController {
         userResult.setType("SYSTEM");
         userResult.setName(currUser.getName());
         userResult.setRole(currUser.getRole());
+
+        // create access token
+        String access_token = this.securityUtils.createAccessToken(authentication, userResult);
 
         // create refresh token
         String refresh_token = this.securityUtils.createRefreshToken(loginDTO.getEmail(), userResult);

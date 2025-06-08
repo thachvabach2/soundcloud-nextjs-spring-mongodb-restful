@@ -1,11 +1,7 @@
 package vn.bachdao.soundcloud.domain;
 
-import java.time.Instant;
-
 import org.hibernate.validator.constraints.Range;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,17 +10,19 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import vn.bachdao.soundcloud.domain.enumeration.GenderEnum;
 import vn.bachdao.soundcloud.domain.enumeration.RoleEnum;
 import vn.bachdao.soundcloud.util.annotation.EnumValidator;
 
 @Document(collection = "users")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User extends AbstractAuditingEntity {
 
     @Id
     @JsonProperty(value = "_id", index = 0)
@@ -56,14 +54,4 @@ public class User {
     private String role;
 
     private String refreshToken;
-
-    @CreatedDate
-    private Instant createdAt;
-
-    private String createdBy;
-
-    @LastModifiedDate
-    private Instant updatedAt;
-
-    private String updatedBy;
 }
