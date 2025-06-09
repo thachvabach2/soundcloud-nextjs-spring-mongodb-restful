@@ -37,7 +37,7 @@ public class ResLoginDTO {
     @Setter
     public static class UserInsideToken {
 
-        private String id;
+        private String _id;
 
         private String email;
         private String name;

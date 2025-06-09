@@ -2,6 +2,7 @@ package vn.bachdao.soundcloud.security;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -48,7 +49,7 @@ public class SecurityUtils {
         Instant validity = now.plus(this.accessTokenValidityInSeconds, ChronoUnit.SECONDS);
 
         ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken();
-        userInsideToken.setId(dto.getId());
+        userInsideToken.set_id(dto.getId());
         userInsideToken.setEmail(dto.getEmail());
         userInsideToken.setName(dto.getName());
         userInsideToken.setRole(dto.getRole());
@@ -75,7 +76,7 @@ public class SecurityUtils {
         Instant validity = now.plus(this.refreshTokenValidityInSeconds, ChronoUnit.SECONDS);
 
         ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken();
-        userInsideToken.setId(dto.getId());
+        userInsideToken.set_id(dto.getId());
         userInsideToken.setEmail(dto.getEmail());
         userInsideToken.setName(dto.getName());
         userInsideToken.setRole(dto.getRole());
@@ -113,20 +114,16 @@ public class SecurityUtils {
         return null;
     }
 
-    public static Optional<Object> getClaimUserFromTokenCurrentUserLogin() {
+    public static Optional<Map<String, Object>> getClaimUserFromTokenCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         return Optional.ofNullable(extractClaimUser(securityContext.getAuthentication()));
     }
 
-    private static Object extractClaimUser(Authentication authentication) {
+    private static Map<String, Object> extractClaimUser(Authentication authentication) {
         if (authentication == null) {
             return null;
-        } else if (authentication.getPrincipal() instanceof UserDetails springSecurityUser) {
-            return springSecurityUser.getUsername();
         } else if (authentication.getPrincipal() instanceof Jwt jwt) {
             return jwt.getClaimAsMap("user");
-        } else if (authentication.getPrincipal() instanceof String s) {
-            return s;
         }
         return null;
     }

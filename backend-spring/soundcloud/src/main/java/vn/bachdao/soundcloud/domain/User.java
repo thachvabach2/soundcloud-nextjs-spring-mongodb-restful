@@ -1,8 +1,9 @@
 package vn.bachdao.soundcloud.domain;
 
 import org.hibernate.validator.constraints.Range;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,7 +25,7 @@ import vn.bachdao.soundcloud.util.annotation.EnumValidator;
 @NoArgsConstructor
 public class User extends AbstractAuditingEntity {
 
-    @Id
+    @MongoId(value = FieldType.OBJECT_ID)
     @JsonProperty(value = "_id", index = 0)
     private String id;
 
