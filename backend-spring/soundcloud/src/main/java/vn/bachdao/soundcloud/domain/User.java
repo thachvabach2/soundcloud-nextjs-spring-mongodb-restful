@@ -14,9 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.bachdao.soundcloud.domain.enumeration.GenderEnum;
-import vn.bachdao.soundcloud.domain.enumeration.RoleEnum;
 import vn.bachdao.soundcloud.util.annotation.EnumValidator;
+import vn.bachdao.soundcloud.util.enumeration.GenderEnum;
+import vn.bachdao.soundcloud.util.enumeration.RoleEnum;
 
 @Document(collection = "users")
 @Getter

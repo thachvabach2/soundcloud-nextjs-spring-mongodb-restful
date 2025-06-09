@@ -1,4 +1,4 @@
-package vn.bachdao.soundcloud.web.rest;
+package vn.bachdao.soundcloud.web.rest.admin;
 
 import java.util.Optional;
 
@@ -33,13 +33,13 @@ import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
-public class UserResource {
+public class UserAdminResource {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    public UserResource(UserService userService,
+    public UserAdminResource(UserService userService,
             PasswordEncoder passwordEncoder,
             UserMapper userMapper) {
         this.userService = userService;

@@ -1,4 +1,4 @@
-package vn.bachdao.soundcloud.web.rest;
+package vn.bachdao.soundcloud.web.rest.admin;
 
 import java.util.List;
 
@@ -29,11 +29,11 @@ import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
-public class TrackResource {
+public class TrackAdminResource {
 
     private final TrackService trackService;
 
-    public TrackResource(TrackService trackService) {
+    public TrackAdminResource(TrackService trackService) {
         this.trackService = trackService;
     }
 
