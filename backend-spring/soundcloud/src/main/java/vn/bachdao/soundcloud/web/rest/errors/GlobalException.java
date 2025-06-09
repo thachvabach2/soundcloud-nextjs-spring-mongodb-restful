@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import vn.bachdao.soundcloud.domain.dto.response.RestResponse;
 
@@ -30,9 +31,7 @@ public class GlobalException {
         return ResponseEntity.badRequest().body(rs);
     }
 
-    @ExceptionHandler(value = {
-            MethodArgumentNotValidException.class,
-    })
+    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
     public ResponseEntity<RestResponse<Object>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
@@ -48,14 +47,22 @@ public class GlobalException {
         return ResponseEntity.badRequest().body(rs);
     }
 
-    @ExceptionHandler(value = {
-            StorageException.class,
-    })
+    @ExceptionHandler(value = { StorageException.class })
     public ResponseEntity<RestResponse<Object>> handleFileUploadException(Exception ex) {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError(ex.getMessage());
         res.setMessage("Exception upload file...");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<RestResponse<Object>> handleNotFoundException(NoResourceFoundException ex) {
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.NOT_FOUND.value());
+        res.setMessage("404 Not Found, URL may not exist ...");
+        res.setError(ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }

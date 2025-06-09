@@ -1,5 +1,9 @@
 package vn.bachdao.soundcloud.domain;
 
+import java.time.Instant;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -17,7 +21,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Track extends AbstractAuditingEntity {
+public class Track {
 
     @MongoId(value = FieldType.OBJECT_ID)
     @JsonProperty(value = "_id", index = 0)
@@ -27,14 +31,20 @@ public class Track extends AbstractAuditingEntity {
     private String title;
 
     private String description;
+    private String category;
+    private String imgUrl;
 
     @NotBlank(message = "TrackUrl không được để trống")
     private String trackUrl;
-    private String imgUrl;
+
     private Integer countLike;
     private Integer countPlay;
+    private String uploader;
     private Boolean isDeleted;
 
-    private String uploader;
-    private String category;
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 }

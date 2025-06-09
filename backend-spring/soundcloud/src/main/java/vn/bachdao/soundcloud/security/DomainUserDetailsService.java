@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import vn.bachdao.soundcloud.repository.UserRepository;
@@ -24,6 +25,11 @@ public class DomainUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         Optional<vn.bachdao.soundcloud.domain.User> userOptional = this.userRepository
                 .findOneByEmailIgnoreCase(username);
+
+        // handle username not exist in DB -> BadCredentialsException("Bad credentials")
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Username/password không hợp lệ");
+        }
 
         return new User(
                 userOptional.get().getEmail(),

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,6 +19,7 @@ import com.mongodb.client.result.UpdateResult;
 
 import vn.bachdao.soundcloud.domain.Track;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqCreateTrackDTO;
+import vn.bachdao.soundcloud.domain.dto.request.track.ReqGetTopTrackByCategory;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqUpdateTrackDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
 import vn.bachdao.soundcloud.util.mapper.TrackMapper;
@@ -38,6 +40,9 @@ public class TrackService {
     public Track createTrack(ReqCreateTrackDTO reqTrack) {
         Track track = trackMapper.toTrack(reqTrack);
         updateUploader(track);
+        track.setIsDeleted(false);
+        track.setCountLike(0);
+        track.setCountPlay(0);
         return mongoTemplate.save(track);
     }
 
@@ -87,5 +92,20 @@ public class TrackService {
         DeleteResult result = mongoTemplate.remove(query, Track.class);
 
         return result;
+    }
+
+    public List<Track> getTopTrackByCategory(ReqGetTopTrackByCategory req) {
+        Sort desTrackByCountPlay = Sort.by(Sort.Direction.DESC, "countPlay");
+        Sort desTrackByCountLike = Sort.by(Sort.Direction.DESC, "countLike");
+
+        Query query = new Query();
+        query
+                .addCriteria(Criteria.where("category").is(req.getCategory()))
+                .limit(req.getLimit())
+                .with(desTrackByCountPlay)
+                .with(desTrackByCountLike);
+
+        List<Track> tracks = mongoTemplate.query(Track.class).matching(query).all();
+        return tracks;
     }
 }
