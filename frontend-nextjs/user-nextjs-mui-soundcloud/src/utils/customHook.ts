@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-// check just render in client
+// force component just render in client
 export const useHasMounted = () => {
     const [hasMounted, setHasMounted] = useState<boolean>(false);
     useEffect(() => {
