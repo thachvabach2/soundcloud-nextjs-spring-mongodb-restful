@@ -3,16 +3,23 @@ import { Stack } from "@mui/material";
 import { sendRequest } from "@/utils/api";
 
 export default async function Home() {
-    const res = await sendRequest<IBackendRes<ITrackTop[]>>({
+    const chills = await sendRequest<IBackendRes<ITrackTop[]>>({
         url: "http://localhost:8080/api/v1/tracks/top",
         method: "POST",
-        body: {
-            category: "HIPHOP",
-            limit: 1
-        }
+        body: { category: "CHILL", limit: 10 },
     })
 
-    console.log('>>> check rs TS', res.data);
+    const workouts = await sendRequest<IBackendRes<ITrackTop[]>>({
+        url: "http://localhost:8080/api/v1/tracks/top",
+        method: "POST",
+        body: { category: "WORKOUT", limit: 10 },
+    })
+
+    const hiphop = await sendRequest<IBackendRes<ITrackTop[]>>({
+        url: "http://localhost:8080/api/v1/tracks/top",
+        method: "POST",
+        body: { category: "HIPHOP", limit: 10 },
+    })
 
     return (
         <Stack
@@ -22,9 +29,18 @@ export default async function Home() {
                 paddingBottom: '60px'
             }}
         >
-            <MainSlider />
-            <MainSlider />
-            <MainSlider />
+            <MainSlider
+                title={"Top Chill"}
+                data={chills?.data ?? []}
+            />
+            <MainSlider
+                title={"Top Workout"}
+                data={workouts?.data ?? []}
+            />
+            <MainSlider
+                title={"Top Hiphop"}
+                data={hiphop?.data ?? []}
+            />
         </Stack>
     );
 }

@@ -1,21 +1,33 @@
 'use client'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Slider, { Settings } from "react-slick";
+import Slider, { CustomArrowProps, Settings } from "react-slick";
 import { Box, Button, Divider } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 
-const MainSlider = () => {
-    const NextArrow = (props: any) => {
+interface IPops {
+    data: ITrackTop[],
+    title: string
+}
+
+const MainSlider = (props: IPops) => {
+    const { data, title } = props;
+
+    console.log('>> check data: ', props.data)
+    const NextArrow = (props: CustomArrowProps) => {
         return (
-            <Button variant='outlined' onClick={props.onClick}
+            <Button
+                color="inherit"
+                variant='contained'
+                onClick={props.onClick}
                 sx={{
                     position: "absolute",
                     right: 0,
-                    top: "50%",
+                    top: "30%",
                     zIndex: 2,
                     minWidth: 30,
                     width: 35,
+                    borderRadius: "50%",
                 }}
             >
                 <NavigateNext />
@@ -23,15 +35,19 @@ const MainSlider = () => {
         )
     }
 
-    const PrevArrow = (props: any) => {
+    const PrevArrow = (props: CustomArrowProps) => {
         return (
-            <Button variant='outlined' onClick={props.onClick}
+            <Button
+                color="inherit"
+                variant='contained'
+                onClick={props.onClick}
                 sx={{
                     position: "absolute",
-                    top: "50%",
+                    top: "30%",
                     zIndex: 2,
                     minWidth: 30,
                     width: 35,
+                    borderRadius: "50%",
                 }}
             >
                 <NavigateBefore />
@@ -49,43 +65,49 @@ const MainSlider = () => {
         prevArrow: <PrevArrow />,
     };
 
-
     return (
         <Box
             sx={{
                 paddingX: '24px',
-                ".abc": {
-                    padding: "0 10px",
+                ".track-container": {
+                    width: '160px !important',
                 },
-                "h3": {
-                    border: "1px solid #ccc",
-                    padding: "20px",
-                    height: "200px",
+                ".slick-slide": {
+                    textAlign: "center",
+                },
+                ".slick-track": {
+                    marginLeft: 0,
                 }
-            }}>
-            <h2 className="text-2xl font-medium">Multiple tracks</h2>
+            }}
+        >
+            <h2 className="text-2xl font-medium">{title}</h2>
 
             <Slider {...settings} className="pt-4">
-                <div className="abc">
-                    <h3>Track 1</h3>
-                </div>
-                <div className="abc">
-                    <h3>Track 2</h3>
-                </div>
-                <div className="abc">
-                    <h3>Track 3</h3>
-                </div>
-                <div className="abc">
-                    <h3>Track 4</h3>
-                </div>
-                <div className="abc">
-                    <h3>Track 5</h3>
-                </div>
-                <div className="abc">
-                    <h3>Track 6</h3>
-                </div>
+                {data.map((track, index) => (
+                    <div className="track-container" key={track._id}>
+                        <div className="track-main">
+                            <div className="track-image w-full cursor-pointer">
+                                <img
+                                    className="w-full"
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
+                                />
+                            </div>
+
+                            <div className="track-footer mt-3 text-start select-text">
+                                <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer">
+                                    <a className="text-sm font-light">{track.title}</a>
+                                </div>
+
+                                <div className="track-artist overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer">
+                                    <span className="text-gray-400 text-xs">{track.category} {index}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
             </Slider>
-            <Divider sx={{ marginTop: 2 }} />
+            <Divider />
         </Box>
     );
 }
