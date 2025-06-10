@@ -43,19 +43,28 @@ public class FileController {
             throw new StorageException("File is empty. Please upload a file");
         }
         String fileName = file.getOriginalFilename();
-        List<String> allowedExtensions = Arrays.asList("mp3", "mp4", "wav", "flac");
-        boolean isValid = allowedExtensions.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
 
-        if (!isValid) {
+        List<String> allowedExtensionsTrack = Arrays.asList("mp3", "mp4", "wav", "flac");
+        boolean isValidTrack = allowedExtensionsTrack.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
+
+        List<String> allowedExtensionsImage = Arrays.asList("jpg", "jpeg", "png");
+        boolean isValidImage = allowedExtensionsImage.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
+
+        String uploadFile;
+
+        if (!isValidTrack && !isValidImage) {
             throw new StorageException("Invalid file extension. only allows " +
-                    allowedExtensions.toString());
+                    allowedExtensionsTrack.toString());
+        } else if (isValidTrack) {
+            // create a directory if not exist
+            this.fileService.createDirectory(baseURI + "/tracks");
+
+            // store file
+            uploadFile = this.fileService.store(file, "tracks");
+        } else {
+            this.fileService.createDirectory(baseURI + "/images");
+            uploadFile = this.fileService.store(file, "images");
         }
-
-        // create a directory if not exist
-        this.fileService.createDirectory(baseURI);
-
-        // store file
-        String uploadFile = this.fileService.store(file);
 
         ResUploadFileDTO res = new ResUploadFileDTO(uploadFile, Instant.now());
 
