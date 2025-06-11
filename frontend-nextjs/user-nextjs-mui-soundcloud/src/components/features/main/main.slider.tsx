@@ -14,7 +14,6 @@ interface IPops {
 const MainSlider = (props: IPops) => {
     const { data, title } = props;
 
-    console.log('>> check data: ', props.data)
     const NextArrow = (props: CustomArrowProps) => {
         return (
             <Button
