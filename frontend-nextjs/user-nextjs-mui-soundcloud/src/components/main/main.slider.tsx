@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider, { CustomArrowProps, Settings } from "react-slick";
 import { Box, Button, Divider } from "@mui/material";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import Link from "next/link";
 
 interface IPops {
     data: ITrackTop[],
@@ -94,10 +95,11 @@ const MainSlider = (props: IPops) => {
                             </div>
 
                             <div className="track-footer mt-3 text-start select-text">
-                                <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer">
-                                    <a className="text-sm font-light">{track.title}</a>
-                                </div>
-
+                                <Link href={`/track/${track._id}?audio=${track.trackUrl}`}>
+                                    <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer">
+                                        <div className="text-sm font-light">{track.title}</div>
+                                    </div>
+                                </Link>
                                 <div className="track-artist overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer">
                                     <span className="text-gray-400 text-xs">{track.category} {index}</span>
                                 </div>
