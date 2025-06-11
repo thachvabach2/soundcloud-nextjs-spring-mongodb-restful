@@ -1,6 +1,6 @@
-import MainSlider from "@/components/main/main.slider";
+import MainSlider from "@/components/features/main/main.slider";
 import { Stack } from "@mui/material";
-import { sendRequest } from "@/utils/api";
+import { sendRequest } from "@/lib/utils/api";
 
 export default async function Home() {
     const chills = await sendRequest<IBackendRes<ITrackTop[]>>({

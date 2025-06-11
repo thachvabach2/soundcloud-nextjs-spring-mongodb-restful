@@ -95,13 +95,13 @@ const MainSlider = (props: IPops) => {
                             </div>
 
                             <div className="track-footer mt-3 text-start select-text">
-                                <Link href={`/track/${track._id}?audio=${track.trackUrl}`}>
-                                    <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer">
-                                        <div className="text-sm font-light">{track.title}</div>
-                                    </div>
-                                </Link>
-                                <div className="track-artist overflow-hidden whitespace-nowrap text-ellipsis cursor-pointer">
-                                    <span className="text-gray-400 text-xs">{track.category} {index}</span>
+                                <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis">
+                                    <Link href={`/track/${track._id}?audio=${track.trackUrl}`}>
+                                        <span className="text-sm font-light">{track.title}</span>
+                                    </Link>
+                                </div>
+                                <div className="track-artist overflow-hidden whitespace-nowrap text-ellipsis">
+                                    <span className="text-gray-400 text-xs cursor-pointer">{track.category} {index}</span>
                                 </div>
                             </div>
                         </div>
