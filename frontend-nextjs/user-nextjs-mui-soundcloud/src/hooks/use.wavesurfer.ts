@@ -5,7 +5,7 @@ export const useWavesurfer = (
     containerRef: React.RefObject<HTMLDivElement | null>,
     options: Omit<WaveSurferOptions, 'container'>
 ) => {
-    const [wavesurfer, setWavesurfer] = useState<any>(null)
+    const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null)
 
     // Initialize wavesurfer when the container mounts
     // or any of the props change
