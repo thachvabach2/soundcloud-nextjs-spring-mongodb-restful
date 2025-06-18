@@ -85,6 +85,36 @@ const WaveTrack = () => {
         return () => { unsubscribeFns.forEach((fn) => fn()) }
     }, [wavesurfer])
 
+    const arrComments = [
+        {
+            id: 1,
+            avatar: "http://localhost:8000/images/chill1.png",
+            moment: 10,
+            user: "username 1",
+            content: "just a comment1"
+        },
+        {
+            id: 2,
+            avatar: "http://localhost:8000/images/chill1.png",
+            moment: 30,
+            user: "username 2",
+            content: "just a comment3"
+        },
+        {
+            id: 3,
+            avatar: "http://localhost:8000/images/chill1.png",
+            moment: 50,
+            user: "username 3",
+            content: "just a comment3"
+        },
+    ]
+
+    const calLeft = (moment: number) => {
+        const hardCodeDuration = 256
+        const percent = (moment / hardCodeDuration) * 100;
+        return `${percent}%`
+    }
+
     console.log('>>>> check render.........')
     return (
         <div className="listen-hero">
@@ -104,40 +134,48 @@ const WaveTrack = () => {
                                     {isPlaying ?
                                         <PauseCircleFilledIcon
                                             sx={{
+                                                cursor: 'pointer',
                                                 fontSize: 64,
                                                 '& svg': {
                                                     width: '100%',
                                                     height: '100%',
                                                 },
                                                 '& path': {
-                                                    transform: 'scale(1.21)',
+                                                    transform: 'scale(1.5)',
                                                     transformOrigin: 'center'
                                                 },
                                                 backgroundColor: '#fff',
                                                 borderRadius: '50%',
+                                                '&:hover': {
+                                                    backgroundColor: 'transparent'
+                                                }
                                             }}
                                         />
                                         :
                                         <PlayCircleFilledIcon
                                             sx={{
+                                                cursor: 'pointer',
                                                 fontSize: 64,
                                                 '& svg': {
                                                     width: '100%',
                                                     height: '100%',
                                                 },
                                                 '& path': {
-                                                    transform: 'scale(1.21)',
+                                                    transform: 'scale(1.5)',
                                                     transformOrigin: 'center'
                                                 },
                                                 backgroundColor: '#fff',
                                                 borderRadius: '50%',
+                                                '&:hover': {
+                                                    backgroundColor: 'transparent'
+                                                }
                                             }}
                                         />
                                     }
 
                                 </div>
                                 <div className="soundTitle__usernameTitleContainer">
-                                    <div className="text-[28px] font-medium bg-[#121212] text-[#fff] px-2 py-1">
+                                    <div className="text-[28px] font-medium bg-[#121212] text-[#fff] px-2 py-1 line-clamp-2">
                                         <span>
                                             Karik ft. GDucky - Bạn Đời (Lo-fi ver by Hawys)
                                         </span>
@@ -184,12 +222,27 @@ const WaveTrack = () => {
                                     className="hover-class absolute left-0 top-0 z-10 pointer-events-none w-0 mix-blend-plus-lighter bg-[#e24d27] opacity-0 transition-opacity duration-200 ease-in-out h-full group-hover:opacity-100"
                                 ></div>
                                 <div className="overplay absolute h-[30px] bottom-0 w-full backdrop-brightness-50">
-
+                                </div>
+                                <div className="comments relative flex flex-row">
+                                    {
+                                        arrComments.map(item => {
+                                            return (
+                                                <img
+                                                    key={item.id}
+                                                    className="h-[24px] w-[24px] absolute top-[67px] z-20 rounded-[50%]"
+                                                    onPointerMove={(e) => {
+                                                        hoverRef.current!.style.width = calLeft(item.moment)
+                                                    }}
+                                                    style={{
+                                                        left: calLeft(item.moment)
+                                                    }}
+                                                    src={`http://localhost:8080/images/phep-mau.jpg`}
+                                                />
+                                            )
+                                        })
+                                    }
                                 </div>
                             </div>
-                            <button onClick={() => onPlayPause()}>
-                                {isPlaying === true ? 'Pause' : 'Play'}
-                            </button>
                         </div>
                     </div>
                 </div>
