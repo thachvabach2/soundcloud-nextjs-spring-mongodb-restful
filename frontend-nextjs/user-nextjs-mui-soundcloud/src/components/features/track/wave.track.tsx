@@ -1,18 +1,26 @@
 'use client'
 
 import { useWavesurfer } from "@/hooks/use.wavesurfer";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { WaveSurferOptions } from "wavesurfer.js";
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
 
 
 const WaveTrack = () => {
-    const searchParams = useSearchParams()
-    const fileName = searchParams.get('audio')
+    const searchParams = useSearchParams();
+    const fileName = searchParams.get('audio');
+    // console.log('>>> check client searchParam: ', searchParams);
+
+    const pathname = usePathname();
+    // console.log('>>> check pathname: ', pathname)
+
     const containerRef = useRef<HTMLDivElement>(null);
     const timeRef = useRef<HTMLDivElement>(null);
     const durationRef = useRef<HTMLDivElement>(null);
     const hoverRef = useRef<HTMLDivElement>(null);
+
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
     const optionsMemo = useMemo((): Omit<WaveSurferOptions, 'container'> => {
@@ -21,23 +29,22 @@ const WaveTrack = () => {
         if (typeof window !== 'undefined') {
             const canvas = document.createElement('canvas')
             const ctx = canvas.getContext('2d')!
-            canvas.height = 70
 
             // Define the waveform gradient
-            gradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 1.35)
-            gradient.addColorStop(0, '#656666') // Top color
-            gradient.addColorStop((canvas.height * 0.7) / canvas.height, '#656666') // Top color
-            gradient.addColorStop((canvas.height * 0.7 + 1) / canvas.height, '#ffffff') // White line
-            gradient.addColorStop((canvas.height * 0.7 + 2) / canvas.height, '#ffffff') // White line
+            gradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 1.45)
+            gradient.addColorStop(0, '#ffffff') // Top color
+            gradient.addColorStop((canvas.height * 0.7) / canvas.height, '#ffffff') // Top color
+            gradient.addColorStop((canvas.height * 0.7 + 1) / canvas.height, '#121212') // White line
+            gradient.addColorStop((canvas.height * 0.7 + 2) / canvas.height, '#121212') // White line
             gradient.addColorStop((canvas.height * 0.7 + 3) / canvas.height, '#B1B1B1') // Bottom color
             gradient.addColorStop(1, '#B1B1B1') // Bottom color
 
             // Define the progress gradient
-            progressGradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 1.35)
-            progressGradient.addColorStop(0, '#f59b64') // Top color
-            progressGradient.addColorStop((canvas.height * 0.7) / canvas.height, '#EB4926') // Top color
-            progressGradient.addColorStop((canvas.height * 0.7 + 1) / canvas.height, '#ffffff') // White line
-            progressGradient.addColorStop((canvas.height * 0.7 + 2) / canvas.height, '#ffffff') // White line
+            progressGradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 1.45)
+            progressGradient.addColorStop(0, '#ff7000') // Top color
+            progressGradient.addColorStop((canvas.height * 0.7) / canvas.height, '#ff3700') // Top color
+            progressGradient.addColorStop((canvas.height * 0.7 + 1) / canvas.height, '#121212') // White line
+            progressGradient.addColorStop((canvas.height * 0.7 + 2) / canvas.height, '#121212') // White line
             progressGradient.addColorStop((canvas.height * 0.7 + 3) / canvas.height, '#F6B094') // Bottom color
             progressGradient.addColorStop(1, '#F6B094') // Bottom color
         }
@@ -80,33 +87,114 @@ const WaveTrack = () => {
 
     console.log('>>>> check render.........')
     return (
-        <>
-            <div
-                ref={containerRef}
-                className="group cursor-pointer relative w-[784px]"
-            >
-                <div
-                    ref={timeRef}
-                    className="time absolute z-11 top-1/2 mt-[-1px] transform-[-translate-y-1/2] text-[11px] bg-black/75 px-0.5 text-[#ddd] left-0"
-                >
-                    0:00
+        <div className="listen-hero">
+            <div className="fullListenHero mx-6 relative h-96 overflow-hidden">
+                <div className="backgroundGradient h-full bg-gradient-to-br from-[#6c6156] to-[#191c1f]">
                 </div>
-                <div
-                    ref={durationRef}
-                    className="duration absolute z-11 top-1/2 mt-[-1px] transform-[-translate-y-1/2] text-[11px] bg-black/75 px-0.5 text-[#ddd] right-0"
-                >
-                    0:00
+                <div className="fullHero__foreground absolute left-0 top-0 w-full h-full box-border pt-8 pr-[574px] pb-8 pl-8">
+                    <div className="fullHero_artwork absolute top-8 right-8 z-1">
+                        <div className="image_lightOutline h-full w-full rounded-[3%] bg-linear-[135deg,#70929c,#e6846e]">
+                            <span className="h-80 w-80 rounded-[3%] bg-cover bg-[url('/audio/phep-mau.png')] block" />
+                        </div>
+                    </div>
+                    <div className="fullHero_title">
+                        <div className="soundTitle break-all">
+                            <div className="soundTitle__titleContainer flex items-start">
+                                <div className="soundTitle_playButton self-start mr-4" onClick={() => onPlayPause()}>
+                                    {isPlaying ?
+                                        <PauseCircleFilledIcon
+                                            sx={{
+                                                fontSize: 64,
+                                                '& svg': {
+                                                    width: '100%',
+                                                    height: '100%',
+                                                },
+                                                '& path': {
+                                                    transform: 'scale(1.21)',
+                                                    transformOrigin: 'center'
+                                                },
+                                                backgroundColor: '#fff',
+                                                borderRadius: '50%',
+                                            }}
+                                        />
+                                        :
+                                        <PlayCircleFilledIcon
+                                            sx={{
+                                                fontSize: 64,
+                                                '& svg': {
+                                                    width: '100%',
+                                                    height: '100%',
+                                                },
+                                                '& path': {
+                                                    transform: 'scale(1.21)',
+                                                    transformOrigin: 'center'
+                                                },
+                                                backgroundColor: '#fff',
+                                                borderRadius: '50%',
+                                            }}
+                                        />
+                                    }
+
+                                </div>
+                                <div className="soundTitle__usernameTitleContainer">
+                                    <div className="text-[28px] font-medium bg-[#121212] text-[#fff] px-2 py-1">
+                                        <span>
+                                            Karik ft. GDucky - Bạn Đời (Lo-fi ver by Hawys)
+                                        </span>
+                                    </div>
+                                    <div className="text-[#999] bg-[#121212] inline py-1 px-2">
+                                        Hawys.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="fullHero_info absolute top-8 right-98 text-right">
+                        <div className="fullHero_uploadTime text-[#fff] mb-2">
+                            <time className="relativeTime">
+                                3 months ago
+                            </time>
+                        </div>
+                        <div className="fullHero_tag text-sm box-border inline-block h-5.5 rounded-[100px] bg-[#f3f3f3] py-0.5 px-2 before:content-['#'] before:block before:float-left before:mr-[3px]">
+                            <span className="overflow-hidden whitespace-nowrap text-ellipsis break-normal max-w-[120px] inline-block">
+                                R&B & Soul R&B & Soul R&B & Soul R&B & Soul
+                            </span>
+                        </div>
+                    </div>
+                    <div className="fullHero_playerArea absolute bottom-8 left-8 right-[392px]">
+                        <div className="fullHero_waveform mb-8 h-[100px]">
+                            <div
+                                ref={containerRef}
+                                className="group cursor-pointer relative"
+                            >
+                                <div
+                                    ref={timeRef}
+                                    className="time absolute z-11 top-1/2 mt-[-1px] transform-[-translate-y-1/2] text-[11px] bg-black/75 px-0.5 text-[#ddd] left-0"
+                                >
+                                    0:00
+                                </div>
+                                <div
+                                    ref={durationRef}
+                                    className="duration absolute z-11 top-1/2 mt-[-1px] transform-[-translate-y-1/2] text-[11px] bg-black/75 px-0.5 text-[#ddd] right-0"
+                                >
+                                    0:00
+                                </div>
+                                <div
+                                    ref={hoverRef}
+                                    className="hover-class absolute left-0 top-0 z-10 pointer-events-none w-0 mix-blend-plus-lighter bg-[#e24d27] opacity-0 transition-opacity duration-200 ease-in-out h-full group-hover:opacity-100"
+                                ></div>
+                                <div className="overplay absolute h-[30px] bottom-0 w-full backdrop-brightness-50">
+
+                                </div>
+                            </div>
+                            <button onClick={() => onPlayPause()}>
+                                {isPlaying === true ? 'Pause' : 'Play'}
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div
-                    ref={hoverRef}
-                    className="hover-class absolute left-0 top-0 z-10 pointer-events-none w-0 mix-blend-plus-lighter bg-[#f0481d] opacity-0 transition-opacity duration-200 ease-in-out h-full group-hover:opacity-100"
-                ></div>
-                {/* wave track */}
             </div>
-            <button onClick={() => onPlayPause()}>
-                {isPlaying === true ? 'Pause' : 'Play'}
-            </button>
-        </>
+        </div>
     )
 }
 

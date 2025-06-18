@@ -13,11 +13,8 @@ const DetailTrackPage = (props: any) => {
 
     console.log('>>>> check search: ', search)
     return (
-        <div>
-            detail track page
-            <div>
-                <WaveTrack />
-            </div>
+        <div className="content">
+            <WaveTrack />
         </div>
     )
 }
