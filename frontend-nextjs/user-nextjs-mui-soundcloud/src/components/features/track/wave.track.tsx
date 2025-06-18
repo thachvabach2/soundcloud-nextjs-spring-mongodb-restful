@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { WaveSurferOptions } from "wavesurfer.js";
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
-
+import { LightTooltip } from "@/components/ui/LightTooltip";
 
 const WaveTrack = () => {
     const searchParams = useSearchParams();
@@ -227,17 +227,18 @@ const WaveTrack = () => {
                                     {
                                         arrComments.map(item => {
                                             return (
-                                                <img
-                                                    key={item.id}
-                                                    className="h-[24px] w-[24px] absolute top-[67px] z-20 rounded-[50%]"
-                                                    onPointerMove={(e) => {
-                                                        hoverRef.current!.style.width = calLeft(item.moment)
-                                                    }}
-                                                    style={{
-                                                        left: calLeft(item.moment)
-                                                    }}
-                                                    src={`http://localhost:8080/images/phep-mau.jpg`}
-                                                />
+                                                <LightTooltip title={item.content} arrow key={item.id}>
+                                                    <img
+                                                        className="h-[24px] w-[24px] absolute top-[67px] z-20 rounded-[50%]"
+                                                        onPointerMove={(e) => {
+                                                            hoverRef.current!.style.width = calLeft(item.moment)
+                                                        }}
+                                                        style={{
+                                                            left: calLeft(item.moment)
+                                                        }}
+                                                        src={`http://localhost:8080/images/phep-mau.jpg`}
+                                                    />
+                                                </LightTooltip>
                                             )
                                         })
                                     }
