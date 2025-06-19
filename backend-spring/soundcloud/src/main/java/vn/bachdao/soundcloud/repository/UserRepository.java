@@ -16,6 +16,8 @@ import vn.bachdao.soundcloud.domain.User;
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findOneByEmailIgnoreCase(String email);
 
+    Optional<User> findOneByUsernameIgnoreCase(String username);
+
     @Query("?0")
     List<User> findAll(Document document);
 

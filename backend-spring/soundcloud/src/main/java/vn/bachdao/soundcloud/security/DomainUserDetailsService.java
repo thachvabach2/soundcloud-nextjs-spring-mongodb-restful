@@ -24,7 +24,7 @@ public class DomainUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         Optional<vn.bachdao.soundcloud.domain.User> userOptional = this.userRepository
-                .findOneByEmailIgnoreCase(username);
+                .findOneByUsernameIgnoreCase(username);
 
         // handle username not exist in DB -> BadCredentialsException("Bad credentials")
         if (userOptional.isEmpty()) {
@@ -32,7 +32,7 @@ public class DomainUserDetailsService implements UserDetailsService {
         }
 
         return new User(
-                userOptional.get().getEmail(),
+                userOptional.get().getUsername(),
                 userOptional.get().getPassword(),
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
     }

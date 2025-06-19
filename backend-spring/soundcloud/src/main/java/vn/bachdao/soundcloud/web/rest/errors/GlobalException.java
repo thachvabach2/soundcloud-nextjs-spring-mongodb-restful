@@ -21,6 +21,7 @@ public class GlobalException {
             IdInvalidException.class,
             BadCredentialsException.class,
             EmailAlreadyUsedException.class,
+            UsernameAlreadyUsedException.class,
     })
     public ResponseEntity<RestResponse<Object>> handleException(Exception ex) {
         RestResponse<Object> rs = new RestResponse<>();

@@ -8,9 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReqLoginDTO {
-    @NotBlank(message = "Email không được để trống")
+    @NotBlank(message = "Username không được để trống")
     @Size(min = 1, max = 50)
-    private String email;
+    private String username;
 
     @NotBlank(message = "Password không được để trống")
     @Size(min = 4, max = 100)

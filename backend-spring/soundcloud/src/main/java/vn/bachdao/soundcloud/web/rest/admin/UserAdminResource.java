@@ -30,6 +30,7 @@ import vn.bachdao.soundcloud.util.annotation.ApiMessage;
 import vn.bachdao.soundcloud.util.mapper.UserMapper;
 import vn.bachdao.soundcloud.web.rest.errors.EmailAlreadyUsedException;
 import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
+import vn.bachdao.soundcloud.web.rest.errors.UsernameAlreadyUsedException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -49,10 +50,11 @@ public class UserAdminResource {
 
     @PostMapping("/users")
     @ApiMessage("Create a user")
-    public ResponseEntity<ResCreateUserDTO> createUser(@Valid @RequestBody User user) throws EmailAlreadyUsedException {
-        Optional<User> DbUser = this.userService.getUserByEmail(user.getEmail());
+    public ResponseEntity<ResCreateUserDTO> createUser(@Valid @RequestBody User user)
+            throws UsernameAlreadyUsedException {
+        Optional<User> DbUser = this.userService.getUserByUsername(user.getUsername());
         if (DbUser.isPresent()) {
-            throw new EmailAlreadyUsedException("User với email = " + user.getEmail() + " đã tồn tại");
+            throw new UsernameAlreadyUsedException("User với username = " + user.getUsername() + " đã tồn tại");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

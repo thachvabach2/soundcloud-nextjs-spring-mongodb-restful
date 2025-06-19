@@ -44,7 +44,6 @@ public class UserService {
 
     public User createUser(User user) {
         user.setType(Constants.SYSTEM);
-        user.setUsername("");
         return userRepository.save(user);
     }
 
@@ -119,12 +118,16 @@ public class UserService {
         return DeleteResult.acknowledged(1);
     }
 
-    public Optional<User> getUserByEmail(String email) {
-        return this.userRepository.findOneByEmailIgnoreCase(email);
+    // public Optional<User> getUserByEmail(String email) {
+    // return this.userRepository.findOneByEmailIgnoreCase(email);
+    // }
+
+    public Optional<User> getUserByUsername(String username) {
+        return this.userRepository.findOneByUsernameIgnoreCase(username);
     }
 
-    public void updateUserToken(String token, String email) {
-        User currentUser = this.getUserByEmail(email).get();
+    public void updateUserToken(String token, String username) {
+        User currentUser = this.getUserByUsername(username).get();
         if (currentUser != null) {
             currentUser.setRefreshToken(token);
             this.userRepository.save(currentUser);

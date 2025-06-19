@@ -55,7 +55,7 @@ public class AuthenticateController {
     public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
         // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDTO.getEmail(),
+                loginDTO.getUsername(),
                 loginDTO.getPassword());
 
         // Xác thực người dùng => cần viết hàm loadUserByUsername
@@ -65,13 +65,13 @@ public class AuthenticateController {
         // lưu vào Spring security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Optional<User> userOptional = this.userService.getUserByEmail(loginDTO.getEmail());
+        Optional<User> userOptional = this.userService.getUserByUsername(loginDTO.getUsername());
         User currUser = userOptional.get();
 
         ResLoginDTO res = new ResLoginDTO();
         ResLoginDTO.ResultResLoginDTO userResult = new ResLoginDTO.ResultResLoginDTO();
         userResult.setId(currUser.getId());
-        userResult.setUserName("");
+        userResult.setUserName(currUser.getUsername());
         userResult.setEmail(currUser.getEmail());
         userResult.setAddress(currUser.getAddress());
         userResult.setIsVerify(currUser.getIsVerify());
@@ -83,9 +83,9 @@ public class AuthenticateController {
         String access_token = this.securityUtils.createAccessToken(authentication, userResult);
 
         // create refresh token
-        String refresh_token = this.securityUtils.createRefreshToken(loginDTO.getEmail(), userResult);
+        String refresh_token = this.securityUtils.createRefreshToken(loginDTO.getUsername(), userResult);
         // update user's refresh token in DB
-        this.userService.updateUserToken(refresh_token, loginDTO.getEmail());
+        this.userService.updateUserToken(refresh_token, loginDTO.getUsername());
 
         res.setAccessToken(access_token);
         res.setRefreshToken(refresh_token);

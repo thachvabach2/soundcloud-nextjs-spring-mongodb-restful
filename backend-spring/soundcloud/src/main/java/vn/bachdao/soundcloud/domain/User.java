@@ -30,6 +30,7 @@ public class User extends AbstractAuditingEntity {
     @JsonProperty(value = "_id", index = 0)
     private String id;
 
+    @NotBlank(message = "Username không được để trống")
     private String username;
 
     @NotBlank(message = "Email không được để trống")

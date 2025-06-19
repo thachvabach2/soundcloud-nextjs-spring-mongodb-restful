@@ -100,7 +100,7 @@ public class SecurityUtils {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
-    public String createRefreshToken(String email, ResLoginDTO.ResultResLoginDTO dto) {
+    public String createRefreshToken(String username, ResLoginDTO.ResultResLoginDTO dto) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenValidityInSeconds, ChronoUnit.SECONDS);
 
@@ -115,7 +115,7 @@ public class SecurityUtils {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
-                .subject(email)
+                .subject(username)
                 .claim("user", userInsideToken)
                 .build();
 
