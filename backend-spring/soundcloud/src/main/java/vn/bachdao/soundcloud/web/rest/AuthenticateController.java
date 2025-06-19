@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import vn.bachdao.soundcloud.config.Constants;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.request.auth.ReqLoginDTO;
 import vn.bachdao.soundcloud.domain.dto.request.auth.ReqSocialLoginDTO;
@@ -74,7 +75,7 @@ public class AuthenticateController {
         userResult.setEmail(currUser.getEmail());
         userResult.setAddress(currUser.getAddress());
         userResult.setIsVerify(currUser.getIsVerify());
-        userResult.setType("SYSTEM");
+        userResult.setType(Constants.SYSTEM);
         userResult.setName(currUser.getName());
         userResult.setRole(currUser.getRole());
 

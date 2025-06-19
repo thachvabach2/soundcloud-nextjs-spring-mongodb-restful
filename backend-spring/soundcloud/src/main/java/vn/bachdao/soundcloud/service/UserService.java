@@ -43,7 +43,6 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        user.setIsVerify(true);
         user.setType(Constants.SYSTEM);
         user.setUsername("");
         return userRepository.save(user);

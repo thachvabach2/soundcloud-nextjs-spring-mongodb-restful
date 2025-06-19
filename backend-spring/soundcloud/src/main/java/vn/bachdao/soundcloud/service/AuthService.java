@@ -56,7 +56,6 @@ public class AuthService {
         newUser.setUsername(req.getUsername());
         newUser.setEmail(req.getUsername());
         newUser.setType(req.getType());
-        newUser.setIsVerify(true);
         newUser.setRole(Constants.ROLE_USER);
 
         return this.userRepository.save(newUser);
