@@ -5,6 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 
 import vn.bachdao.soundcloud.domain.User;
+import vn.bachdao.soundcloud.domain.dto.response.auth.ResSocialLoginDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResCreateUserDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResGetUserDTO;
 
@@ -15,4 +16,6 @@ public interface UserMapper {
     ResGetUserDTO toResGetUserDTO(User user);
 
     List<ResGetUserDTO> toResGetUserDTOs(List<User> users);
+
+    ResSocialLoginDTO.ResultResSocialLoginDTO toResultResSocialLoginDTO(User user);
 }

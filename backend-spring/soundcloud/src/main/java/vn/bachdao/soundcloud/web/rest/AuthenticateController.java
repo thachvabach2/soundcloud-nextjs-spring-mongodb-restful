@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
-import vn.bachdao.soundcloud.domain.dto.request.ReqLoginDTO;
-import vn.bachdao.soundcloud.domain.dto.response.ResLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.request.auth.ReqLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.request.auth.ReqSocialLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.response.auth.ResLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.response.auth.ResSocialLoginDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
+import vn.bachdao.soundcloud.service.AuthService;
 import vn.bachdao.soundcloud.service.UserService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
 
@@ -33,12 +36,17 @@ public class AuthenticateController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtils securityUtils;
     private final UserService userService;
+    private final AuthService authService;
 
-    public AuthenticateController(AuthenticationManagerBuilder authenticationManagerBuilder,
-            SecurityUtils securityUtils, UserService userService) {
+    public AuthenticateController(
+            AuthenticationManagerBuilder authenticationManagerBuilder,
+            SecurityUtils securityUtils,
+            UserService userService,
+            AuthService authService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtils = securityUtils;
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping("/login")
@@ -65,7 +73,7 @@ public class AuthenticateController {
         userResult.setUserName("");
         userResult.setEmail(currUser.getEmail());
         userResult.setAddress(currUser.getAddress());
-        userResult.setVerify(currUser.getIsVerify());
+        userResult.setIsVerify(currUser.getIsVerify());
         userResult.setType("SYSTEM");
         userResult.setName(currUser.getName());
         userResult.setRole(currUser.getRole());
@@ -84,6 +92,23 @@ public class AuthenticateController {
 
         // set cookies
         ResponseCookie resCookies = ResponseCookie.from("refresh_token", refresh_token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenValidityInSeconds)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, resCookies.toString())
+                .body(res);
+    }
+
+    @PostMapping("/social-media")
+    @ApiMessage("Fetch token for user login with social media account")
+    public ResponseEntity<ResSocialLoginDTO> socialLogin(@Valid @RequestBody ReqSocialLoginDTO req) {
+        ResSocialLoginDTO res = this.authService.socialLogin(req);
+
+        ResponseCookie resCookies = ResponseCookie.from("refresh_token", res.getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")

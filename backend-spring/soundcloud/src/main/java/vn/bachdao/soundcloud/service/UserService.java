@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
+import vn.bachdao.soundcloud.config.Constants;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResGetUserDTO;
@@ -43,6 +44,8 @@ public class UserService {
 
     public User createUser(User user) {
         user.setIsVerify(true);
+        user.setType(Constants.SYSTEM);
+        user.setUsername("");
         return userRepository.save(user);
     }
 

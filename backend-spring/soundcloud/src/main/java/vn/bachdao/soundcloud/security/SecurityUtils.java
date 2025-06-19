@@ -20,7 +20,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import vn.bachdao.soundcloud.domain.dto.response.ResLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.response.auth.ResLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.response.auth.ResSocialLoginDTO;
 
 @Service
 public class SecurityUtils {
@@ -71,6 +72,34 @@ public class SecurityUtils {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
+    public String createAccessSocialToken(ResSocialLoginDTO.ResultResSocialLoginDTO dto) {
+        Instant now = Instant.now();
+
+        Instant validity = now.plus(this.accessTokenValidityInSeconds, ChronoUnit.SECONDS);
+
+        ResSocialLoginDTO.UserInsideSocialToken userInsideToken = new  ResSocialLoginDTO.UserInsideSocialToken();
+        userInsideToken.set_id(dto.getId());
+        userInsideToken.setUsername(dto.getUsername());
+        userInsideToken.setEmail(dto.getEmail());
+        userInsideToken.setIsVerify(dto.getIsVerify());
+        userInsideToken.setRole(dto.getRole());
+        userInsideToken.setType(dto.getType());
+
+        // @formatter:off
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+            .issuedAt(now)
+            .expiresAt(validity)
+            .subject(userInsideToken.get_id())
+            .claim("user", userInsideToken)
+            .build();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
+        // signature = jwk + jwsHeader(header) + claims(payload)
+        // jwk = jwtKey(secret key) + alg
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
     public String createRefreshToken(String email, ResLoginDTO.ResultResLoginDTO dto) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenValidityInSeconds, ChronoUnit.SECONDS);
@@ -89,6 +118,32 @@ public class SecurityUtils {
                 .subject(email)
                 .claim("user", userInsideToken)
                 .build();
+
+        // header
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    public String createRefreshSocialToken(ResSocialLoginDTO.ResultResSocialLoginDTO dto) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.refreshTokenValidityInSeconds, ChronoUnit.SECONDS);
+
+        ResSocialLoginDTO.UserInsideSocialToken userInsideToken = new  ResSocialLoginDTO.UserInsideSocialToken();
+        userInsideToken.set_id(dto.getId());
+        userInsideToken.setUsername(dto.getUsername());
+        userInsideToken.setEmail(dto.getEmail());
+        userInsideToken.setIsVerify(dto.getIsVerify());
+        userInsideToken.setRole(dto.getRole());
+        userInsideToken.setType(dto.getType());
+
+        // payload
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+            .issuedAt(now)
+            .expiresAt(validity)
+            .subject(userInsideToken.get_id())
+            .claim("user", userInsideToken)
+            .build();
 
         // header
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

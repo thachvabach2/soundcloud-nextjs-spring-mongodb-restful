@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.bachdao.soundcloud.config.Constants;
 import vn.bachdao.soundcloud.util.annotation.EnumValidator;
 import vn.bachdao.soundcloud.util.enumeration.GenderEnum;
 import vn.bachdao.soundcloud.util.enumeration.RoleEnum;
@@ -29,14 +30,18 @@ public class User extends AbstractAuditingEntity {
     @JsonProperty(value = "_id", index = 0)
     private String id;
 
+    private String username;
+
     @NotBlank(message = "Email không được để trống")
-    @Pattern(message = "Email không hợp lệ", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    @Pattern(message = "Email không hợp lệ", regexp = Constants.LOGIN_REGEX)
     private String email;
 
     @NotBlank(message = "Password không được để trống")
     private String password;
 
     private Boolean isVerify;
+
+    private String type;
 
     @NotBlank(message = "Name không được để trống")
     private String name;
@@ -55,4 +60,16 @@ public class User extends AbstractAuditingEntity {
     private String role;
 
     private String refreshToken;
+
+    public void setGender(String gender) {
+        this.gender = gender != null ? gender.toUpperCase() : null;
+    }
+
+    public void setRole(String role) {
+        this.role = role != null ? role.toUpperCase() : null;
+    }
+
+    public void setType(String type) {
+        this.type = type != null ? type.toUpperCase() : null;
+    }
 }

@@ -14,7 +14,9 @@ public class ResGetUserDTO {
     @JsonProperty(value = "_id", index = 0)
     private String id;
     private String email;
+
     private Boolean isVerify;
+
     private String name;
     private Integer age;
     private String gender;

@@ -21,4 +21,6 @@ public interface UserRepository extends MongoRepository<User, String> {
 
     @Query("?0")
     Page<User> findAll(Document document, Pageable pageable);
+
+    Optional<User> findOneByUsernameAndTypeAllIgnoreCase(String username, String type);
 }

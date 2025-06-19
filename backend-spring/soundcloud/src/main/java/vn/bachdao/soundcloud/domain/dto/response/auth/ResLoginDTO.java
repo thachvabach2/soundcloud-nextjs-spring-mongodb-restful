@@ -1,4 +1,4 @@
-package vn.bachdao.soundcloud.domain.dto.response;
+package vn.bachdao.soundcloud.domain.dto.response.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,7 +27,7 @@ public class ResLoginDTO {
         private String userName;
         private String email;
         private String address;
-        private boolean isVerify;
+        private Boolean isVerify;
         private String type;
         private String name;
         private String role;
@@ -38,7 +38,6 @@ public class ResLoginDTO {
     public static class UserInsideToken {
 
         private String _id;
-
         private String email;
         private String name;
         private String role;
