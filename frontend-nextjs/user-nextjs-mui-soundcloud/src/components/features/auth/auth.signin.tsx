@@ -102,10 +102,6 @@ const AuthSignin = () => {
         }
     }
 
-    const handleSigninWithGithub = async () => {
-        await signIn('github', { callbackUrl: '/' });
-    }
-
     return (
         <>
             <Stack className="main" sx={{ height: '100vh', overflowX: "hidden", backgroundColor: '#121212' }}>
@@ -141,7 +137,7 @@ const AuthSignin = () => {
                                 Tên người dùng hoặc mật khẩu không chính xác.
                             </Alert>}
                             <Stack className="list-provider" sx={{ width: { sm: '100%', md: '324px' }, margin: '0 auto', color: '#ffffff' }} spacing={1}>
-                                <ProviderButton onClick={handleSigninWithGithub}>
+                                <ProviderButton onClick={() => signIn('github')}>
                                     <Box component={'span'}>
                                         <GitHubIcon sx={{ width: '1.5rem', height: '1.5rem', color: '' }} />
                                     </Box>

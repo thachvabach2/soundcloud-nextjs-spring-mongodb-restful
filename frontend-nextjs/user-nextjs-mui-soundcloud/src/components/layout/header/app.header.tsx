@@ -1,7 +1,6 @@
 'use client'
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -11,10 +10,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Button, Card, Tab, Tabs, Tooltip, useColorScheme } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { Avatar, Tab, Tabs, Tooltip, useColorScheme } from '@mui/material';
 import { signIn, signOut, useSession } from "next-auth/react"
 import { CustomAppBar } from '@/components/ui/CustomAppBar';
+import Link from 'next/link';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -60,8 +59,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const AppHeader = () => {
-    const router = useRouter();
-
     const { data: session } = useSession()
     // console.log('>>> check session: ', session);
 
@@ -89,11 +86,6 @@ const AppHeader = () => {
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
-
-    //
-    const handleRedirectHome = () => {
-        router.push('/');
-    }
 
     // dark mode
     const { mode, setMode } = useColorScheme();
@@ -159,9 +151,8 @@ const AppHeader = () => {
                                 display: { xs: 'none', sm: 'block' },
                                 cursor: 'pointer',
                             }}
-                            onClick={() => handleRedirectHome()}
                         >
-                            SoundCloud
+                            <Link href={'/'}>SoundCloud</Link>
                         </Typography>
 
                         {/* Search */}
@@ -201,19 +192,16 @@ const AppHeader = () => {
                                         >
                                             <Tab
                                                 value={'playlist'}
-                                                label={'Playlists'}
-                                                onClick={() => router.push('/playlist')}
+                                                label={<Link href={'/playlist'}>Playlists</Link>}
                                             />
                                             <Tab
                                                 value={'like'}
-                                                label={'Likes'}
-                                                onClick={() => router.push('/like')}
+                                                label={<Link href={'/like'}>Likes</Link>}
                                             />
                                             <Tab
                                                 value={'upload'}
-                                                label={'Upload'}
-                                                // sx={{ textTransform: 'none', fontSize: '1rem' }}
-                                                onClick={() => router.push('/upload')}
+                                                label={<Link href={'/upload'}>Upload</Link>}
+                                            // sx={{ textTransform: 'none', fontSize: '1rem' }}
                                             />
                                         </Tabs>
                                     </Box>
@@ -263,13 +251,16 @@ const AppHeader = () => {
                                             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                                             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                                         >
-                                            <MenuItem onClick={() => router.push('/profile')}>
-                                                Profile
-                                            </MenuItem>
+                                            <Link href={'/profile'}>
+                                                <MenuItem>
+                                                    Profile
+                                                </MenuItem>
+                                            </Link>
+
                                             <MenuItem
                                                 onClick={() => {
                                                     handleCloseUserMenu;
-                                                    signOut();
+                                                    signOut({ callbackUrl: '/' });
                                                 }}
                                             >
                                                 Sign out
@@ -293,18 +284,16 @@ const AppHeader = () => {
                                     >
                                         <Tab
                                             value={'sign-in'}
-                                            label={'Sign in'}
-                                            onClick={() => signIn()}
+                                            label={<Link href={'/auth/signin'}>Sign in</Link>}
                                         />
                                         <Tab
                                             value={'create-account'}
-                                            label={'Create Account'}
-                                            onClick={() => router.push('/create-account')}
+                                            label={<Link href={'/create-account'}>Create Account</Link>}
+
                                         />
                                         <Tab
                                             value={'upload'}
-                                            label={'Upload'}
-                                            onClick={() => router.push('/upload')}
+                                            label={<Link href={'/upload'}>Upload</Link>}
                                         />
                                     </Tabs>
                                 </Box>
