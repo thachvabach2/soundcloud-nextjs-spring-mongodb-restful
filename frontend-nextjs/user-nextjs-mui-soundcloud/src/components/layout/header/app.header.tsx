@@ -11,11 +11,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Tab, Tabs, Tooltip } from '@mui/material';
+import { Avatar, Button, Card, Tab, Tabs, Tooltip, useColorScheme } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { signIn, signOut, useSession } from "next-auth/react"
+import { CustomAppBar } from '@/components/ui/CustomAppBar';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
-const settings = ['Profile', 'My Account'];
 
 // styled-component
 const Search = styled('div')(({ theme }) => ({
@@ -59,8 +60,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const AppHeader = () => {
-
     const router = useRouter();
+
+    const { data: session } = useSession()
+    // console.log('>>> check session: ', session);
 
     //
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -92,16 +95,23 @@ const AppHeader = () => {
         router.push('/');
     }
 
+    // dark mode
+    const { mode, setMode } = useColorScheme();
+    if (!mode) {
+        return null;
+    }
+
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
-                <AppBar
+                <CustomAppBar
                     position='fixed'
                     sx={{
                         maxWidth: 'var(--custom-mui-width-container)',
                         left: 0,
                         right: 0,
                         margin: '0 auto',
+                        background: '#ffffff',
                     }}
                 >
                     <Toolbar>
@@ -166,102 +176,153 @@ const AppHeader = () => {
                         </Search>
 
                         <Box sx={{ flexGrow: 1 }} />
+                        {
+                            session
+                                ?
+                                <>
+                                    {/* Pages PC */}
+                                    <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+                                        <Tabs
+                                            value={value}
+                                            onChange={handleChange}
+                                            // slotProps={{
+                                            //     indicator: {
+                                            //         style: { display: 'none' }
+                                            //     }
+                                            // }}
+                                            aria-label="basic tabs example"
+                                            sx={{
+                                                paddingRight: '20px',
+                                                "button": {
+                                                    textTransform: 'none',
+                                                    fontSize: '1rem',
+                                                }
+                                            }}
+                                        >
+                                            <Tab
+                                                value={'playlist'}
+                                                label={'Playlists'}
+                                                onClick={() => router.push('/playlist')}
+                                            />
+                                            <Tab
+                                                value={'like'}
+                                                label={'Likes'}
+                                                onClick={() => router.push('/like')}
+                                            />
+                                            <Tab
+                                                value={'upload'}
+                                                label={'Upload'}
+                                                // sx={{ textTransform: 'none', fontSize: '1rem' }}
+                                                onClick={() => router.push('/upload')}
+                                            />
+                                        </Tabs>
+                                    </Box>
 
-                        {/* Pages PC */}
-                        <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-                            <Tabs
-                                value={value}
-                                onChange={handleChange}
-                                // slotProps={{
-                                //     indicator: {
-                                //         style: { display: 'none' }
-                                //     }
-                                // }}
-                                aria-label="basic tabs example"
-                                sx={{
-                                    paddingRight: '20px',
-                                    "button": {
-                                        textTransform: 'none',
-                                        fontSize: '1rem',
-                                    }
-                                }}
-                            >
-                                <Tab
-                                    value={'playlist'}
-                                    label={'Playlists'}
-                                    onClick={() => router.push('/playlist')}
-                                />
-                                <Tab
-                                    value={'like'}
-                                    label={'Likes'}
-                                    onClick={() => router.push('/like')}
-                                />
-                                <Tab
-                                    value={'upload'}
-                                    label={'Upload'}
-                                    // sx={{ textTransform: 'none', fontSize: '1rem' }}
-                                    onClick={() => router.push('/upload')}
-                                />
-                            </Tabs>
-                        </Box>
-
-                        {/* avatar */}
-                        <Box sx={{ flexGrow: 0 }}>
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar>BD</Avatar>
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                anchorEl={anchorElUser}
-                                id="account-menu"
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}
-                                disableScrollLock={true}
-                                keepMounted
-                                slotProps={{
-                                    paper: {
-                                        elevation: 0,
-                                        sx: {
-                                            overflow: 'visible',
-                                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                                            mt: 1.5,
-                                            '& .MuiAvatar-root': {
-                                                width: 32,
-                                                height: 32,
-                                                ml: -0.5,
-                                                mr: 1,
-                                            },
-                                            '&::before': {
-                                                content: '""',
-                                                display: 'block',
-                                                position: 'absolute',
-                                                top: 0,
-                                                right: 14,
-                                                width: 10,
-                                                height: 10,
-                                                bgcolor: 'background.paper',
-                                                transform: 'translateY(-50%) rotate(45deg)',
-                                                zIndex: 0,
-                                            },
-                                        },
-                                    },
-                                }}
-                                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                            >
-                                <MenuItem onClick={() => router.push('/profile')}>
-                                    Profile
-                                </MenuItem>
-                                <MenuItem onClick={handleCloseUserMenu}>
-                                    My Account
-                                </MenuItem>
-
-                            </Menu>
-                        </Box>
+                                    {/* avatar */}
+                                    <Box sx={{ flexGrow: 0 }}>
+                                        <Tooltip title="Open settings">
+                                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                                <Avatar>BD</Avatar>
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Menu
+                                            anchorEl={anchorElUser}
+                                            id="account-menu"
+                                            open={Boolean(anchorElUser)}
+                                            onClose={handleCloseUserMenu}
+                                            disableScrollLock={true}
+                                            keepMounted
+                                            slotProps={{
+                                                paper: {
+                                                    elevation: 0,
+                                                    sx: {
+                                                        overflow: 'visible',
+                                                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                                        mt: 1.5,
+                                                        '& .MuiAvatar-root': {
+                                                            width: 32,
+                                                            height: 32,
+                                                            ml: -0.5,
+                                                            mr: 1,
+                                                        },
+                                                        '&::before': {
+                                                            content: '""',
+                                                            display: 'block',
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            right: 14,
+                                                            width: 10,
+                                                            height: 10,
+                                                            bgcolor: 'background.paper',
+                                                            transform: 'translateY(-50%) rotate(45deg)',
+                                                            zIndex: 0,
+                                                        },
+                                                    },
+                                                },
+                                            }}
+                                            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                                            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                                        >
+                                            <MenuItem onClick={() => router.push('/profile')}>
+                                                Profile
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={() => {
+                                                    handleCloseUserMenu;
+                                                    signOut();
+                                                }}
+                                            >
+                                                Sign out
+                                            </MenuItem>
+                                        </Menu>
+                                    </Box>
+                                </>
+                                :
+                                <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
+                                    <Tabs
+                                        value={'sign-in'}
+                                        // onChange={handleChange}
+                                        aria-label="basic tabs example"
+                                        sx={{
+                                            // paddingRight: '20px',
+                                            "button": {
+                                                textTransform: 'none',
+                                                fontSize: '1rem',
+                                            }
+                                        }}
+                                    >
+                                        <Tab
+                                            value={'sign-in'}
+                                            label={'Sign in'}
+                                            onClick={() => signIn()}
+                                        />
+                                        <Tab
+                                            value={'create-account'}
+                                            label={'Create Account'}
+                                            onClick={() => router.push('/create-account')}
+                                        />
+                                        <Tab
+                                            value={'upload'}
+                                            label={'Upload'}
+                                            onClick={() => router.push('/upload')}
+                                        />
+                                    </Tabs>
+                                </Box>
+                        }
+                        <select
+                            value={mode}
+                            onChange={(event) => {
+                                setMode(event.target.value as 'light' | 'dark' | 'system');
+                                // For TypeScript, cast `event.target.value as 'light' | 'dark' | 'system'`:
+                            }}
+                        >
+                            <option value="system">System</option>
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
                     </Toolbar>
-                </AppBar>
-            </Box>
+                </CustomAppBar>
+            </Box >
             <Toolbar />
         </>
 

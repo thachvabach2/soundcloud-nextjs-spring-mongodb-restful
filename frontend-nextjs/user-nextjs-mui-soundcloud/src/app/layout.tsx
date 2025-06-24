@@ -1,20 +1,20 @@
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import "@/styles/globals.css";
+import { InitColorSchemeScript, ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import theme from '@/theme';
-import "@/styles/globals.css";
-import AppHeader from "@/components/layout/header/app.header";
-import AppFooter from "@/components/layout/footer/app.footer";
+import NextAuthWrapper from "@/lib/auth/next.auth.wrapper";
+
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
             <body>
                 <AppRouterCacheProvider>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        <AppHeader />
-                        {children}
-                        <AppFooter />
+                    <InitColorSchemeScript attribute=".encore-%s-theme" />
+                    <ThemeProvider theme={theme} defaultMode="light">
+                        <NextAuthWrapper>
+                            {children}
+                        </NextAuthWrapper>
                     </ThemeProvider>
                 </AppRouterCacheProvider>
             </body>

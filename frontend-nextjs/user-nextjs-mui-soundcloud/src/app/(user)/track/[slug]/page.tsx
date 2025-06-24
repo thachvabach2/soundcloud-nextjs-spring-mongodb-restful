@@ -11,7 +11,7 @@ const DetailTrackPage = (props: any) => {
     const search = searchParams.get('audio')
 
 
-    console.log('>>>> check search: ', search)
+    // console.log('>>>> check search: ', search)
     return (
         <div className="content">
             <WaveTrack />

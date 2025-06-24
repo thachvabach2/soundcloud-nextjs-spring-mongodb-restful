@@ -1,4 +1,5 @@
 'use client'
+import { CustomAppBar } from '@/components/ui/CustomAppBar';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { AppBar, Box, Grid } from '@mui/material';
 import AudioPlayer from 'react-h5-audio-player';
@@ -10,7 +11,7 @@ const AppFooter = () => {
     if (!hasMounted) return (<></>);
 
     return (
-        <AppBar
+        <CustomAppBar
             position="fixed"
             sx={{
                 top: 'auto',
@@ -59,7 +60,7 @@ const AppFooter = () => {
                 </Grid>
             </Box>
 
-        </AppBar>
+        </CustomAppBar>
     )
 }
 

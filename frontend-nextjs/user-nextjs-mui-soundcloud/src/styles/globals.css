@@ -5,3 +5,12 @@
     --breakpoint-md: 768px;
     --breakpoint-lg: 976px;
 } */
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
