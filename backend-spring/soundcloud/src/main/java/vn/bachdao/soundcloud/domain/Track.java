@@ -30,6 +30,7 @@ public class Track {
     @NotBlank(message = "Title không được để trống")
     private String title;
 
+    private String artist;
     private String description;
     private String category;
     private String imgUrl;
@@ -39,7 +40,7 @@ public class Track {
 
     private Integer countLike;
     private Integer countPlay;
-    private String uploader;
+    private Uploader uploader;
     private Boolean isDeleted;
 
     @CreatedDate
@@ -47,4 +48,16 @@ public class Track {
 
     @LastModifiedDate
     private Instant updatedAt;
+
+    @Getter
+    @Setter
+    public static class Uploader {
+        @JsonProperty(value = "_id", index = 0)
+        private String id;
+
+        private String email;
+        private String name;
+        private String role;
+        private String type;
+    }
 }

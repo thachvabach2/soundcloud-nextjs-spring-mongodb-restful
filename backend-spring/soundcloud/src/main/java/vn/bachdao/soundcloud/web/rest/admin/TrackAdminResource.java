@@ -1,7 +1,5 @@
 package vn.bachdao.soundcloud.web.rest.admin;
 
-import java.util.List;
-
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
@@ -23,6 +21,7 @@ import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.Track;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqCreateTrackDTO;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqUpdateTrackDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.service.TrackService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
 import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
@@ -40,7 +39,6 @@ public class TrackAdminResource {
     @PostMapping("/tracks")
     @ApiMessage("Create a new track")
     public ResponseEntity<Track> createTrack(@RequestBody ReqCreateTrackDTO reqTrack) {
-
         return ResponseEntity.ok(trackService.createTrack(reqTrack));
     }
 
@@ -69,7 +67,7 @@ public class TrackAdminResource {
 
     @GetMapping("/tracks")
     @ApiMessage("Get all tracks with pagination")
-    public ResponseEntity<List<Track>> getAllTracks(
+    public ResponseEntity<ResPaginationDTO> getAllTracks(
             @Filter(entityClass = Track.class) Query query,
             Pageable pageable) {
         return ResponseEntity.ok(this.trackService.getAllTracks(query, pageable));

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class ReqCreateTrackDTO {
     private String title;
-
+    private String artist;
     private String description;
 
     @NotBlank(message = "TrackUrl không được để trống")

@@ -5,12 +5,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,9 +20,12 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
 import vn.bachdao.soundcloud.domain.Track;
+import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqCreateTrackDTO;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqGetTopTrackByCategory;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqUpdateTrackDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.track.ResGetTrackDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
 import vn.bachdao.soundcloud.util.mapper.TrackMapper;
 
@@ -29,12 +34,15 @@ public class TrackService {
 
     private final MongoTemplate mongoTemplate;
     private final TrackMapper trackMapper;
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+    private final UserService userService;
 
-    public TrackService(MongoTemplate mongoTemplate, TrackMapper trackMapper, ObjectMapper objectMapper) {
+    public TrackService(MongoTemplate mongoTemplate, TrackMapper trackMapper, ObjectMapper objectMapper,
+            UserService userService) {
         this.mongoTemplate = mongoTemplate;
         this.trackMapper = trackMapper;
         this.objectMapper = objectMapper;
+        this.userService = userService;
     }
 
     public Track createTrack(ReqCreateTrackDTO reqTrack) {
@@ -51,7 +59,20 @@ public class TrackService {
 
         if (userToken.isPresent()) {
             String userId = (String) userToken.get().get("_id");
-            track.setUploader(userId);
+
+            Optional<User> userOptional = this.userService.getUserById(userId);
+            if (userOptional.isPresent()) {
+                User userDB = userOptional.get();
+
+                Track.Uploader uploaderDTO = new Track.Uploader();
+                uploaderDTO.setId(userDB.getId());
+                uploaderDTO.setEmail(userDB.getEmail());
+                uploaderDTO.setName(userDB.getName());
+                uploaderDTO.setRole(userDB.getRole());
+                uploaderDTO.setType(userDB.getType());
+
+                track.setUploader(uploaderDTO);
+            }
         }
     }
 
@@ -65,9 +86,29 @@ public class TrackService {
         return result;
     }
 
-    public List<Track> getAllTracks(Query query, Pageable pageable) {
-        List<Track> tracks = mongoTemplate.find(query.with(pageable), Track.class);
-        return tracks;
+    public ResPaginationDTO getAllTracks(Query query, Pageable pageable) {
+        Query newQuery = query.with(pageable);
+
+        List<Track> tracks = mongoTemplate.find(newQuery, Track.class);
+
+        Page<Track> trackPage = PageableExecutionUtils.getPage(
+                tracks,
+                pageable,
+                () -> mongoTemplate.count(Query.of(newQuery).limit(-1).skip(-1), Track.class));
+
+        ResPaginationDTO res = new ResPaginationDTO();
+        ResPaginationDTO.Meta meta = new ResPaginationDTO.Meta();
+        meta.setPageNumber(trackPage.getNumber() + 1);
+        meta.setPageSize(trackPage.getSize());
+        meta.setTotalPage(trackPage.getTotalPages());
+        meta.setTotalElement(trackPage.getTotalElements());
+
+        List<ResGetTrackDTO> resGetTrackDTOs = this.trackMapper.toResGetTrackDTOs(trackPage.getContent());
+
+        res.setResult(resGetTrackDTOs);
+        res.setMeta(meta);
+
+        return res;
     }
 
     public UpdateResult updateTrack(ObjectId id, ReqUpdateTrackDTO reqTrack) {
