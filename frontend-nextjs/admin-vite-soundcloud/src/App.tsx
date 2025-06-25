@@ -4,10 +4,11 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import UsersPage from './screens/users.page'
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { CustomerServiceOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { Link } from "react-router";
+import TracksPage from './screens/tracks.page'
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -21,6 +22,11 @@ const items: MenuItem[] = [
         label: <Link to="/users">Manage Users</Link>,
         key: 'users',
         icon: <UserOutlined />,
+    },
+    {
+        label: <Link to="/tracks">Manage Trackss</Link>,
+        key: 'tracks',
+        icon: <CustomerServiceOutlined />,
     },
 ];
 
@@ -65,7 +71,7 @@ function App() {
                     'Content-Type': "application/json",
                 },
                 body: JSON.stringify({
-                    email: 'admin@gmail.com',
+                    username: 'admin@gmail.com',
                     password: '123456'
                 })
             }
@@ -114,8 +120,8 @@ function App() {
                     <Route path="/" element={<LayoutAdmin />} >
                         <Route index element={<AppVite />} />
                         <Route path="users" element={<UsersPage />} />
+                        <Route path="/tracks" element={<TracksPage />} />
                     </Route>
-                    <Route path="/tracks" element={<div>Manage Tracks</div>} />
                 </Routes>
             </BrowserRouter>
         </>
