@@ -1,4 +1,5 @@
 'use client';
+import { outlinedInputClasses } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { Roboto } from 'next/font/google';
 
@@ -12,12 +13,16 @@ const theme = createTheme({
     colorSchemes: {
         light: {
             palette: {
-                background: {
-                    default: '#34a853',
+                text: {
+                    primary: '#121212',
                 },
-                AppBar: {
-                    defaultBg: '#34a853' // not working
-                }
+                primary: {
+                    main: '#1ed760',
+                    // contrastText: '#fff',
+                },
+                background: {
+                    default: '#fff',
+                },
             },
         },
         dark: {
@@ -58,6 +63,39 @@ const theme = createTheme({
                 },
             },
         },
+        MuiInput: {
+            styleOverrides: {
+                root: {
+                    // minHeight: '40px',
+                    '&::before': {
+                        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                    },
+                    '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                    },
+                    '&.Mui-focused:after': {
+                        borderBottom: '1.5px solid #121212',
+                    },
+                    // override primary
+                    // unfocus
+                    '&::after': {
+                        borderBottom: '2px solid #121212',
+                    }
+                },
+            },
+        },
+        MuiOutlinedInput: {
+            defaultProps: {
+                notched: false,
+            }
+        },
+        MuiInputLabel: {
+            styleOverrides: {
+                root: {
+                    shrink: true
+                }
+            }
+        }
     },
 });
 

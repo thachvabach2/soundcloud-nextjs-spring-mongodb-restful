@@ -200,7 +200,7 @@ const AppHeader = () => {
                                             />
                                             <Tab
                                                 value={'upload'}
-                                                label={<Link href={'/upload'}>Upload</Link>}
+                                                label={<Link href={'/track/upload'}>Upload</Link>}
                                             // sx={{ textTransform: 'none', fontSize: '1rem' }}
                                             />
                                         </Tabs>
@@ -293,7 +293,7 @@ const AppHeader = () => {
                                         />
                                         <Tab
                                             value={'upload'}
-                                            label={<Link href={'/upload'}>Upload</Link>}
+                                            label={<Link href={'/track/upload'}>Upload</Link>}
                                         />
                                     </Tabs>
                                 </Box>
