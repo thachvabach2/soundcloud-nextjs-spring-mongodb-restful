@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,8 +40,10 @@ public class FileService {
     public String store(MultipartFile file, String folder) throws URISyntaxException, IOException {
         // create unique filename
         String finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+        String encodedFinalName = URLEncoder.encode(finalName, StandardCharsets.UTF_8);
 
-        URI uri = new URI(baseURI + "/" + folder + "/" + finalName);
+        URI uri = new URI(baseURI + "/" + folder + "/" + encodedFinalName);
+
         Path path = Paths.get(uri);
         try (InputStream inputStream = file.getInputStream()) {
             Files.copy(inputStream, path,
