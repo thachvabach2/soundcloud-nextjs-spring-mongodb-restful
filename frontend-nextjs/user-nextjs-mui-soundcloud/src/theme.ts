@@ -84,18 +84,6 @@ const theme = createTheme({
                 },
             },
         },
-        MuiOutlinedInput: {
-            defaultProps: {
-                notched: false,
-            }
-        },
-        MuiInputLabel: {
-            styleOverrides: {
-                root: {
-                    shrink: true
-                }
-            }
-        }
     },
 });
 
