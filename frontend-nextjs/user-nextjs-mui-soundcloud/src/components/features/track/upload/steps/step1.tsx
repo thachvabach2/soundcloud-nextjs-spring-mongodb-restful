@@ -1,35 +1,70 @@
 'use client'
 import { Box, Button, Typography } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { FileWithPath, useDropzone } from 'react-dropzone'
+import { useSession } from "next-auth/react";
+import axios, { AxiosProgressEvent } from 'axios';
 
+interface ITrackUpload {
+    fileName: string
+    percent: number
+}
 interface IProp {
-    onFileUploaded: (uploadedFile: any) => void
+    setIsUploaded: (value: boolean) => void
+    setTrackUpload: (value: ITrackUpload) => void
 }
 
 const Step1 = (props: IProp) => {
-    const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+    const { setIsUploaded, setTrackUpload } = props;
+    const [isAcceptedFile, setIsAcceptedFile] = useState<boolean>(true);
 
+    const { data: session } = useSession();
+    const onDrop = useCallback(async (acceptedFiles: FileWithPath[]) => {
+        if (acceptedFiles.length === 0) {
+            setIsAcceptedFile(false);
+            return;
+        }
 
-        acceptedFiles.forEach((file: FileWithPath, index: number) => {
-            props.onFileUploaded(file);
+        if (acceptedFiles && acceptedFiles[0]) {
+            const audio = acceptedFiles[0];
 
-            console.log(`files ${index}: `, file);
-            const reader = new FileReader()
+            setIsUploaded(true);
+            setIsAcceptedFile(true);
 
-            reader.onabort = () => console.log('file reading was aborted')
-            reader.onerror = () => console.log('file reading has failed')
-            reader.onload = () => {
-                // Do whatever you want with the file contents
-                const binaryStr = reader.result
-                // console.log(binaryStr)
+            const formData = new FormData();
+            formData.append('fileUpload', audio);
+            try {
+                const res = await axios.post('http://localhost:8080/api/v1/files/upload', formData,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${session?.access_token}`,
+                            'target_type': 'tracks',
+                        },
+                        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+                            const percentCompleted = Math.floor((progressEvent.loaded * 100) / progressEvent.total!)
+                            setTrackUpload({
+                                fileName: acceptedFiles[0].name,
+                                percent: percentCompleted
+                            })
+                        },
+                    }
+                )
+                console.log('>>>> check res: ', res?.data?.data?.fileName)
+            } catch (error) {
+                //@ts-ignore
+                alert(error?.response?.data?.message)
             }
-            reader.readAsArrayBuffer(file)
-        })
+        }
+    }, [session, isAcceptedFile])
 
-    }, [])
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: false })
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop,
+        multiple: false,
+        accept: {
+            'audio': ['.mp3', '.m4a', '.wav'],
+        },
+    })
 
     return (
         <>
@@ -64,15 +99,23 @@ const Step1 = (props: IProp) => {
                         '&:hover': {
                             borderColor: '#121212'
                         },
-                        borderColor: `${isDragActive ? '#121212' : 'rgba(0, 0, 0, 0.15)'}`
+                        borderColor: `${isDragActive ? '#121212' : isAcceptedFile ? 'rgba(0, 0, 0, 0.15)' : '#E61948'}`
                     }}>
                     <input {...getInputProps()} />
                     <Box component={'span'}>
                         <CloudUploadIcon sx={{ fontSize: '72px' }} />
                     </Box>
-                    <Box component={'p'} sx={{ marginY: '24px', fontWeight: 700 }}>
-                        Drag and drop audio files to get started.
-                    </Box>
+                    {isAcceptedFile
+                        ?
+                        <Box component={'p'} sx={{ marginY: '24px', fontWeight: 700 }}>
+                            Drag and drop audio files to get started.
+                        </Box>
+                        :
+                        <Box component={'p'} sx={{ marginY: '24px', fontWeight: 700, color: '#E61948' }}>
+                            File type is not supported.
+                        </Box>
+                    }
+
                     <Button
                         variant="contained"
                         sx={{

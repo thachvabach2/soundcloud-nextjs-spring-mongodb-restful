@@ -1,8 +1,7 @@
 'use client'
 import { Autocomplete, Box, Button, Grid, InputLabel, LinearProgress, LinearProgressProps, Stack, TextField, Typography } from "@mui/material";
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
-import { FileWithPath, useDropzone } from "react-dropzone";
-import { useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -30,22 +29,17 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 }
 
 interface IProps {
-    file: FileWithPath | null
+    trackUpload: {
+        fileName: string
+        percent: number
+    }
     onBack: () => void
 }
 
 const Step2 = (props: IProps) => {
-    const { getRootProps, getInputProps } = useDropzone()
-    const [progress, setProgress] = useState<number>(10);
+    const { trackUpload, onBack } = props;
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setProgress((prevProgress) => (prevProgress >= 100 ? 10 : prevProgress + 10));
-        }, 800);
-        return () => {
-            clearInterval(timer);
-        };
-    }, []);
+    const { getRootProps, getInputProps } = useDropzone()
 
     const top100Films = [
         { label: 'CHILL' },
@@ -74,10 +68,10 @@ const Step2 = (props: IProps) => {
                             component={'span'}
                             variant="body2"
                         >
-                            {props.file?.name}
+                            {trackUpload?.fileName}
                         </Typography>
                     </Box>
-                    <LinearProgressWithLabel value={progress} />
+                    <LinearProgressWithLabel value={trackUpload?.percent} />
 
                 </Stack>
                 <Box sx={{ flexGrow: 1 }}>

@@ -3,14 +3,12 @@ import { FileWithPath } from "react-dropzone"
 
 export const useTrackUpload = () => {
     const [isUploaded, setIsUploaded] = useState<boolean>(false)
-    const [file, setFile] = useState<FileWithPath | null>(null)
-
-    const handleFileUpload = (uploadedFile: any) => {
-        setFile(uploadedFile)
-        setIsUploaded(true)
-    }
+    const [trackUpload, setTrackUpload] = useState({
+        fileName: '',
+        percent: 0
+    })
 
     const goBack = () => setIsUploaded(false)
 
-    return { isUploaded, file, handleFileUpload, goBack }
+    return { isUploaded, setIsUploaded, trackUpload, setTrackUpload, goBack }
 }
