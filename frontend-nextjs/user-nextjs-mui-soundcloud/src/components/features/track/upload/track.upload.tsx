@@ -4,7 +4,7 @@ import Step1 from "./steps/step1";
 import { useTrackUpload } from "@/hooks/use.track.upload";
 
 const TrackUpload = () => {
-    const { isUploaded, setIsUploaded, trackUpload, setTrackUpload, goBack } = useTrackUpload();
+    const { isUploaded, setIsUploaded, trackUpload, setTrackUpload } = useTrackUpload();
 
     return (
         <>
@@ -13,11 +13,11 @@ const TrackUpload = () => {
                 <Step1
                     setIsUploaded={setIsUploaded}
                     setTrackUpload={setTrackUpload}
+                    trackUpload={trackUpload}
                 />
                 :
                 <Step2
                     trackUpload={trackUpload}
-                    onBack={goBack}
                 />
             }
         </>

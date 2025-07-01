@@ -1,7 +1,7 @@
 'use client'
 import { Box, Button, Typography } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useCallback, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import { FileWithPath, useDropzone } from 'react-dropzone'
 import { useSession } from "next-auth/react";
 import axios, { AxiosProgressEvent } from 'axios';
@@ -9,14 +9,17 @@ import axios, { AxiosProgressEvent } from 'axios';
 interface ITrackUpload {
     fileName: string
     percent: number
+    uploadedTrackName: string
 }
 interface IProp {
     setIsUploaded: (value: boolean) => void
-    setTrackUpload: (value: ITrackUpload) => void
+    // chuẩn React, == setTrackUpload: (value: ITrackUpload | ((prev: ITrackUpload) => ITrackUpload)) => void
+    setTrackUpload: Dispatch<SetStateAction<ITrackUpload>>
+    trackUpload: ITrackUpload
 }
 
 const Step1 = (props: IProp) => {
-    const { setIsUploaded, setTrackUpload } = props;
+    const { setIsUploaded, setTrackUpload, trackUpload } = props;
     const [isAcceptedFile, setIsAcceptedFile] = useState<boolean>(true);
 
     const { data: session } = useSession();
@@ -43,29 +46,36 @@ const Step1 = (props: IProp) => {
                         },
                         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
                             const percentCompleted = Math.floor((progressEvent.loaded * 100) / progressEvent.total!)
-                            setTrackUpload({
+                            setTrackUpload((prev: ITrackUpload) => ({
+                                ...prev,
                                 fileName: acceptedFiles[0].name,
                                 percent: percentCompleted
-                            })
+                            }))
                         },
                     }
                 )
-                console.log('>>>> check res: ', res?.data?.data?.fileName)
+                setTrackUpload(prevTrackUpload => ({
+                    ...prevTrackUpload,
+                    uploadedTrackName: res?.data?.data?.fileName
+                }))
             } catch (error) {
                 //@ts-ignore
                 alert(error?.response?.data?.message)
             }
         }
-    }, [session, isAcceptedFile])
+    }, [session, setIsUploaded, setTrackUpload])
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const dropzoneConfig = useMemo(() => ({
         onDrop,
         multiple: false,
         accept: {
             'audio': ['.mp3', '.m4a', '.wav'],
         },
-    })
+    }), [onDrop]);
 
+    const { getRootProps, getInputProps, isDragActive } = useDropzone(dropzoneConfig);
+
+    // console.log('>>> render step1')
     return (
         <>
             <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '16px' }} >
@@ -142,4 +152,4 @@ const Step1 = (props: IProp) => {
     )
 }
 
-export default Step1;
+export default React.memo(Step1);

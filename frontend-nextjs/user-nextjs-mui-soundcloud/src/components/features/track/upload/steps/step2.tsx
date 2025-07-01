@@ -2,6 +2,7 @@
 import { Autocomplete, Box, Button, Grid, InputLabel, LinearProgress, LinearProgressProps, Stack, TextField, Typography } from "@mui/material";
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 import { useDropzone } from "react-dropzone";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -32,21 +33,113 @@ interface IProps {
     trackUpload: {
         fileName: string
         percent: number
+        uploadedTrackName: string
     }
-    onBack: () => void
+}
+
+interface INewTrack {
+    title: string,
+    description: string,
+    trackUrl: string,
+    imgUrl: string,
+    category: string
 }
 
 const Step2 = (props: IProps) => {
-    const { trackUpload, onBack } = props;
+    const { trackUpload } = props;
 
-    const { getRootProps, getInputProps } = useDropzone()
+    const [info, setInfo] = useState<INewTrack>({
+        title: '',
+        description: '',
+        trackUrl: '',
+        imgUrl: '',
+        category: ''
+    });
 
-    const top100Films = [
+    const dropzoneConfig = useMemo(() => ({
+        accept: {
+            'image/*': ['.png', '.jpg', '.jpeg', '.gif']
+        }
+    }), []);
+    const { getRootProps, getInputProps } = useDropzone(dropzoneConfig)
+
+    useEffect(() => {
+        if (trackUpload?.uploadedTrackName) {
+            setInfo({
+                ...info,
+                trackUrl: trackUpload.uploadedTrackName
+            })
+            // console.log('render useEffect step2');
+        }
+    }, [trackUpload])
+
+    const top100Films = useMemo(() => [
         { label: 'CHILL' },
         { label: 'WORKOUT' },
         { label: 'HIPHOP' },
-    ]
+    ], [])
 
+    const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setInfo(prevInfo => ({
+            ...prevInfo,
+            title: e.target.value,
+        }));
+    }, []);
+
+    const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setInfo(prevInfo => ({
+            ...prevInfo,
+            description: e.target.value,
+        }));
+    }, []);
+
+    const handleCategoryChange = useCallback((event: any, newInputValue: string) => {
+        setInfo(prevInfo => ({
+            ...prevInfo,
+            category: newInputValue,
+        }));
+    }, []);
+
+    const uploadButtonStyles = useMemo(() => ({
+        '@media (min-width: 480px)': {
+            height: '400px',
+            width: '400px',
+        },
+        height: '160px',
+        width: '160px',
+        backgroundColor: 'unset',
+        border: '2px dashed rgba(0, 0, 0, 0.15)',
+        marginY: { xs: '24px', lg: 0 },
+        cursor: 'pointer',
+
+        '&:hover': {
+            borderColor: 'rgba(0, 0, 0, 0.5)',
+
+            '& svg': {
+                color: 'rgba(0, 0, 0, 0.8)'
+            }
+        }
+    }), [])
+
+    const fieldContainerStyles = useMemo(() => ({
+        display: 'flex',
+        flexDirection: 'column' as const,
+        width: '100%',
+    }), []);
+
+    const labelStyles = useMemo(() => ({
+        fontSize: '14px',
+        fontWeight: 'bold',
+        color: '#121212'
+    }), []);
+
+    const textFieldProps = useMemo(() => ({
+        hiddenLabel: true,
+        variant: 'standard' as const,
+        autoComplete: 'off',
+    }), []);
+
+    // console.log('>>> render info: ', info)
     return (
         <>
             <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '16px' }} >
@@ -79,26 +172,7 @@ const Step2 = (props: IProps) => {
                         <Grid size={{ xs: 12, lg: 4 }} sx={{ textAlign: 'center', }}>
                             <Button
                                 {...getRootProps()}
-                                sx={{
-                                    '@media (min-width: 480px)': {
-                                        height: '400px',
-                                        width: '400px',
-                                    },
-                                    height: '160px',
-                                    width: '160px',
-                                    backgroundColor: 'unset',
-                                    border: '2px dashed rgba(0, 0, 0, 0.15)',
-                                    marginY: { xs: '24px', lg: 0 },
-                                    cursor: 'pointer',
-
-                                    '&:hover': {
-                                        borderColor: 'rgba(0, 0, 0, 0.5)',
-
-                                        '& svg': {
-                                            color: 'rgba(0, 0, 0, 0.8)'
-                                        }
-                                    }
-                                }}
+                                sx={uploadButtonStyles}
                             >
                                 <input {...getInputProps()} />
                                 <InsertPhotoOutlinedIcon sx={{ fontSize: '120px', color: '#ccc' }} />
@@ -108,67 +182,57 @@ const Step2 = (props: IProps) => {
                             <Stack spacing={4}>
                                 <Box
                                     component={'div'}
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        width: '100%',
-                                    }}
+                                    sx={fieldContainerStyles}
                                 >
                                     <Box display={'flex'}>
-                                        <InputLabel sx={{ fontSize: '14px', fontWeight: 'bold', color: '#121212' }}>
+                                        <InputLabel sx={labelStyles}>
                                             Track title
                                         </InputLabel>
                                         <Box component={'span'} sx={{ color: 'var(--mui-palette-error-main)', marginLeft: '5px' }}>*</Box>
                                     </Box>
                                     <TextField
-                                        hiddenLabel
-                                        variant="standard"
-                                        autoComplete="off"
+                                        value={info?.title}
+                                        // value={trackUpload?.uploadedTrackName}
+                                        onChange={handleTitleChange}
+                                        {...textFieldProps}
                                     />
                                 </Box>
                                 <Box
                                     component={'div'}
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        width: '100%',
-                                    }}
+                                    sx={fieldContainerStyles}
                                 >
                                     <Box display={'flex'}>
-                                        <InputLabel sx={{ fontSize: '14px', fontWeight: 'bold', color: '#121212' }}>
+                                        <InputLabel sx={labelStyles}>
                                             Description
                                         </InputLabel>
                                     </Box>
                                     <TextField
-                                        hiddenLabel
-                                        variant="standard"
-                                        autoComplete="off"
+                                        value={info?.description}
+                                        onChange={handleDescriptionChange}
+                                        {...textFieldProps}
                                         placeholder="Track with descriptions"
 
                                     />
                                 </Box>
                                 <Box
                                     component={'div'}
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        width: '100%',
-                                    }}
+                                    sx={fieldContainerStyles}
                                 >
                                     <Box display={'flex'}>
-                                        <InputLabel sx={{ fontSize: '14px', fontWeight: 'bold', color: '#121212' }}>
+                                        <InputLabel sx={labelStyles}>
                                             Genre
                                         </InputLabel>
                                     </Box>
 
                                     <Autocomplete
+                                        inputValue={info?.category}
+                                        onInputChange={handleCategoryChange}
                                         disablePortal
                                         options={top100Films}
                                         renderInput={
-                                            (params) => <TextField {...params}
-                                                hiddenLabel
-                                                variant="standard"
-                                                autoComplete="off"
+                                            (params) => <TextField
+                                                {...params}
+                                                {...textFieldProps}
                                                 placeholder="Add or search for genre"
                                             />
                                         }
@@ -186,4 +250,4 @@ const Step2 = (props: IProps) => {
     )
 }
 
-export default Step2;
+export default React.memo(Step2);
