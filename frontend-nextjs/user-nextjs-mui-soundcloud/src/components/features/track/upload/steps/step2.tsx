@@ -1,8 +1,9 @@
 'use client'
-import { Autocomplete, Box, Button, Grid, InputLabel, LinearProgress, LinearProgressProps, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, InputLabel, LinearProgress, LinearProgressProps, Stack, Typography } from "@mui/material";
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 import { useDropzone } from "react-dropzone";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { AutocompleteElement, TextFieldElement, useForm } from 'react-hook-form-mui'
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
     return (
@@ -39,9 +40,17 @@ interface IProps {
 
 interface INewTrack {
     title: string,
+    artist: string,
     description: string,
     trackUrl: string,
     imgUrl: string,
+    category: string
+}
+
+interface ITrackForm {
+    title: string,
+    artist: string,
+    description: string,
     category: string
 }
 
@@ -50,6 +59,7 @@ const Step2 = (props: IProps) => {
 
     const [info, setInfo] = useState<INewTrack>({
         title: '',
+        artist: '',
         description: '',
         trackUrl: '',
         imgUrl: '',
@@ -73,32 +83,7 @@ const Step2 = (props: IProps) => {
         }
     }, [trackUpload])
 
-    const top100Films = useMemo(() => [
-        { label: 'CHILL' },
-        { label: 'WORKOUT' },
-        { label: 'HIPHOP' },
-    ], [])
-
-    const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setInfo(prevInfo => ({
-            ...prevInfo,
-            title: e.target.value,
-        }));
-    }, []);
-
-    const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        setInfo(prevInfo => ({
-            ...prevInfo,
-            description: e.target.value,
-        }));
-    }, []);
-
-    const handleCategoryChange = useCallback((event: any, newInputValue: string) => {
-        setInfo(prevInfo => ({
-            ...prevInfo,
-            category: newInputValue,
-        }));
-    }, []);
+    const listGenre = useMemo(() => ['CHILL', 'WORKOUT', 'HIPHOP',], [])
 
     const uploadButtonStyles = useMemo(() => ({
         '@media (min-width: 480px)': {
@@ -139,7 +124,24 @@ const Step2 = (props: IProps) => {
         autoComplete: 'off',
     }), []);
 
-    // console.log('>>> render info: ', info)
+    //
+    const { control, handleSubmit } = useForm({
+        defaultValues: {
+            title: '',
+            artist: '',
+            description: '',
+            category: ''
+        },
+    })
+
+    const handleUploadTrackAfterUpload = (data: ITrackForm) => {
+        setInfo(prev => ({
+            ...prev,
+            ...data
+        }));
+    }
+
+    console.log('>>> check info: ', info)
     return (
         <>
             <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '16px' }} >
@@ -167,84 +169,103 @@ const Step2 = (props: IProps) => {
                     <LinearProgressWithLabel value={trackUpload?.percent} />
 
                 </Stack>
-                <Box sx={{ flexGrow: 1 }}>
-                    <Grid container justifyContent={'space-between'}>
-                        <Grid size={{ xs: 12, lg: 4 }} sx={{ textAlign: 'center', }}>
-                            <Button
-                                {...getRootProps()}
-                                sx={uploadButtonStyles}
-                            >
-                                <input {...getInputProps()} />
-                                <InsertPhotoOutlinedIcon sx={{ fontSize: '120px', color: '#ccc' }} />
-                            </Button>
-                        </Grid>
-                        <Grid size={{ xs: 12, lg: 6 }}>
-                            <Stack spacing={4}>
-                                <Box
-                                    component={'div'}
-                                    sx={fieldContainerStyles}
-                                >
-                                    <Box display={'flex'}>
-                                        <InputLabel sx={labelStyles}>
-                                            Track title
-                                        </InputLabel>
-                                        <Box component={'span'} sx={{ color: 'var(--mui-palette-error-main)', marginLeft: '5px' }}>*</Box>
-                                    </Box>
-                                    <TextField
-                                        value={info?.title}
-                                        // value={trackUpload?.uploadedTrackName}
-                                        onChange={handleTitleChange}
-                                        {...textFieldProps}
-                                    />
-                                </Box>
-                                <Box
-                                    component={'div'}
-                                    sx={fieldContainerStyles}
-                                >
-                                    <Box display={'flex'}>
-                                        <InputLabel sx={labelStyles}>
-                                            Description
-                                        </InputLabel>
-                                    </Box>
-                                    <TextField
-                                        value={info?.description}
-                                        onChange={handleDescriptionChange}
-                                        {...textFieldProps}
-                                        placeholder="Track with descriptions"
 
-                                    />
-                                </Box>
-                                <Box
-                                    component={'div'}
-                                    sx={fieldContainerStyles}
+                <form onSubmit={handleSubmit(handleUploadTrackAfterUpload)} noValidate>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Grid container justifyContent={'space-between'}>
+                            <Grid size={{ xs: 12, lg: 4 }} sx={{ textAlign: 'center', }}>
+                                <Button
+                                    {...getRootProps()}
+                                    sx={uploadButtonStyles}
                                 >
-                                    <Box display={'flex'}>
-                                        <InputLabel sx={labelStyles}>
-                                            Genre
-                                        </InputLabel>
-                                    </Box>
-
-                                    <Autocomplete
-                                        inputValue={info?.category}
-                                        onInputChange={handleCategoryChange}
-                                        disablePortal
-                                        options={top100Films}
-                                        renderInput={
-                                            (params) => <TextField
-                                                {...params}
-                                                {...textFieldProps}
-                                                placeholder="Add or search for genre"
-                                            />
-                                        }
-                                    />
-                                </Box>
-                                <Button variant="contained">
-                                    Upload
+                                    <input {...getInputProps()} />
+                                    <InsertPhotoOutlinedIcon sx={{ fontSize: '120px', color: '#ccc' }} />
                                 </Button>
-                            </Stack>
+                            </Grid>
+                            <Grid size={{ xs: 12, lg: 6 }}>
+                                <Stack spacing={4}>
+                                    <Box
+                                        component={'div'}
+                                        sx={fieldContainerStyles}
+                                    >
+                                        <Box display={'flex'}>
+                                            <InputLabel sx={labelStyles}>
+                                                Track title
+                                            </InputLabel>
+                                            <Box component={'span'} sx={{ color: 'var(--mui-palette-error-main)', marginLeft: '5px' }}>*</Box>
+                                        </Box>
+                                        <TextFieldElement
+                                            name={'title'}
+                                            control={control}
+                                            rules={{
+                                                required: 'Please enter a title',
+                                            }}
+                                            {...textFieldProps}
+                                        />
+                                    </Box>
+                                    <Box
+                                        component={'div'}
+                                        sx={fieldContainerStyles}
+                                    >
+                                        <Box display={'flex'}>
+                                            <InputLabel sx={labelStyles}>
+                                                Main Artist(s)
+                                            </InputLabel>
+                                            <Box component={'span'} sx={{ color: 'var(--mui-palette-error-main)', marginLeft: '5px' }}>*</Box>
+                                        </Box>
+                                        <TextFieldElement
+                                            name={'artist'}
+                                            control={control}
+                                            rules={{
+                                                required: 'Please enter a valid artist name.',
+                                            }}
+                                            {...textFieldProps}
+                                        />
+                                    </Box>
+                                    <Box
+                                        component={'div'}
+                                        sx={fieldContainerStyles}
+                                    >
+                                        <Box display={'flex'}>
+                                            <InputLabel sx={labelStyles}>
+                                                Description
+                                            </InputLabel>
+                                        </Box>
+                                        <TextFieldElement
+                                            name={'description'}
+                                            control={control}
+                                            placeholder="Track with descriptions"
+                                            {...textFieldProps}
+                                        />
+                                    </Box>
+                                    <Box
+                                        component={'div'}
+                                        sx={fieldContainerStyles}
+                                    >
+                                        <Box display={'flex'}>
+                                            <InputLabel sx={labelStyles}>
+                                                Genre
+                                            </InputLabel>
+                                        </Box>
+
+                                        <AutocompleteElement
+                                            name={'category'}
+                                            options={listGenre}
+                                            control={control}
+                                            textFieldProps={{
+                                                ...textFieldProps,
+                                                placeholder: "Add or search for genre"
+                                            }}
+                                        />
+                                    </Box>
+                                    <Button variant="contained" type={'submit'}>
+                                        Upload
+                                    </Button>
+                                </Stack>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Box>
+                    </Box>
+                </form>
             </Box >
         </>
     )
