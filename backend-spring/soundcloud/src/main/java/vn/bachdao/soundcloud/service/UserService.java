@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -49,6 +50,16 @@ public class UserService {
 
     public Optional<User> getUserById(String id) {
         return this.userRepository.findById(id);
+    }
+
+    public Optional<User> getTrackByObjectId(ObjectId id) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(id));
+
+        Optional<User> result = mongoTemplate.query(User.class)
+                .matching(query).one();
+
+        return result;
     }
 
     public ResPaginationDTO getAllUser(Document document, Pageable pageable) {
@@ -117,10 +128,6 @@ public class UserService {
         this.userRepository.deleteById(id);
         return DeleteResult.acknowledged(1);
     }
-
-    // public Optional<User> getUserByEmail(String email) {
-    // return this.userRepository.findOneByEmailIgnoreCase(email);
-    // }
 
     public Optional<User> getUserByUsername(String username) {
         return this.userRepository.findOneByUsernameIgnoreCase(username);
