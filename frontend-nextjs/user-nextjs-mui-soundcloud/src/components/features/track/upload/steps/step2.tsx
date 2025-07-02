@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { AutocompleteElement, TextFieldElement, useForm } from 'react-hook-form-mui'
 import FileUploadInput from "@/components/ui/track/upload/FileUploadInput";
 import { LinearProgressWithLabel } from "@/components/ui/track/upload/LinearProgressWithLabel";
+import { sendRequest } from "@/lib/utils/api";
+import { useSession } from "next-auth/react";
 
 interface IProps {
     trackUpload: {
@@ -31,6 +33,7 @@ interface ITrackForm {
 
 const Step2 = (props: IProps) => {
     const { trackUpload } = props;
+    const { data: session } = useSession();
 
     const [info, setInfo] = useState<INewTrack>({
         title: '',
@@ -81,14 +84,36 @@ const Step2 = (props: IProps) => {
         },
     })
 
-    const handleSubmitForm = (data: ITrackForm) => {
+    const handleSubmitForm = async (data: ITrackForm) => {
         setInfo(prev => ({
             ...prev,
             ...data
         }));
+        const res = await sendRequest<IBackendRes<ITrackTop[]>>({
+            url: "http://localhost:8080/api/v1/tracks",
+            method: "POST",
+            body: {
+                title: data.title,
+                artist: data.artist,
+                description: data.description,
+                trackUrl: info.trackUrl,
+                imgUrl: info.imgUrl,
+                category: data.category
+            },
+            headers: {
+                'Authorization': `Bearer ${session?.access_token}`,
+            },
+        })
+        if (res.data) {
+            alert("create success")
+        } else {
+            alert(res.message);
+        }
+        // console.log('>>> check info submit: ', info);
+        // console.log('>>> check data submit: ', data);
     }
 
-    console.log('>>> check info: ', info)
+    // console.log('>>> check info: ', info)
     return (
         <>
             <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '16px' }} >
