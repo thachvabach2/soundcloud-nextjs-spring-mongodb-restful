@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { WaveSurferOptions } from "wavesurfer.js";
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
-import { LightTooltip } from "@/components/ui/LightTooltip";
+import { LightTooltip } from "@/components/ui/track/LightTooltip";
 
 const WaveTrack = () => {
     const searchParams = useSearchParams();

@@ -1,34 +1,9 @@
 'use client'
-import { Box, Button, Grid, InputLabel, LinearProgress, LinearProgressProps, Stack, Typography } from "@mui/material";
-import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
-import { useDropzone } from "react-dropzone";
+import { Box, Button, Grid, InputLabel, Stack, Typography } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { AutocompleteElement, TextFieldElement, useForm } from 'react-hook-form-mui'
-
-function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
-    return (
-        <>
-            <Box sx={{ flex: 1 }} >
-                <LinearProgress
-                    variant="determinate"
-                    {...props}
-                    sx={{
-                        height: { xs: '8px', md: '6px' },
-                        backgroundColor: 'rgb(221, 221, 221)',
-                    }}
-                />
-            </Box>
-            <Box sx={{ display: { xs: 'none', md: 'block', whiteSpace: 'nowrap' } }}>
-                <Typography
-                    variant="body2"
-                    sx={{ color: 'text.primary' }}
-                >
-                    {`Uploading ${Math.round(props.value)}%`}
-                </Typography>
-            </Box>
-        </>
-    );
-}
+import { FileUploadInput } from "@/components/ui/track/upload/FileUploadInput";
+import { LinearProgressWithLabel } from "@/components/ui/track/upload/LinearProgressWithLabel";
 
 interface IProps {
     trackUpload: {
@@ -66,13 +41,6 @@ const Step2 = (props: IProps) => {
         category: ''
     });
 
-    const dropzoneConfig = useMemo(() => ({
-        accept: {
-            'image/*': ['.png', '.jpg', '.jpeg', '.gif']
-        }
-    }), []);
-    const { getRootProps, getInputProps } = useDropzone(dropzoneConfig)
-
     useEffect(() => {
         if (trackUpload?.uploadedTrackName) {
             setInfo({
@@ -84,27 +52,6 @@ const Step2 = (props: IProps) => {
     }, [trackUpload])
 
     const listGenre = useMemo(() => ['CHILL', 'WORKOUT', 'HIPHOP',], [])
-
-    const uploadButtonStyles = useMemo(() => ({
-        '@media (min-width: 480px)': {
-            height: '400px',
-            width: '400px',
-        },
-        height: '160px',
-        width: '160px',
-        backgroundColor: 'unset',
-        border: '2px dashed rgba(0, 0, 0, 0.15)',
-        marginY: { xs: '24px', lg: 0 },
-        cursor: 'pointer',
-
-        '&:hover': {
-            borderColor: 'rgba(0, 0, 0, 0.5)',
-
-            '& svg': {
-                color: 'rgba(0, 0, 0, 0.8)'
-            }
-        }
-    }), [])
 
     const fieldContainerStyles = useMemo(() => ({
         display: 'flex',
@@ -174,13 +121,7 @@ const Step2 = (props: IProps) => {
                     <Box sx={{ flexGrow: 1 }}>
                         <Grid container justifyContent={'space-between'}>
                             <Grid size={{ xs: 12, lg: 4 }} sx={{ textAlign: 'center', }}>
-                                <Button
-                                    {...getRootProps()}
-                                    sx={uploadButtonStyles}
-                                >
-                                    <input {...getInputProps()} />
-                                    <InsertPhotoOutlinedIcon sx={{ fontSize: '120px', color: '#ccc' }} />
-                                </Button>
+                                <FileUploadInput />
                             </Grid>
                             <Grid size={{ xs: 12, lg: 6 }}>
                                 <Stack spacing={4}>

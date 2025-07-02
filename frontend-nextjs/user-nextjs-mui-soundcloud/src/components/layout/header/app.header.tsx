@@ -11,8 +11,8 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { Avatar, Tab, Tabs, Tooltip, useColorScheme } from '@mui/material';
-import { signIn, signOut, useSession } from "next-auth/react"
-import { CustomAppBar } from '@/components/ui/CustomAppBar';
+import { signOut, useSession } from "next-auth/react"
+import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import Link from 'next/link';
 
 const pages = ['Playlists', 'Likes', 'Upload'];

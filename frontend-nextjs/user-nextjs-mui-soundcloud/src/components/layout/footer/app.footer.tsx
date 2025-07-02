@@ -1,7 +1,7 @@
 'use client'
-import { CustomAppBar } from '@/components/ui/CustomAppBar';
+import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import { useHasMounted } from '@/hooks/use.has.mounted';
-import { AppBar, Box, Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 
