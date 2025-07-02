@@ -15,7 +15,7 @@ public class ResGetTrackDTO {
     private String id;
 
     private String title;
-
+    private String artist;
     private String description;
     private String category;
     private String imgUrl;

@@ -168,9 +168,7 @@ public class TrackService {
         meta.setTotalPage(trackPage.getTotalPages());
         meta.setTotalElement(trackPage.getTotalElements());
 
-        List<ResGetTrackDTO> resGetTrackDTOs = this.trackMapper.toResGetTrackDTOs(trackPage.getContent());
-
-        res.setResult(resGetTrackDTOs);
+        res.setResult(tracks);
         res.setMeta(meta);
         return res;
     }

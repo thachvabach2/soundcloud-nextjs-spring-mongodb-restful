@@ -10,6 +10,7 @@ public class ReqUpdateTrackDTO {
 
     @NotBlank(message = "Title không được để trống")
     private String title;
+    private String artist;
     private String description;
     private String category;
 }
