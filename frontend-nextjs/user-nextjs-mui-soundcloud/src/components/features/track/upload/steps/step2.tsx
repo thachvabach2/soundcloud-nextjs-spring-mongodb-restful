@@ -2,7 +2,7 @@
 import { Box, Button, Grid, InputLabel, Stack, Typography } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { AutocompleteElement, TextFieldElement, useForm } from 'react-hook-form-mui'
-import { FileUploadInput } from "@/components/ui/track/upload/FileUploadInput";
+import FileUploadInput from "@/components/ui/track/upload/FileUploadInput";
 import { LinearProgressWithLabel } from "@/components/ui/track/upload/LinearProgressWithLabel";
 
 interface IProps {
@@ -13,7 +13,7 @@ interface IProps {
     }
 }
 
-interface INewTrack {
+export interface INewTrack {
     title: string,
     artist: string,
     description: string,
@@ -81,7 +81,7 @@ const Step2 = (props: IProps) => {
         },
     })
 
-    const handleUploadTrackAfterUpload = (data: ITrackForm) => {
+    const handleSubmitForm = (data: ITrackForm) => {
         setInfo(prev => ({
             ...prev,
             ...data
@@ -117,11 +117,11 @@ const Step2 = (props: IProps) => {
 
                 </Stack>
 
-                <form onSubmit={handleSubmit(handleUploadTrackAfterUpload)} noValidate>
+                <form onSubmit={handleSubmit(handleSubmitForm)} noValidate>
                     <Box sx={{ flexGrow: 1 }}>
                         <Grid container justifyContent={'space-between'}>
                             <Grid size={{ xs: 12, lg: 4 }} sx={{ textAlign: 'center', }}>
-                                <FileUploadInput />
+                                <FileUploadInput info={info} setInfo={setInfo} />
                             </Grid>
                             <Grid size={{ xs: 12, lg: 6 }}>
                                 <Stack spacing={4}>
