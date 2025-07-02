@@ -149,4 +149,29 @@ public class TrackService {
         List<Track> tracks = mongoTemplate.query(Track.class).matching(query).all();
         return tracks;
     }
+
+    public ResPaginationDTO getTrackCreatedByAUser(String id, Pageable pageable) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("uploader.id").is(id)).with(pageable);
+
+        List<Track> tracks = mongoTemplate.query(Track.class).matching(query).all();
+
+        Page<Track> trackPage = PageableExecutionUtils.getPage(
+                tracks,
+                pageable,
+                () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), Track.class));
+
+        ResPaginationDTO res = new ResPaginationDTO();
+        ResPaginationDTO.Meta meta = new ResPaginationDTO.Meta();
+        meta.setPageNumber(trackPage.getNumber() + 1);
+        meta.setPageSize(trackPage.getSize());
+        meta.setTotalPage(trackPage.getTotalPages());
+        meta.setTotalElement(trackPage.getTotalElements());
+
+        List<ResGetTrackDTO> resGetTrackDTOs = this.trackMapper.toResGetTrackDTOs(trackPage.getContent());
+
+        res.setResult(resGetTrackDTOs);
+        res.setMeta(meta);
+        return res;
+    }
 }
