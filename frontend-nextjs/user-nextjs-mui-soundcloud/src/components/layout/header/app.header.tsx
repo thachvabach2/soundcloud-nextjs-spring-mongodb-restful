@@ -251,7 +251,7 @@ const AppHeader = () => {
                                             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                                             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                                         >
-                                            <Link href={'/profile'}>
+                                            <Link href={`/profile/${session?.user?._id}`}>
                                                 <MenuItem>
                                                     Profile
                                                 </MenuItem>
