@@ -38,7 +38,7 @@ public class TrackAdminResource {
 
     @PostMapping("/tracks")
     @ApiMessage("Create a new track")
-    public ResponseEntity<Track> createTrack(@RequestBody ReqCreateTrackDTO reqTrack) {
+    public ResponseEntity<Track> createTrack(@Valid @RequestBody ReqCreateTrackDTO reqTrack) {
         return ResponseEntity.ok(trackService.createTrack(reqTrack));
     }
 

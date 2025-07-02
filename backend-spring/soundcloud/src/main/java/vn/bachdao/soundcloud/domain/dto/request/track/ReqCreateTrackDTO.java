@@ -13,6 +13,8 @@ public class ReqCreateTrackDTO {
 
     @NotBlank(message = "TrackUrl không được để trống")
     private String trackUrl;
+
+    @NotBlank(message = "Image không được để trống")
     private String imgUrl;
     private String category;
 }
