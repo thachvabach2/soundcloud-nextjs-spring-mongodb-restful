@@ -8,6 +8,7 @@ import { INewTrack } from "@/components/features/track/upload/steps/step2";
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Theme } from "@emotion/react";
+import { useToast } from "@/hooks/toast";
 
 interface IProps {
     info: INewTrack
@@ -17,6 +18,7 @@ interface IProps {
 const FileUploadInput = (props: IProps) => {
     const { info, setInfo } = props;
     const { data: session } = useSession();
+    const toast = useToast();
 
     const onDrop = useCallback(async (acceptedFiles: FileWithPath[]) => {
         if (acceptedFiles && acceptedFiles[0]) {
@@ -39,7 +41,7 @@ const FileUploadInput = (props: IProps) => {
                 }))
             } catch (error) {
                 //@ts-ignore
-                alert(error?.response?.data?.message)
+                toast.error(error?.response?.data?.message)
             }
         }
     }, [session])
@@ -93,7 +95,6 @@ const FileUploadInput = (props: IProps) => {
                             sx={{
                                 height: '100%',
                                 width: '100%',
-                                objectFit: 'cover'
                             }}
                         />
                         <Stack spacing={2}

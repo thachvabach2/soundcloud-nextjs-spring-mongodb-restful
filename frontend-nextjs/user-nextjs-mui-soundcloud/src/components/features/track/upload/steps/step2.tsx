@@ -6,6 +6,7 @@ import FileUploadInput from "@/components/ui/track/upload/FileUploadInput";
 import { LinearProgressWithLabel } from "@/components/ui/track/upload/LinearProgressWithLabel";
 import { sendRequest } from "@/lib/utils/api";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/hooks/toast";
 
 interface IProps {
     trackUpload: {
@@ -13,6 +14,7 @@ interface IProps {
         percent: number
         uploadedTrackName: string
     }
+    onBack: () => void
 }
 
 export interface INewTrack {
@@ -32,8 +34,9 @@ interface ITrackForm {
 }
 
 const Step2 = (props: IProps) => {
-    const { trackUpload } = props;
+    const { trackUpload, onBack } = props;
     const { data: session } = useSession();
+    const toast = useToast();
 
     const [info, setInfo] = useState<INewTrack>({
         title: '',
@@ -105,15 +108,21 @@ const Step2 = (props: IProps) => {
             },
         })
         if (res.data) {
-            alert("create success")
+            onBack();
+            setInfo({
+                title: '',
+                artist: '',
+                description: '',
+                trackUrl: '',
+                imgUrl: '',
+                category: ''
+            })
+            toast.success("Create a new track success!")
         } else {
-            alert(res.message);
+            toast.error(res.message)
         }
-        // console.log('>>> check info submit: ', info);
-        // console.log('>>> check data submit: ', data);
     }
 
-    // console.log('>>> check info: ', info)
     return (
         <>
             <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '16px' }} >

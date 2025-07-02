@@ -3,6 +3,7 @@ import { InitColorSchemeScript, ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import theme from '@/theme';
 import NextAuthWrapper from "@/lib/auth/next.auth.wrapper";
+import { ToastProvider } from "@/hooks/toast";
 
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
@@ -13,7 +14,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                     <InitColorSchemeScript attribute=".encore-%s-theme" />
                     <ThemeProvider theme={theme} defaultMode="light">
                         <NextAuthWrapper>
-                            {children}
+                            <ToastProvider>
+                                {children}
+                            </ToastProvider>
                         </NextAuthWrapper>
                     </ThemeProvider>
                 </AppRouterCacheProvider>
