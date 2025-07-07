@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,11 +36,11 @@ public class FileService {
     }
 
     public String store(MultipartFile file, String folder) throws URISyntaxException, IOException {
-        // create unique filename
-        String finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-        String encodedFinalName = URLEncoder.encode(finalName, StandardCharsets.UTF_8);
+        String originalName = file.getOriginalFilename();
+        String sanitizedName = sanitizeFileName(originalName);
+        String finalName = System.currentTimeMillis() + "-" + sanitizedName;
 
-        URI uri = new URI(baseURI + "/" + folder + "/" + encodedFinalName);
+        URI uri = new URI(baseURI + "/" + folder + "/" + finalName);
 
         Path path = Paths.get(uri);
         try (InputStream inputStream = file.getInputStream()) {
@@ -51,5 +49,23 @@ public class FileService {
         }
 
         return finalName;
+    }
+
+    private String sanitizeFileName(String filename) {
+        if (filename == null || filename.trim().isEmpty()) {
+            return "unknown";
+        }
+
+        return filename.toLowerCase()
+                .replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a")
+                .replaceAll("[èéẹẻẽêềếệểễ]", "e")
+                .replaceAll("[ìíịỉĩ]", "i")
+                .replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o")
+                .replaceAll("[ùúụủũưừứựửữ]", "u")
+                .replaceAll("[ỳýỵỷỹ]", "y")
+                .replaceAll("đ", "d")
+                .replaceAll("[^a-z0-9._-]", "-")
+                .replaceAll("-{2,}", "-")
+                .replaceAll("^-|-$", "");
     }
 }
