@@ -78,7 +78,7 @@ const Step1 = (props: IProp) => {
     // console.log('>>> render step1')
     return (
         <>
-            <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '16px' }} >
+            <Box component={'div'}>
                 <Typography
                     variant="h4"
                     component={'h1'}

@@ -5,8 +5,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function Home() {
-    const session = await getServerSession(authOptions)
-    // console.log('>>> check session server: ', session)
+    const session = await getServerSession(authOptions);
 
     const chills = await sendRequest<IBackendRes<ITrackTop[]>>({
         url: "http://localhost:8080/api/v1/tracks/top",
@@ -27,13 +26,7 @@ export default async function Home() {
     })
 
     return (
-        <Stack
-            spacing={5}
-            sx={{
-                paddingTop: '24px',
-                paddingBottom: '60px',
-            }}
-        >
+        <Stack spacing={5}>
             <MainSlider
                 title={"Top Chill"}
                 data={chills?.data ?? []}

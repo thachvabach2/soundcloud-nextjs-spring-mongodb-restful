@@ -1,4 +1,4 @@
-import { CssBaseline } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 import AppHeader from "@/components/layout/header/app.header";
 import AppFooter from "@/components/layout/footer/app.footer";
 
@@ -8,7 +8,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
         <>
             <CssBaseline />
             <AppHeader />
-            {children}
+            <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '24px', paddingBottom: '60px' }}>
+                {children}
+            </Box>
             <AppFooter />
         </>
     );

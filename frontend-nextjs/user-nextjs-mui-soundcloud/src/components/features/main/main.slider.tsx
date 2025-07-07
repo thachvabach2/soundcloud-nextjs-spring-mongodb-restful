@@ -68,7 +68,6 @@ const MainSlider = (props: IPops) => {
     return (
         <Box
             sx={{
-                paddingX: '24px',
                 ".track-container": {
                     width: '160px !important',
                 },
@@ -86,21 +85,24 @@ const MainSlider = (props: IPops) => {
                 {data.map((track, index) => (
                     <div className="track-container" key={track._id}>
                         <div className="track-main">
-                            <div className="track-image w-full cursor-pointer">
-                                <img
-                                    className="w-full"
-                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
-                                />
-                            </div>
-
-                            <div className="track-footer mt-3 text-start select-text">
-                                <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis">
-                                    <Link href={`/track/${track._id}?audio=${track.trackUrl}`}>
-                                        <span className="text-sm font-light">{track.title}</span>
-                                    </Link>
+                            <Link href={`/track/${track._id}?audio=${track.trackUrl}&id=${track._id}`}>
+                                <div className="track-image w-full cursor-pointer">
+                                    <img
+                                        className="w-full"
+                                        src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
+                                    />
                                 </div>
+                            </Link>
+
+                            <div className="track-footer mt-1 text-start select-text">
+                                <Link href={`/track/${track._id}?audio=${track.trackUrl}&id=${track._id}`}>
+                                    <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis">
+                                        <span className="text-sm font-light">{track.title}</span>
+                                    </div>
+                                </Link>
+
                                 <div className="track-artist overflow-hidden whitespace-nowrap text-ellipsis">
-                                    <span className="text-gray-400 text-xs cursor-pointer">{track.category} {index}</span>
+                                    <span className="text-gray-400 text-xs">{track.uploader.name}</span>
                                 </div>
                             </div>
                         </div>

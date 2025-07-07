@@ -1,20 +1,15 @@
-'use client'
-
+import { handleGetTrackByIdAction } from "@/actions/actions";
 import WaveTrack from "@/components/features/track/wave.track";
-import { useSearchParams } from "next/navigation";
 
-const DetailTrackPage = (props: any) => {
-    const { params } = props;
+const DetailTrackPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+    const { slug: trackId } = await params;
 
-    const searchParams = useSearchParams()
-
-    const search = searchParams.get('audio')
-
-
-    // console.log('>>>> check search: ', search)
+    const res = await handleGetTrackByIdAction(trackId);
     return (
         <div className="content">
-            <WaveTrack />
+            <WaveTrack
+                track={res?.data ?? null}
+            />
         </div>
     )
 }

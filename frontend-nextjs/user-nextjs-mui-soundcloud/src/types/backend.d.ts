@@ -1,3 +1,6 @@
+import { Dispatch, RefObject, SetStateAction } from "react";
+import H5AudioPlayer from "react-h5-audio-player";
+
 export { };
 // https://bobbyhadz.com/blog/typescript-make-types-global#declare-global-types-in-typescript
 
@@ -22,13 +25,20 @@ declare global {
     interface ITrackTop {
         _id: string,
         title: string,
+        artist: string,
         description: string,
         category: string,
         imgUrl: string,
         trackUrl: string,
         countLike: number,
         countPlay: number,
-        uploader: string,
+        uploader: {
+            _id: string;
+            email: string;
+            name: string;
+            role: string;
+            type: string;
+        },
         isDeleted: boolean,
         createdAt: string,
         updatedAt: string
@@ -36,11 +46,20 @@ declare global {
 
     interface IModelPaginate<T> {
         meta: {
-            current: number;
+            pageNumber: number;
             pageSize: number;
-            pages: number;
-            total: number;
+            totalElement: number;
+            totalPage: number;
         },
         result: T[]
+    }
+
+    interface IShareTrack extends ITrackTop {
+        isPlaying: boolean;
+    }
+
+    interface ITrackContext {
+        currentTrack: IShareTrack
+        setCurrentTrack: Dispatch<SetStateAction<IShareTrack>>
     }
 }

@@ -7,19 +7,26 @@ import { WaveSurferOptions } from "wavesurfer.js";
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
 import { LightTooltip } from "@/components/ui/track/LightTooltip";
+import { useTrackContext } from "@/hooks/use.track.context";
 
-const WaveTrack = () => {
+interface IProps {
+    track: ITrackTop | null
+}
+
+const WaveTrack = (props: IProps) => {
+    const { track } = props;
     const searchParams = useSearchParams();
     const fileName = searchParams.get('audio');
-    // console.log('>>> check client searchParam: ', searchParams);
+    const trackId = searchParams.get('id')
 
     const pathname = usePathname();
-    // console.log('>>> check pathname: ', pathname)
 
     const containerRef = useRef<HTMLDivElement>(null);
     const timeRef = useRef<HTMLDivElement>(null);
     const durationRef = useRef<HTMLDivElement>(null);
     const hoverRef = useRef<HTMLDivElement>(null);
+
+    const { currentTrack, setCurrentTrack } = useTrackContext();
 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
@@ -67,7 +74,7 @@ const WaveTrack = () => {
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
-        const secondsRemainder = Math.round(seconds) % 60;
+        const secondsRemainder = Math.floor(seconds) % 60;
         const paddedSeconds = `0${secondsRemainder}`.slice(-2);
         return `${minutes}:${paddedSeconds}`;
     }
@@ -84,6 +91,18 @@ const WaveTrack = () => {
         containerRef.current?.addEventListener('pointermove', (e) => (hoverRef.current!.style.width = `${e.offsetX}px`))
         return () => { unsubscribeFns.forEach((fn) => fn()) }
     }, [wavesurfer])
+
+    useEffect(() => {
+        if (wavesurfer && currentTrack.isPlaying) {
+            wavesurfer.pause()
+        }
+    }, [currentTrack])
+
+    useEffect(() => {
+        if (track?._id && !currentTrack.isPlaying) {
+            setCurrentTrack({ ...track, isPlaying: false })
+        }
+    }, [track])
 
     const arrComments = [
         {
@@ -115,22 +134,33 @@ const WaveTrack = () => {
         return `${percent}%`
     }
 
-    console.log('>>>> check render.........')
     return (
         <div className="listen-hero">
-            <div className="fullListenHero mx-6 relative h-96 overflow-hidden">
+            <div className="fullListenHero relative h-96 overflow-hidden">
                 <div className="backgroundGradient h-full bg-gradient-to-br from-[#6c6156] to-[#191c1f]">
                 </div>
                 <div className="fullHero__foreground absolute left-0 top-0 w-full h-full box-border pt-8 pr-[574px] pb-8 pl-8">
                     <div className="fullHero_artwork absolute top-8 right-8 z-1">
                         <div className="image_lightOutline h-full w-full rounded-[3%] bg-linear-[135deg,#70929c,#e6846e]">
-                            <span className="h-80 w-80 rounded-[3%] bg-cover bg-[url('/audio/phep-mau.png')] block" />
+                            <span className="h-80 w-80 rounded-[3%] bg-cover block"
+                                style={{ backgroundImage: `url('${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track?.imgUrl}')` }}
+                            />
                         </div>
                     </div>
                     <div className="fullHero_title">
                         <div className="soundTitle break-all">
                             <div className="soundTitle__titleContainer flex items-start">
-                                <div className="soundTitle_playButton self-start mr-4" onClick={() => onPlayPause()}>
+                                <div className="soundTitle_playButton self-start mr-4"
+                                    onClick={() => {
+                                        onPlayPause();
+                                        if (track && wavesurfer) {
+                                            setCurrentTrack(prev => ({
+                                                ...prev,
+                                                isPlaying: false
+                                            }))
+                                        }
+                                    }}
+                                >
                                     {isPlaying ?
                                         <PauseCircleFilledIcon
                                             sx={{
@@ -175,13 +205,13 @@ const WaveTrack = () => {
 
                                 </div>
                                 <div className="soundTitle__usernameTitleContainer">
-                                    <div className="text-[28px] font-medium bg-[#121212] text-[#fff] px-2 py-1 line-clamp-2">
+                                    <div className="text-[28px] font-medium bg-[#121212] text-[#fff] px-2 py-1 line-clamp-2 break-words break-keep">
                                         <span>
-                                            Karik ft. GDucky - Bạn Đời (Lo-fi ver by Hawys)
+                                            {track?.title} - {track?.artist}
                                         </span>
                                     </div>
                                     <div className="text-[#999] bg-[#121212] inline py-1 px-2">
-                                        Hawys.
+                                        {track?.uploader?.name}
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +225,7 @@ const WaveTrack = () => {
                         </div>
                         <div className="fullHero_tag text-sm box-border inline-block h-5.5 rounded-[100px] bg-[#f3f3f3] py-0.5 px-2 before:content-['#'] before:block before:float-left before:mr-[3px]">
                             <span className="overflow-hidden whitespace-nowrap text-ellipsis break-normal max-w-[120px] inline-block">
-                                R&B & Soul R&B & Soul R&B & Soul R&B & Soul
+                                {track?.category}
                             </span>
                         </div>
                     </div>

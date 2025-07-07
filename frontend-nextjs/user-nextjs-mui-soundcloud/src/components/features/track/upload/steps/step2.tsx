@@ -125,7 +125,7 @@ const Step2 = (props: IProps) => {
 
     return (
         <>
-            <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '16px' }} >
+            <Box component={'div'} sx={{ paddingBottom: '20px' }}>
                 <Stack
                     direction={{ xs: 'column', md: 'row' }}
                     sx={{ alignItems: { md: 'center' }, justifyContent: 'center', marginBottom: { lg: '24px' } }}

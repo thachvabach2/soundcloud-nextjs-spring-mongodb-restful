@@ -4,6 +4,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import theme from '@/theme';
 import NextAuthWrapper from "@/lib/auth/next.auth.wrapper";
 import { ToastProvider } from "@/hooks/toast";
+import { TrackContextProvider } from "@/context/track.context.provider";
 
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
@@ -15,7 +16,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                     <ThemeProvider theme={theme} defaultMode="light">
                         <NextAuthWrapper>
                             <ToastProvider>
-                                {children}
+                                <TrackContextProvider>
+                                    {children}
+                                </TrackContextProvider>
                             </ToastProvider>
                         </NextAuthWrapper>
                     </ThemeProvider>
