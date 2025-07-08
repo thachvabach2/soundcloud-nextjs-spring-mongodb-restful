@@ -60,7 +60,7 @@ public class SecurityUtils {
         JwtClaimsSet claims = JwtClaimsSet.builder()
             .issuedAt(now)
             .expiresAt(validity)
-            .subject(authentication.getName())
+            .subject(userInsideToken.get_id())
             .claim("user", userInsideToken)
             .claim("auth", authorities)
             .build();
@@ -115,7 +115,7 @@ public class SecurityUtils {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
-                .subject(username)
+                .subject(userInsideToken.get_id())
                 .claim("user", userInsideToken)
                 .build();
 
