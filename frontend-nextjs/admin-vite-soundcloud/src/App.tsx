@@ -4,11 +4,12 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom'
 import UsersPage from './screens/users.page'
-import { CustomerServiceOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { CommentOutlined, CustomerServiceOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { Link } from "react-router";
 import TracksPage from './screens/tracks.page'
+import CommentsPage from './screens/comments.page'
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -24,9 +25,14 @@ const items: MenuItem[] = [
         icon: <UserOutlined />,
     },
     {
-        label: <Link to="/tracks">Manage Trackss</Link>,
+        label: <Link to="/tracks">Manage Tracks</Link>,
         key: 'tracks',
         icon: <CustomerServiceOutlined />,
+    },
+    {
+        label: <Link to="/comments">Manage Comments</Link>,
+        key: 'comments',
+        icon: <CommentOutlined />,
     },
 ];
 
@@ -121,6 +127,7 @@ function App() {
                         <Route index element={<AppVite />} />
                         <Route path="users" element={<UsersPage />} />
                         <Route path="/tracks" element={<TracksPage />} />
+                        <Route path="/comments" element={<CommentsPage />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
