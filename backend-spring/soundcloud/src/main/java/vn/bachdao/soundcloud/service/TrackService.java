@@ -28,6 +28,7 @@ import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.track.ResGetTrackDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
 import vn.bachdao.soundcloud.util.mapper.TrackMapper;
+import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 
 @Service
 public class TrackService {
@@ -171,5 +172,14 @@ public class TrackService {
         res.setResult(tracks);
         res.setMeta(meta);
         return res;
+    }
+
+    public void validateTrackExists(String trackId) throws IdInvalidException {
+        Query query = new Query(Criteria.where("_id").is(trackId).and("isDeleted").is(false));
+        boolean trackExists = mongoTemplate.exists(query, Track.class);
+
+        if (!trackExists) {
+            throw new IdInvalidException("Track với id = " + trackId + " không tồn tại");
+        }
     }
 }

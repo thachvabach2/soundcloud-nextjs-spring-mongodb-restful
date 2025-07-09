@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import jakarta.validation.ConstraintViolationException;
 import vn.bachdao.soundcloud.domain.dto.response.RestResponse;
 
 @RestControllerAdvice
@@ -25,6 +26,8 @@ public class GlobalException {
             UsernameAlreadyUsedException.class,
             InvalidHeaderFormatException.class,
             MissingRequestHeaderException.class,
+            UserNotAuthenticatedException.class,
+            ConstraintViolationException.class,
     })
     public ResponseEntity<RestResponse<Object>> handleException(Exception ex) {
         RestResponse<Object> rs = new RestResponse<>();

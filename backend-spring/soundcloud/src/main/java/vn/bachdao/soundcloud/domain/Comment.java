@@ -1,0 +1,29 @@
+package vn.bachdao.soundcloud.domain;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Document(collection = "comments")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class Comment extends AbstractAuditingEntity {
+    @MongoId(value = FieldType.OBJECT_ID)
+    @JsonProperty(value = "_id", index = 0)
+    private String id;
+
+    private String content;
+    private Integer moment;
+    private String user;
+    private String track;
+    private Boolean isDeleted;
+}

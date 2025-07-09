@@ -1,10 +1,11 @@
-package vn.bachdao.soundcloud.util.annotation;
+package vn.bachdao.soundcloud.util.annotation.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import vn.bachdao.soundcloud.util.annotation.EnumValidator;
 
 public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, String> {
 

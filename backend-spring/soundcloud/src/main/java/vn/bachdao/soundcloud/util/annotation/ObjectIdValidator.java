@@ -8,24 +8,16 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import jakarta.validation.ReportAsSingleViolation;
-import jakarta.validation.constraints.NotNull;
-import vn.bachdao.soundcloud.util.annotation.impl.EnumValidatorImpl;
+import vn.bachdao.soundcloud.util.annotation.impl.ObjectIdValidatorImpl;
 
 @Documented
-@Constraint(validatedBy = EnumValidatorImpl.class)
+@Constraint(validatedBy = { ObjectIdValidatorImpl.class })
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-@NotNull(message = "Value cannot be null")
-@ReportAsSingleViolation
-public @interface EnumValidator {
-
-    Class<? extends Enum<?>> enumClazz();
-
-    String message() default "Value is not valid";
+public @interface ObjectIdValidator {
+    String message() default "{vn.bachdao.soundcloud.util.annotation.ValidObjectId.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 }
