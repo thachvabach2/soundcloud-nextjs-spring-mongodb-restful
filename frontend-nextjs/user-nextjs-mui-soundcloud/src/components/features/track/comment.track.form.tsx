@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { fetchDefaultImages } from "@/lib/utils/api";
 import { createACommentOnATrackAction } from "@/actions/actions.comment";
 import WaveSurfer from "wavesurfer.js";
+import LikeTrack from "./like.track";
 
 interface IProps {
     commentInputRef: RefObject<HTMLInputElement | null>;
@@ -137,70 +138,9 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
                     justifyContent={'space-between'}
                     alignItems={'center'}
                 >
-                    <Stack
-                        className="listenEngagement__actions"
-                        direction={'row'}
-                        spacing={3}
-                    >
-                        <Box component={'div'}
-                            sx={{
-                                py: '6px',
-                                px: '12px',
-                                backgroundColor: '#f3f3f3',
-                                cursor: 'pointer',
-
-                                '&:hover svg': {
-                                    opacity: 0.5
-                                }
-                            }}
-                        >
-                            <FavoriteIcon sx={{ fontSize: '20px' }} />
-                        </Box>
-                        <Box component={'div'}
-                            sx={{
-                                py: '6px',
-                                px: '12px',
-                                backgroundColor: '#f3f3f3',
-                                cursor: 'pointer',
-
-                                '&:hover svg': {
-                                    opacity: 0.5
-                                }
-                            }}
-                        >
-                            <PlaylistAddIcon sx={{ fontSize: '20px' }} />
-                        </Box>
-                    </Stack>
-                    <Stack
-                        className="listenEngagement__stats"
-                        direction={'row'}
-                        alignItems={'center'}
-                        spacing={3}
-                    >
-                        <Box
-                            component={'span'}
-                            sx={{ color: '#666', fontSize: '14px', display: 'flex', alignItems: 'center' }}
-                        >
-                            <Box
-                                component={'div'}
-                                sx={{ display: 'inline-flex', marginRight: '5px', alignItems: 'center' }}
-                            >
-                                <PlayArrowIcon sx={{ fontSize: '20px' }} />
-                            </Box>
-                            <Box component={'span'}>143k</Box>
-                        </Box>
-                        <Box
-                            component={'span'}
-                            style={{ color: '#666', fontSize: '14px', display: 'flex', alignItems: 'center' }}
-                        >
-                            <Box
-                                sx={{ display: 'inline-flex', marginRight: '5px', alignItems: 'center' }}
-                            >
-                                <FavoriteIcon sx={{ fontSize: '15px' }} />
-                            </Box>
-                            <Box component={'span'}>2,555</Box>
-                        </Box>
-                    </Stack>
+                    <LikeTrack
+                        track={track}
+                    />
                 </Stack>
             </Stack>
         </Box>
