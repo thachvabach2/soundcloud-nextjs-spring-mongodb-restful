@@ -69,12 +69,14 @@ const TrackProfile = (props: IProps) => {
                         </IconButton>
                     </Box>
                 </Box>
-                <CardMedia
-                    component="img"
-                    sx={{ width: 155, height: 155, objectFit: 'fill' }}
-                    image={`http://localhost:8080/images/${track.imgUrl}`}
-                    alt="Live from space album cover"
-                />
+                <Link href={`/track/${track._id}?audio=${track.trackUrl}&id=${track._id}`} onClick={() => setCurrentTrack({ ...track, isPlaying: false })}>
+                    <CardMedia
+                        component="img"
+                        sx={{ width: 155, height: 155, objectFit: 'fill' }}
+                        image={`http://localhost:8080/images/${track.imgUrl}`}
+                        alt="Live from space album cover"
+                    />
+                </Link>
             </Card>
 
         </>

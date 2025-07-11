@@ -75,7 +75,6 @@ const Step1 = (props: IProp) => {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone(dropzoneConfig);
 
-    // console.log('>>> render step1')
     return (
         <>
             <Box component={'div'}>

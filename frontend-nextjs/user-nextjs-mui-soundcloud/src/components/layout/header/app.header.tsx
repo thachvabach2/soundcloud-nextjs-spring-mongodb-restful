@@ -14,6 +14,7 @@ import { Avatar, Tab, Tabs, Tooltip, useColorScheme } from '@mui/material';
 import { signOut, useSession } from "next-auth/react"
 import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import Link from 'next/link';
+import { fetchDefaultImages } from '@/lib/utils/api';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -60,7 +61,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const AppHeader = () => {
     const { data: session } = useSession()
-    // console.log('>>> check session: ', session);
 
     //
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -210,7 +210,10 @@ const AppHeader = () => {
                                     <Box sx={{ flexGrow: 0 }}>
                                         <Tooltip title="Open settings">
                                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                                <Avatar>BD</Avatar>
+                                                <Avatar
+                                                    alt='avatar'
+                                                    src={fetchDefaultImages(session.user.type)}
+                                                />
                                             </IconButton>
                                         </Tooltip>
                                         <Menu

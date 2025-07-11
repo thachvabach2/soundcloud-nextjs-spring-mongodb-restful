@@ -4,7 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { sendRequest } from "@/lib/utils/api"
 import { getServerSession } from "next-auth";
 
-export const handleGetTrackByIdAction = async (id: string) => {
+export const getTrackByIdAction = async (id: string) => {
     const session = await getServerSession(authOptions);
 
     const res = await sendRequest<IBackendRes<ITrackTop>>({

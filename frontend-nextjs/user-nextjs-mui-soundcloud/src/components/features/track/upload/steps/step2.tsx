@@ -53,7 +53,6 @@ const Step2 = (props: IProps) => {
                 ...info,
                 trackUrl: trackUpload.uploadedTrackName
             })
-            // console.log('render useEffect step2');
         }
     }, [trackUpload])
 

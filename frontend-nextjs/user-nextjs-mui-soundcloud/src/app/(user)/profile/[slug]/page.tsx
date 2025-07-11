@@ -9,13 +9,16 @@ const ProfilePage = async ({ params }: { params: Promise<{ slug: string }> }) =>
     const session = await getServerSession(authOptions);
 
     const tracks = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: "http://localhost:8080/api/v1/tracks/users?page=1&size=10",
+        url: "http://localhost:8080/api/v1/tracks/users",
         method: "POST",
         body: { id: slug },
+        queryParams: {
+            page: 1,
+            size: 30
+        }
     })
     const data = tracks?.data?.result ?? []
 
-    // console.log('>>> check res: ', tracks)
     return (
         <>
             <Box component={'div'} sx={{ paddingBottom: '20px' }}>

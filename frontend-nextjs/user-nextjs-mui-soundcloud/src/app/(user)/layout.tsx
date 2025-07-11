@@ -11,6 +11,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
             <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '24px', paddingBottom: '60px' }}>
                 {children}
             </Box>
+            <div style={{ marginBottom: '50px' }}></div>
             <AppFooter />
         </>
     );
