@@ -20,7 +20,7 @@ interface IProps {
     wavesurfer: WaveSurfer | null;
 }
 
-const WaveTrackCommentForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
+const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
     const { commentInputRef, track, momentSecondComment, setMomentSecondComment, wavesurfer } = props;
     const { data: session } = useSession();
 
@@ -207,4 +207,4 @@ const WaveTrackCommentForm = forwardRef<CommentFormRef, IProps>((props, ref) => 
     )
 }
 )
-export default WaveTrackCommentForm;
+export default CommentTrackForm;

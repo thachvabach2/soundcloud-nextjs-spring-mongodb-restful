@@ -6,7 +6,7 @@ interface IProps {
     track: ITrackTop | null;
 }
 
-const WaveTrackArtistInfo = (props: IProps) => {
+const CommentTrackArtistInfo = (props: IProps) => {
     const { track } = props;
 
     console.log('>>> check track: ', track)
@@ -55,4 +55,4 @@ const WaveTrackArtistInfo = (props: IProps) => {
     )
 }
 
-export default WaveTrackArtistInfo;
+export default CommentTrackArtistInfo;

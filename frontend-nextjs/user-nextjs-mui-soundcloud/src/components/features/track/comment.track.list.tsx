@@ -10,7 +10,7 @@ interface IProps {
     listComment: IModelPaginate<ITrackComment> | null;
 }
 
-const WaveTrackCommentList = (props: IProps) => {
+const CommentTrackList = (props: IProps) => {
     const { wavesurfer, listComment } = props;
 
     const formatTime = (seconds: number) => {
@@ -135,4 +135,4 @@ const WaveTrackCommentList = (props: IProps) => {
     )
 }
 
-export default WaveTrackCommentList;
+export default CommentTrackList;

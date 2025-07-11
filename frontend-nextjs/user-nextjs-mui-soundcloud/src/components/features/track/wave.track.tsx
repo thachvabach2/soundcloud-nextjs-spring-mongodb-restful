@@ -9,10 +9,9 @@ import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
 import { LightTooltip } from "@/components/ui/track/LightTooltip";
 import { useTrackContext } from "@/hooks/use.track.context";
 import { Box, Grid } from "@mui/material";
-
-import WaveTrackArtistInfo from "./wave.track.artist.info";
-import WaveTrackCommentList from "./wave.track.comment.list";
-import WaveTrackCommentForm from "./wave.track.comment.form";
+import CommentTrackArtistInfo from "./comment.track.artist.info";
+import CommentTrackList from "./comment.track.list";
+import CommentTrackForm from "./comment.track.form";
 import { useSession } from "next-auth/react";
 import { fetchDefaultImages } from "@/lib/utils/api";
 
@@ -337,7 +336,7 @@ const WaveTrack = (props: IProps) => {
                         pb: '16px'
                     }}
                 >
-                    <WaveTrackCommentForm
+                    <CommentTrackForm
                         ref={childRef}
                         commentInputRef={commentInputRef}
                         track={track}
@@ -348,12 +347,12 @@ const WaveTrack = (props: IProps) => {
                     <Box className="list-comment artistInfo">
                         <Grid container>
                             <Grid size={3}>
-                                <WaveTrackArtistInfo
+                                <CommentTrackArtistInfo
                                     track={track}
                                 />
                             </Grid>
                             <Grid size={9}>
-                                <WaveTrackCommentList
+                                <CommentTrackList
                                     wavesurfer={wavesurfer}
                                     listComment={listComment}
                                 />
