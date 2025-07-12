@@ -14,6 +14,7 @@ import CommentTrackList from "./comment.track.list";
 import CommentTrackForm from "./comment.track.form";
 import { useSession } from "next-auth/react";
 import { fetchDefaultImages } from "@/lib/utils/api";
+import { increaseCountPlay } from "@/actions/actions.track";
 
 interface IProps {
     track: ITrackTop | null;
@@ -48,6 +49,7 @@ const WaveTrack = (props: IProps) => {
     const commentInputRef = useRef<HTMLInputElement | null>(null);
     const commentPlaceholderRef = useRef<HTMLDivElement | null>(null);
     const childRef = useRef<CommentFormRef>(null);
+    const firstPlayRef = useRef(true);
 
     const optionsMemo = useMemo((): Omit<WaveSurferOptions, 'container'> => {
         let gradient, progressGradient;
@@ -147,6 +149,13 @@ const WaveTrack = (props: IProps) => {
         childRef.current?.setFocused();
     }
 
+    const handleIncreasePlay = () => {
+        if (firstPlayRef.current === true) {
+            track?._id && increaseCountPlay(track._id);
+            firstPlayRef.current = false;
+        }
+    }
+
     return (
         <>
             <div className="listen-hero">
@@ -167,6 +176,7 @@ const WaveTrack = (props: IProps) => {
                                     <div className="soundTitle_playButton self-start mr-4"
                                         onClick={() => {
                                             onPlayPause();
+                                            handleIncreasePlay();
                                             if (track && wavesurfer) {
                                                 setCurrentTrack(prev => ({
                                                     ...prev,
