@@ -57,6 +57,7 @@ declare global {
     interface IShareTrack extends ITrackTop {
         isPlaying: boolean;
     }
+
     interface ITrackContext {
         currentTrack: IShareTrack
         setCurrentTrack: Dispatch<SetStateAction<IShareTrack>>
@@ -84,5 +85,17 @@ declare global {
         createdBy: string;
         updatedAt: string;
         updatedBy: string;
+    }
+
+    export interface ITrackLike {
+        _id: string;
+        title: string;
+        artist: string;
+        description: string;
+        category: string;
+        imgUrl: string;
+        trackUrl: string;
+        countLike: number;
+        countPlay: number;
     }
 }

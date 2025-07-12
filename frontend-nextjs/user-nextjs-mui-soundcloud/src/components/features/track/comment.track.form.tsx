@@ -19,10 +19,11 @@ interface IProps {
     momentSecondComment: number;
     setMomentSecondComment: Dispatch<SetStateAction<number>>;
     wavesurfer: WaveSurfer | null;
+    listTrackLikedByAUser: IModelPaginate<ITrackLike> | null;
 }
 
 const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
-    const { commentInputRef, track, momentSecondComment, setMomentSecondComment, wavesurfer } = props;
+    const { commentInputRef, track, momentSecondComment, setMomentSecondComment, wavesurfer, listTrackLikedByAUser } = props;
     const { data: session } = useSession();
 
     const wasAlreadyFocused = useRef(false);
@@ -79,7 +80,7 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
                         <IconButton sx={{ p: 0 }}>
                             <Avatar
                                 alt="avatar"
-                                src={session ? fetchDefaultImages(session.user.type) : 'USER'}
+                                src={fetchDefaultImages(session?.user?.type ?? "USER")}
                             />
                         </IconButton>
                     </Box>
@@ -140,6 +141,7 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
                 >
                     <LikeTrack
                         track={track}
+                        listTrackLikedByAUser={listTrackLikedByAUser}
                     />
                 </Stack>
             </Stack>

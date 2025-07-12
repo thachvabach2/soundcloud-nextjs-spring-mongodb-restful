@@ -16,8 +16,9 @@ import { useSession } from "next-auth/react";
 import { fetchDefaultImages } from "@/lib/utils/api";
 
 interface IProps {
-    track: ITrackTop | null
-    listComment: IModelPaginate<ITrackComment> | null
+    track: ITrackTop | null;
+    listComment: IModelPaginate<ITrackComment> | null;
+    listTrackLikedByAUser: IModelPaginate<ITrackLike> | null;
 }
 
 export interface CommentFormRef {
@@ -25,7 +26,7 @@ export interface CommentFormRef {
 }
 
 const WaveTrack = (props: IProps) => {
-    const { track, listComment } = props;
+    const { track, listComment, listTrackLikedByAUser } = props;
     const { data: session } = useSession();
     const searchParams = useSearchParams();
     const fileName = searchParams.get('audio');
@@ -343,6 +344,7 @@ const WaveTrack = (props: IProps) => {
                         momentSecondComment={momentSecondComment}
                         setMomentSecondComment={setMomentSecondComment}
                         wavesurfer={wavesurfer}
+                        listTrackLikedByAUser={listTrackLikedByAUser}
                     />
                     <Box className="list-comment artistInfo">
                         <Grid container>
