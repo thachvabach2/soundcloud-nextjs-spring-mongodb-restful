@@ -1,7 +1,18 @@
 package vn.bachdao.soundcloud.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.bson.Document;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.ConvertOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -10,7 +21,9 @@ import org.springframework.stereotype.Service;
 import vn.bachdao.soundcloud.domain.Like;
 import vn.bachdao.soundcloud.domain.Track;
 import vn.bachdao.soundcloud.domain.dto.request.like.ReqLikeDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.auth.ResLoginDTO;
+import vn.bachdao.soundcloud.domain.dto.response.like.ResGetTracksLikedByAUser;
 import vn.bachdao.soundcloud.domain.dto.response.like.ResLikeDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
 import vn.bachdao.soundcloud.util.mapper.LikeMapper;
@@ -67,7 +80,6 @@ public class LikeService {
         if (existingLike == null && reqQuantity == 1) {
             // Trường hợp chưa có Like và muốn Like → tạo mới
             Like newLike = new Like();
-            newLike.setQuantity(reqQuantity);
             newLike.setUser(userId);
             newLike.setTrack(trackId);
 
@@ -96,7 +108,6 @@ public class LikeService {
             // Tạo response
             ResLikeDTO resLike = new ResLikeDTO(
                     resultLike != null ? resultLike.getId() : null,
-                    resultLike != null ? resultLike.getQuantity() : 0,
                     currentUser,
                     this.likeMapper.toResTrackInLike(updatedTrack));
             return resLike;
@@ -105,9 +116,83 @@ public class LikeService {
         // Fallback (không nên đến đây)
         ResLikeDTO resLike = new ResLikeDTO(
                 null,
-                0,
                 currentUser,
                 this.likeMapper.toResTrackInLike(track));
         return resLike;
+    }
+
+    public ResPaginationDTO getTracksLikedByAUser(Pageable pageable)
+            throws UserNotAuthenticatedException {
+
+        ResLoginDTO.UserInsideToken currentUser = SecurityUtils.getClaimUserFromTokenCurrentUserLogin1()
+                .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("user").is(currentUser.get_id())),
+
+                Aggregation.addFields()
+                        .addField("trackObjectId").withValue(ConvertOperators.ToObjectId.toObjectId("$track"))
+                        .build(),
+
+                Aggregation.lookup("tracks", "trackObjectId", "_id", "track"),
+
+                Aggregation.unwind("track", true),
+
+                Aggregation.project()
+                        .and("track._id").as("_id")
+                        .and("track.title").as("title")
+                        .and("track.artist").as("artist")
+                        .and("track.description").as("description")
+                        .and("track.category").as("category")
+                        .and("track.imgUrl").as("imgUrl")
+                        .and("track.trackUrl").as("trackUrl")
+                        .and("track.countLike").as("countLike")
+                        .and("track.countPlay").as("countPlay"),
+
+                Aggregation.facet(
+                        Aggregation.sort(pageable.getSort()),
+                        Aggregation.skip(pageable.getOffset()),
+                        Aggregation.limit(pageable.getPageSize())).as("data")
+                        .and(Aggregation.count().as("count")).as("total")
+
+        );
+
+        AggregationResults<Document> results = mongoTemplate.aggregate(
+                aggregation, Like.class, Document.class);
+
+        Document result = results.getUniqueMappedResult();
+
+        // Extract data và total count
+        List<ResGetTracksLikedByAUser> resTracks = new ArrayList<>();
+        long totalElements = 0;
+
+        if (result != null) {
+            List<Document> dataList = result.getList("data", Document.class);
+            if (dataList != null) {
+                resTracks = dataList.stream()
+                        .map(doc -> mongoTemplate.getConverter().read(ResGetTracksLikedByAUser.class, doc))
+                        .collect(Collectors.toList());
+            }
+
+            List<Document> totalList = result.getList("total", Document.class);
+            if (totalList != null && !totalList.isEmpty()) {
+                totalElements = totalList.get(0).getInteger("count", 0);
+            }
+        }
+
+        Page<ResGetTracksLikedByAUser> trackPage = new PageImpl<>(resTracks, pageable, totalElements);
+        ResPaginationDTO res = new ResPaginationDTO();
+        ResPaginationDTO.Meta meta = new ResPaginationDTO.Meta();
+        meta.setPageNumber(trackPage.getNumber() + 1);
+        meta.setPageSize(trackPage.getSize());
+        meta.setTotalPage(trackPage.getTotalPages());
+        meta.setTotalElement(trackPage.getTotalElements());
+
+        List<ResGetTracksLikedByAUser> resCommentDTOs = trackPage.getContent();
+
+        res.setResult(resCommentDTOs);
+        res.setMeta(meta);
+
+        return res;
     }
 }

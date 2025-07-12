@@ -16,7 +16,6 @@ public class ResLikeDTO {
     @JsonProperty(value = "_id", index = 0)
     private String id;
 
-    private Integer quantity;
     private ResLoginDTO.UserInsideToken user;
     private ResTrackInLike track;
 

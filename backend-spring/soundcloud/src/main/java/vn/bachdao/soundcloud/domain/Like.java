@@ -21,7 +21,6 @@ public class Like extends AbstractAuditingEntity {
     @JsonProperty(value = "_id", index = 0)
     private String id;
 
-    private Integer quantity;
     private String user;
     private String track;
 }
