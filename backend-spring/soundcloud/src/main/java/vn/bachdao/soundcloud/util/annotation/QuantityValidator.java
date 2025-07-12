@@ -8,14 +8,14 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import vn.bachdao.soundcloud.util.annotation.impl.ObjectIdValidatorImpl;
+import vn.bachdao.soundcloud.util.annotation.impl.QuantityValidatorImpl;
 
 @Documented
-@Constraint(validatedBy = { ObjectIdValidatorImpl.class })
+@Constraint(validatedBy = { QuantityValidatorImpl.class })
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ObjectIdValidator {
-    String message() default "{vn.bachdao.soundcloud.util.annotation.ObjectIdValidator.message}";
+public @interface QuantityValidator {
+    String message() default "{vn.bachdao.soundcloud.util.annotation.QuantityValidator.message}";
 
     Class<?>[] groups() default {};
 

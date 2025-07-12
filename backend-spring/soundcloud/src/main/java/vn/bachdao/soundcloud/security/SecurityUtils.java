@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import vn.bachdao.soundcloud.domain.dto.response.auth.ResLoginDTO;
 import vn.bachdao.soundcloud.domain.dto.response.auth.ResSocialLoginDTO;
 
@@ -28,6 +30,7 @@ public class SecurityUtils {
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
     private final JwtEncoder jwtEncoder;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${soundcloud.security.authentication.jwt.base64-secret}")
     private String jwtKey;
@@ -179,6 +182,23 @@ public class SecurityUtils {
             return null;
         } else if (authentication.getPrincipal() instanceof Jwt jwt) {
             return jwt.getClaimAsMap("user");
+        }
+        return null;
+    }
+
+     public static Optional<ResLoginDTO.UserInsideToken> getClaimUserFromTokenCurrentUserLogin1() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return Optional.ofNullable(extractClaimUser1(securityContext.getAuthentication()));
+    }
+
+    private static ResLoginDTO.UserInsideToken extractClaimUser1(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        } else if (authentication.getPrincipal() instanceof Jwt jwt) {
+            Object userClaim = jwt.getClaim("user");
+            if (userClaim != null) {
+                return objectMapper.convertValue(userClaim, ResLoginDTO.UserInsideToken.class);
+            }
         }
         return null;
     }

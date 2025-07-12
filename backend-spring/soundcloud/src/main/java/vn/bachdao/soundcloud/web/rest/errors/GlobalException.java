@@ -28,6 +28,7 @@ public class GlobalException {
             MissingRequestHeaderException.class,
             UserNotAuthenticatedException.class,
             ConstraintViolationException.class,
+            LikeIllegalQuantityArgumentException.class,
     })
     public ResponseEntity<RestResponse<Object>> handleException(Exception ex) {
         RestResponse<Object> rs = new RestResponse<>();
