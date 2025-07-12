@@ -21,8 +21,8 @@ import com.mongodb.client.result.UpdateResult;
 import vn.bachdao.soundcloud.config.Constants;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResUpdateResultDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResGetUserDTO;
-import vn.bachdao.soundcloud.domain.dto.response.user.ResUpdateUserDTO;
 import vn.bachdao.soundcloud.repository.UserRepository;
 import vn.bachdao.soundcloud.util.mapper.UserMapper;
 import vn.bachdao.soundcloud.web.rest.errors.EmailAlreadyUsedException;
@@ -80,7 +80,7 @@ public class UserService {
         return res;
     }
 
-    public ResUpdateUserDTO updateAUser(User reqUser) throws EmailAlreadyUsedException {
+    public ResUpdateResultDTO updateAUser(User reqUser) throws EmailAlreadyUsedException {
 
         // Validate email
         validateEmailUnique(reqUser.getId(), reqUser.getEmail());
@@ -102,7 +102,7 @@ public class UserService {
         // update DB
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, User.class);
 
-        ResUpdateUserDTO res = new ResUpdateUserDTO();
+        ResUpdateResultDTO res = new ResUpdateResultDTO();
         res.setAcknowledged(updateResult.wasAcknowledged());
         res.setModifiedCount(updateResult.getModifiedCount());
         res.setUpsertId(updateResult.getUpsertedId());

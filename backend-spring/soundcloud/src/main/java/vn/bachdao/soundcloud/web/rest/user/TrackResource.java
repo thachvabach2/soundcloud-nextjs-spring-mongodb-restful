@@ -1,11 +1,13 @@
 package vn.bachdao.soundcloud.web.rest.user;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +19,16 @@ import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqGetTopTrackByCategory;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqIdTrack;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResUpdateResultDTO;
 import vn.bachdao.soundcloud.service.TrackService;
 import vn.bachdao.soundcloud.service.UserService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
+import vn.bachdao.soundcloud.util.annotation.ObjectIdValidator;
 import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
+@Validated
 public class TrackResource {
 
     private final TrackService trackService;
@@ -55,5 +60,15 @@ public class TrackResource {
         }
 
         return ResponseEntity.ok(this.trackService.getTrackCreatedByAUser(req.getId(), pageable));
+    }
+
+    @PostMapping("/tracks/increase-view")
+    @ApiMessage("Increase count View (play)")
+    public ResUpdateResultDTO increaseCountView(
+            @RequestBody Map<String, @ObjectIdValidator(message = "TrackId không phải dạng ObjectId") String> req) {
+
+        String trackId = req.get("trackId");
+
+        return this.trackService.increaseCountView(trackId);
     }
 }

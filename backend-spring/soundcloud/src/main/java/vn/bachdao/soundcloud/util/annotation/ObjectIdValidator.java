@@ -12,7 +12,7 @@ import vn.bachdao.soundcloud.util.annotation.impl.ObjectIdValidatorImpl;
 
 @Documented
 @Constraint(validatedBy = { ObjectIdValidatorImpl.class })
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ObjectIdValidator {
     String message() default "{vn.bachdao.soundcloud.util.annotation.ObjectIdValidator.message}";

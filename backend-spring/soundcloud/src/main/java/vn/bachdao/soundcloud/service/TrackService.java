@@ -25,6 +25,7 @@ import vn.bachdao.soundcloud.domain.dto.request.track.ReqCreateTrackDTO;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqGetTopTrackByCategory;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqUpdateTrackDTO;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResUpdateResultDTO;
 import vn.bachdao.soundcloud.domain.dto.response.track.ResGetTrackDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
 import vn.bachdao.soundcloud.util.mapper.TrackMapper;
@@ -181,5 +182,24 @@ public class TrackService {
         if (!trackExists) {
             throw new IdInvalidException("Track với id = " + trackId + " không tồn tại");
         }
+    }
+
+    public ResUpdateResultDTO increaseCountView(String trackId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(trackId));
+
+        Update update = new Update();
+        update.inc("countPlay", 1);
+
+        UpdateResult updateResult = this.mongoTemplate.updateFirst(query, update, Track.class);
+
+        ResUpdateResultDTO res = new ResUpdateResultDTO();
+        res.setAcknowledged(updateResult.wasAcknowledged());
+        res.setModifiedCount(updateResult.getModifiedCount());
+        res.setUpsertId(updateResult.getUpsertedId());
+        res.setUpsertCount(updateResult.getUpsertedId() != null ? 1 : 0);
+        res.setMatchedCount(updateResult.getMatchedCount());
+
+        return res;
     }
 }

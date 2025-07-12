@@ -22,9 +22,9 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.ResUpdateResultDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResCreateUserDTO;
 import vn.bachdao.soundcloud.domain.dto.response.user.ResGetUserDTO;
-import vn.bachdao.soundcloud.domain.dto.response.user.ResUpdateUserDTO;
 import vn.bachdao.soundcloud.service.UserService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
 import vn.bachdao.soundcloud.util.mapper.UserMapper;
@@ -87,7 +87,7 @@ public class UserAdminResource {
 
     @PatchMapping("/users")
     @ApiMessage("Update a user")
-    public ResponseEntity<ResUpdateUserDTO> updateAUser(@RequestBody User reqUser)
+    public ResponseEntity<ResUpdateResultDTO> updateAUser(@RequestBody User reqUser)
             throws IdInvalidException, EmailAlreadyUsedException {
         Optional<User> currentUserOptional = this.userService.getUserById(reqUser.getId());
 
@@ -96,7 +96,7 @@ public class UserAdminResource {
             throw new IdInvalidException("User với Id = " + reqUser.getId() + " không tồn tại");
         }
 
-        ResUpdateUserDTO updateUserDTO = this.userService.updateAUser(reqUser);
+        ResUpdateResultDTO updateUserDTO = this.userService.updateAUser(reqUser);
         return ResponseEntity.ok().body(updateUserDTO);
     }
 

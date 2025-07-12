@@ -1,4 +1,4 @@
-package vn.bachdao.soundcloud.domain.dto.response.user;
+package vn.bachdao.soundcloud.domain.dto.response;
 
 import org.bson.BsonValue;
 
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResUpdateUserDTO {
+public class ResUpdateResultDTO {
     private boolean acknowledged;
     private long modifiedCount;
     private BsonValue upsertId;
