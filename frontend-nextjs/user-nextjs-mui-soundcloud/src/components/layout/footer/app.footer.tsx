@@ -2,6 +2,7 @@
 import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { useTrackContext } from '@/hooks/use.track.context';
+import { convertSlugUrl } from '@/lib/utils/api';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Link from 'next/link';
@@ -126,7 +127,7 @@ const AppFooter = () => {
                                             }
                                         }}
                                     >
-                                        <Link href={`/track/${currentTrack?._id}?audio=${currentTrack.trackUrl}&id=${currentTrack._id}`}>
+                                        <Link href={`/track/${convertSlugUrl(currentTrack.title)}-${currentTrack._id}.html?audio=${currentTrack.trackUrl}`}>
                                             <span>
                                                 {currentTrack?.title} - {currentTrack?.artist}
                                             </span>

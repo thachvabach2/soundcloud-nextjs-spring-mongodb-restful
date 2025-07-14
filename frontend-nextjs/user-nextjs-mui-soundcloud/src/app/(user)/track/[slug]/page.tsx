@@ -2,8 +2,8 @@ import { getCommentsByATrackAction } from "@/actions/actions.comment";
 import { getTracksLikedByAUserAction } from "@/actions/actions.like";
 import { getTrackByIdAction } from "@/actions/actions.track";
 import WaveTrack from "@/components/features/track/wave.track";
-
 import type { Metadata, ResolvingMetadata } from 'next'
+import { notFound } from "next/navigation";
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -31,11 +31,30 @@ export async function generateMetadata(
 }
 
 const DetailTrackPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
-    const { slug: trackId } = await params;
+    const { slug } = await params;
+
+    const extractTrackId = (slug: string): string | null => {
+        const withoutExtension = slug.replace('.html', '');
+
+        const parts = withoutExtension.split('-');
+        const trackId = parts[parts.length - 1];
+
+        if (trackId && /^[a-f\d]{24}$/i.test(trackId)) {
+            return trackId;
+        }
+
+        return null;
+    };
+
+    const trackId = extractTrackId(slug);
+    if (!trackId) {
+        notFound();
+    }
 
     const res = await getTrackByIdAction(trackId);
     const resAllComments = await getCommentsByATrackAction(trackId);
     const resGetTracksLikedByAUser = await getTracksLikedByAUserAction();
+
     return (
         <div className="content">
             <WaveTrack

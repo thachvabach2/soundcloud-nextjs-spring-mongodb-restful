@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import NavigateNext from "@mui/icons-material/NavigateNext";
 import NavigateBefore from "@mui/icons-material/NavigateBefore";
 import Link from "next/link";
+import { convertSlugUrl } from "@/lib/utils/api";
 
 interface IPops {
     data: ITrackTop[],
@@ -88,7 +89,7 @@ const MainSlider = (props: IPops) => {
                 {data.map((track, index) => (
                     <div className="track-container" key={track._id}>
                         <div className="track-main">
-                            <Link href={`/track/${track._id}?audio=${track.trackUrl}&id=${track._id}`}>
+                            <Link href={`/track/${convertSlugUrl(track.title)}-${track._id}.html?audio=${track.trackUrl}`}>
                                 <div className="track-image w-full cursor-pointer">
                                     <img
                                         className="w-full"
@@ -99,7 +100,7 @@ const MainSlider = (props: IPops) => {
                             </Link>
 
                             <div className="track-footer mt-1 text-start select-text">
-                                <Link href={`/track/${track._id}?audio=${track.trackUrl}&id=${track._id}`}>
+                                <Link href={`/track/${convertSlugUrl(track.title)}-${track._id}.html?audio=${track.trackUrl}`}>
                                     <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis">
                                         <span className="text-sm font-light">{track.title}</span>
                                     </div>

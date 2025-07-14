@@ -31,9 +31,6 @@ const WaveTrack = (props: IProps) => {
     const { data: session } = useSession();
     const searchParams = useSearchParams();
     const fileName = searchParams.get('audio');
-    const trackId = searchParams.get('id')
-
-    const pathname = usePathname();
 
     const containerRef = useRef<HTMLDivElement>(null);
     const timeRef = useRef<HTMLDivElement>(null);
