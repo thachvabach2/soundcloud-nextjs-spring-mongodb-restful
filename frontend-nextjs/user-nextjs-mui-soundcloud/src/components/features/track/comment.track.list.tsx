@@ -42,7 +42,6 @@ const CommentTrackList = (props: IProps) => {
         }
     }
 
-    // console.log('>>> check arComments: ', arrComments)
     return (
         <>
             <Stack

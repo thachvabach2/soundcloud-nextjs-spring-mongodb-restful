@@ -6,12 +6,12 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import React, { Dispatch, forwardRef, RefObject, SetStateAction, useImperativeHandle, useRef } from "react";
-import { CommentFormRef } from "./wave.track";
+import { CommentFormRef } from "@/components/features/track/wave.track";
 import { useSession } from "next-auth/react";
 import { fetchDefaultImages } from "@/lib/utils/api";
 import { createACommentOnATrackAction } from "@/actions/actions.comment";
 import WaveSurfer from "wavesurfer.js";
-import LikeTrack from "./like.track";
+import LikeTrack from "@/components/features/track/like.track";
 
 interface IProps {
     commentInputRef: RefObject<HTMLInputElement | null>;
@@ -49,7 +49,6 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
 
     const handleInputClick = () => {
         if (wasAlreadyFocused.current) {
-            console.log('Already focused - ignoring click')
             return
         }
         if (!commentInputRef.current?.value) {
@@ -149,4 +148,6 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
     )
 }
 )
+CommentTrackForm.displayName = 'CommentTrackForm';
+
 export default CommentTrackForm;

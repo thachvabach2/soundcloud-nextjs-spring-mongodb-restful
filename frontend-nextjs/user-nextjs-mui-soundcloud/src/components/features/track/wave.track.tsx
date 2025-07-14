@@ -9,9 +9,9 @@ import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
 import { LightTooltip } from "@/components/ui/track/LightTooltip";
 import { useTrackContext } from "@/hooks/use.track.context";
 import { Box, Grid } from "@mui/material";
-import CommentTrackArtistInfo from "./comment.track.artist.info";
-import CommentTrackList from "./comment.track.list";
-import CommentTrackForm from "./comment.track.form";
+import CommentTrackArtistInfo from "@/components/features/track/comment.track.artist.info";
+import CommentTrackList from "@/components/features/track/comment.track.list";
+import CommentTrackForm from "@/components/features/track/comment.track.form";
 import { useSession } from "next-auth/react";
 import { fetchDefaultImages } from "@/lib/utils/api";
 import { increaseCountPlay } from "@/actions/actions.track";
@@ -85,7 +85,7 @@ const WaveTrack = (props: IProps) => {
             barRadius: 2,
             url: `/api?audio=${fileName}`,
         }
-    }, [])
+    }, [fileName])
 
     const wavesurfer = useWavesurfer(containerRef, optionsMemo);
 
@@ -118,13 +118,13 @@ const WaveTrack = (props: IProps) => {
         if (wavesurfer && currentTrack.isPlaying) {
             wavesurfer.pause()
         }
-    }, [currentTrack])
+    }, [currentTrack, wavesurfer])
 
     useEffect(() => {
         if (track?._id && !currentTrack.isPlaying) {
             setCurrentTrack({ ...track, isPlaying: false })
         }
-    }, [track])
+    }, [track, currentTrack.isPlaying, setCurrentTrack])
 
     const calLeft = (moment: number) => {
         const hardCodeDuration = wavesurfer?.getDuration() ?? 0;
@@ -299,6 +299,7 @@ const WaveTrack = (props: IProps) => {
                                                                     style={{
                                                                         left: calLeft(item.moment)
                                                                     }}
+                                                                    alt="tooltip"
                                                                     src={fetchDefaultImages(item.user.type)}
                                                                 />
                                                             </LightTooltip>

@@ -1,2 +1,2 @@
-export * from "./Toast"
-export * from "./use.toast"
+export * from "@/hooks/toast/Toast"
+export * from "@/hooks/toast/use.toast"

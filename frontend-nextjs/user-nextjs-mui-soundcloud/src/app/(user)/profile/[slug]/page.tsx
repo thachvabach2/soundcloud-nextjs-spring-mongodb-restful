@@ -1,9 +1,9 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth/auth";
 import TrackProfile from "@/components/features/profile/profile.tracks";
 import { sendRequest } from "@/lib/utils/api";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { getServerSession } from "next-auth/";
+import { getServerSession } from "next-auth";
 import type { Metadata, ResolvingMetadata } from 'next'
 
 type Props = {

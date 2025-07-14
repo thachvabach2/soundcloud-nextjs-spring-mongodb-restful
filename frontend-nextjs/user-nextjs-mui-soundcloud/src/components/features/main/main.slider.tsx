@@ -92,6 +92,7 @@ const MainSlider = (props: IPops) => {
                                 <div className="track-image w-full cursor-pointer">
                                     <img
                                         className="w-full"
+                                        alt="track image"
                                         src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
                                     />
                                 </div>

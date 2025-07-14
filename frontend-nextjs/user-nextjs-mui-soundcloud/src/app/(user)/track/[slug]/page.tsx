@@ -21,6 +21,12 @@ export async function generateMetadata(
     return {
         title: `${track.data?.title} • ${track.data?.artist}`,
         description: `Listen to ${track.data?.title} on SoundCloud · ${track.data?.artist}`,
+        openGraph: {
+            title: "title",
+            description: "description",
+            type: 'website',
+            images: [`https://github.com/thachvabach2/sharing-host-files/blob/main/soundcloud/muon.jpg?raw=true`]
+        }
     }
 }
 

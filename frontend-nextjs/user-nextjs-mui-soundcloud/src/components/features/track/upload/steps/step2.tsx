@@ -59,7 +59,7 @@ const Step2 = (props: IProps) => {
                 trackUrl: trackUpload.uploadedTrackName
             })
         }
-    }, [trackUpload])
+    }, [trackUpload, info])
 
     const listGenre = useMemo(() => ['CHILL', 'WORKOUT', 'HIPHOP',], [])
 

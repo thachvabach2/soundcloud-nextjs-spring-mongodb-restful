@@ -1,8 +1,9 @@
 import queryString from 'query-string';
 
 export const sendRequest = async <T>(props: IRequest) => {
-    let {
-        url,
+    let { url } = props;
+
+    const {
         method,
         body,
         queryParams = {},
@@ -41,8 +42,9 @@ export const sendRequest = async <T>(props: IRequest) => {
 };
 
 export const sendRequestFile = async <T>(props: IRequest) => {
-    let {
-        url,
+    let { url } = props;
+
+    const {
         method,
         body,
         queryParams = {},

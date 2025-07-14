@@ -45,11 +45,11 @@ const FileUploadInput = (props: IProps) => {
                     imgUrl: res.data?.data?.fileName,
                 }))
             } catch (error) {
-                //@ts-ignore
+                //@ts-expect-error: error: error
                 toast.error(error?.response?.data?.message)
             }
         }
-    }, [session])
+    }, [session, setInfo, toast])
 
     const dropzoneConfig: DropzoneOptions = useMemo(() => ({
         onDrop,
@@ -58,7 +58,7 @@ const FileUploadInput = (props: IProps) => {
             'image/*': ['.png', '.jpg', '.jpeg']
         },
 
-    }), []);
+    }), [onDrop]);
 
     const { getRootProps, getInputProps } = useDropzone(dropzoneConfig)
 

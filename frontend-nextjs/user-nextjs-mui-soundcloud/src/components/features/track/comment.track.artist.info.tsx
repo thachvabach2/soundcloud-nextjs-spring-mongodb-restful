@@ -14,7 +14,6 @@ interface IProps {
 const CommentTrackArtistInfo = (props: IProps) => {
     const { track } = props;
 
-    console.log('>>> check track: ', track)
     return (
         <Stack sx={{ width: 150 }}>
             <Box component={'div'} className="userBadge__avatar" sx={{ mb: '8px' }}>

@@ -3,7 +3,7 @@ import Alert from "@mui/material/Alert"
 import Snackbar, { SnackbarProps } from "@mui/material/Snackbar"
 import * as React from "react"
 import { FC } from "react"
-import { ToastMessage } from "./use.toast"
+import { ToastMessage } from "@/hooks/toast/use.toast"
 
 export type ToastStyle = Omit<
     SnackbarProps,

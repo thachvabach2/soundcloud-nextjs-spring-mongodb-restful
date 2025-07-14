@@ -1,6 +1,6 @@
 'use server'
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth/auth";
 import { sendRequest } from "@/lib/utils/api"
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
@@ -25,7 +25,7 @@ export const getTrackByIdAction = async (id: string) => {
 }
 
 export const increaseCountPlay = async (trackId: string) => {
-    await sendRequest<IBackendRes<any>>({
+    await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/increase-view`,
         method: "POST",
         body: {

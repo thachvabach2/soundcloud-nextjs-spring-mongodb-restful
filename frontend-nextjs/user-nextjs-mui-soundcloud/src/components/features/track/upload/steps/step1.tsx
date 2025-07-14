@@ -61,7 +61,7 @@ const Step1 = (props: IProp) => {
                     uploadedTrackName: res?.data?.data?.fileName
                 }))
             } catch (error) {
-                //@ts-ignore
+                //@ts-expect-error: error
                 alert(error?.response?.data?.message)
             }
         }

@@ -295,7 +295,7 @@ const AppHeader = () => {
                                         />
                                         <Tab
                                             value={'create-account'}
-                                            label={<Link href={'/create-account'}>Create Account</Link>}
+                                            label={<Link href={'/auth/signup'}>Create Account</Link>}
 
                                         />
                                         <Tab
