@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import { InitColorSchemeScript, ThemeProvider } from "@mui/material";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter/";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import theme from '@/theme';
 import NextAuthWrapper from "@/lib/auth/next.auth.wrapper";
 import { ToastProvider } from "@/hooks/toast";

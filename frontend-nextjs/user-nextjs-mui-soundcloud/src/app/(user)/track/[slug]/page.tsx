@@ -3,6 +3,27 @@ import { getTracksLikedByAUserAction } from "@/actions/actions.like";
 import { getTrackByIdAction } from "@/actions/actions.track";
 import WaveTrack from "@/components/features/track/wave.track";
 
+import type { Metadata, ResolvingMetadata } from 'next'
+
+type Props = {
+    params: Promise<{ slug: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateMetadata(
+    { params, searchParams }: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const slug = (await params).slug
+
+    const track = await getTrackByIdAction(slug);
+
+    return {
+        title: `${track.data?.title} • ${track.data?.artist}`,
+        description: `Listen to ${track.data?.title} on SoundCloud · ${track.data?.artist}`,
+    }
+}
+
 const DetailTrackPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const { slug: trackId } = await params;
 

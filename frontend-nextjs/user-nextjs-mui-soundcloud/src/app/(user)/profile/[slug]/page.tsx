@@ -4,6 +4,26 @@ import { sendRequest } from "@/lib/utils/api";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { getServerSession } from "next-auth/";
+import type { Metadata, ResolvingMetadata } from 'next'
+
+type Props = {
+    params: Promise<{ slug: string }>
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export async function generateMetadata(
+    { params, searchParams }: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const slug = (await params).slug
+
+    // get api current user here
+
+    return {
+        title: `Stream User music | Listen to songs, albums, playlists for free on SoundCloud`,
+        description: `Play User Đào and discover followers on SoundCloud | Stream tracks, albums, playlists on desktop and mobile.`,
+    }
+}
 
 const ProfilePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const { slug } = await params;
