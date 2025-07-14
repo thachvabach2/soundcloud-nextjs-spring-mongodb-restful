@@ -1,5 +1,5 @@
 'use client'
-import { AlertColor } from "@mui/material"
+import { AlertColor } from "@mui/material/Alert"
 import { createContext, FC, ReactNode, useContext, useState } from "react"
 import { Toast, ToastStyle } from "./Toast"
 

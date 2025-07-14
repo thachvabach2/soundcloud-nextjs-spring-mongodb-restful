@@ -1,8 +1,9 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import TrackProfile from "@/components/features/profile/profile.tracks";
 import { sendRequest } from "@/lib/utils/api";
-import { Box, Grid } from "@mui/material";
-import { getServerSession } from "next-auth";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import { getServerSession } from "next-auth/";
 
 const ProfilePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     const { slug } = await params;

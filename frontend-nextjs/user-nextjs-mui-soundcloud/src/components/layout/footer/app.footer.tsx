@@ -2,7 +2,8 @@
 import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { useTrackContext } from '@/hooks/use.track.context';
-import { Box, Grid } from '@mui/material';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import H5AudioPlayer from 'react-h5-audio-player';

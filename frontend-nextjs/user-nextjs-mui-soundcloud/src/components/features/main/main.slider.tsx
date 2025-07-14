@@ -2,8 +2,11 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider, { CustomArrowProps, Settings } from "react-slick";
-import { Box, Button, Divider } from "@mui/material";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import NavigateNext from "@mui/icons-material/NavigateNext";
+import NavigateBefore from "@mui/icons-material/NavigateBefore";
 import Link from "next/link";
 
 interface IPops {

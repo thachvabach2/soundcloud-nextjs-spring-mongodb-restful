@@ -1,4 +1,9 @@
-import { Box, Button, Fab, Stack, SxProps } from "@mui/material"
+import Box from "@mui/material/Box"
+import Button from "@mui/material/Button"
+import Fab from "@mui/material/Fab"
+import Stack from "@mui/material/Stack"
+import { SxProps } from "@mui/material"
+
 import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 import { DropzoneOptions, FileWithPath, useDropzone } from "react-dropzone";
 import React, { Dispatch, SetStateAction, useCallback, useMemo } from "react";

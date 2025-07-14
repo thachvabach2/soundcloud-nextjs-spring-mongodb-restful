@@ -1,12 +1,19 @@
 'use client'
-import { Alert, Box, Button, Divider, Grid, IconButton, Input, InputAdornment, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import GraphicEqOutlinedIcon from '@mui/icons-material/GraphicEqOutlined';
 import GoogleIcon from '@mui/icons-material/Google';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import CredentialInput from "@/components/ui/auth/CredentialInput";
 import ProviderButton from "@/components/ui/auth/ProviderButton";
 import Link from "next/link";
-import { VisibilityOffOutlined } from "@mui/icons-material";
+import VisibilityOffOutlined from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";

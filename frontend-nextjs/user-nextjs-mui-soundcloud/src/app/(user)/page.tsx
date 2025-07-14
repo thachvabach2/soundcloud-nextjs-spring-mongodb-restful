@@ -1,5 +1,5 @@
 import MainSlider from "@/components/features/main/main.slider";
-import { Stack } from "@mui/material";
+import Stack from "@mui/material/Stack";
 import { sendRequest } from "@/lib/utils/api";
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

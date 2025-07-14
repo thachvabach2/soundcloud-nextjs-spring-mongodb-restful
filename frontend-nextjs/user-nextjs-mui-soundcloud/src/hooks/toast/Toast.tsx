@@ -1,5 +1,6 @@
 'use client'
-import { Alert, Snackbar, SnackbarProps } from "@mui/material"
+import Alert from "@mui/material/Alert"
+import Snackbar, { SnackbarProps } from "@mui/material/Snackbar"
 import * as React from "react"
 import { FC } from "react"
 import { ToastMessage } from "./use.toast"

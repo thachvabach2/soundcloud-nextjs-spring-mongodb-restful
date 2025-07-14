@@ -10,7 +10,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Tab, Tabs, Tooltip, useColorScheme } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Tooltip from '@mui/material/Tooltip';
+import { useColorScheme } from '@mui/material/styles';
 import { signOut, useSession } from "next-auth/react"
 import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import Link from 'next/link';
