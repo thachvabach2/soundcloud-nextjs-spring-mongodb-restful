@@ -2,8 +2,10 @@ import { getCommentsByATrackAction } from "@/actions/actions.comment";
 import { getTracksLikedByAUserAction } from "@/actions/actions.like";
 import { getTrackByIdAction } from "@/actions/actions.track";
 import WaveTrack from "@/components/features/track/wave.track";
+import { createTrackSchema } from "@/lib/utils/schemas";
 import type { Metadata, ResolvingMetadata } from 'next'
 import { notFound } from "next/navigation";
+import Script from "next/script";
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -61,6 +63,12 @@ const DetailTrackPage = async ({ params }: { params: Promise<{ slug: string }> }
                 track={res?.data ?? null}
                 listComment={resAllComments?.data ?? null}
                 listTrackLikedByAUser={resGetTracksLikedByAUser?.data ?? null}
+            />
+            <Script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(createTrackSchema(res?.data ?? null))
+                }}
             />
         </div>
     )
