@@ -59,7 +59,8 @@ const Step2 = (props: IProps) => {
                 trackUrl: trackUpload.uploadedTrackName
             })
         }
-    }, [trackUpload, info])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [trackUpload])
 
     const listGenre = useMemo(() => ['CHILL', 'WORKOUT', 'HIPHOP',], [])
 

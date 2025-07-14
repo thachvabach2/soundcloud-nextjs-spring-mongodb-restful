@@ -49,7 +49,8 @@ const FileUploadInput = (props: IProps) => {
                 toast.error(error?.response?.data?.message)
             }
         }
-    }, [session, setInfo, toast])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [session])
 
     const dropzoneConfig: DropzoneOptions = useMemo(() => ({
         onDrop,
@@ -57,8 +58,8 @@ const FileUploadInput = (props: IProps) => {
         accept: {
             'image/*': ['.png', '.jpg', '.jpeg']
         },
-
-    }), [onDrop]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }), []);
 
     const { getRootProps, getInputProps } = useDropzone(dropzoneConfig)
 

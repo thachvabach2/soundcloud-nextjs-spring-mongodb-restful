@@ -121,7 +121,8 @@ const WaveTrack = (props: IProps) => {
         if (track?._id && !currentTrack.isPlaying) {
             setCurrentTrack({ ...track, isPlaying: false })
         }
-    }, [track, currentTrack.isPlaying, setCurrentTrack])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [track])
 
     const calLeft = (moment: number) => {
         const hardCodeDuration = wavesurfer?.getDuration() ?? 0;
