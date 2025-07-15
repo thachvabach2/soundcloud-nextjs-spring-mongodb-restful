@@ -5,6 +5,7 @@ interface IUser {
     _id: string;
     userName: string;
     email: string;
+    name: string;
     isVerify: boolean;
     type: string;
     role: string;
