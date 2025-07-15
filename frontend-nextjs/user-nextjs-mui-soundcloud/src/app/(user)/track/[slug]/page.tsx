@@ -18,7 +18,24 @@ export async function generateMetadata(
 ): Promise<Metadata> {
     const slug = (await params).slug
 
-    const track = await getTrackByIdAction(slug);
+    const extractTrackId = (slug: string): string | null => {
+        const withoutExtension = slug.replace('.html', '');
+
+        const parts = withoutExtension.split('-');
+        const trackId = parts[parts.length - 1];
+
+        if (trackId && /^[a-f\d]{24}$/i.test(trackId)) {
+            return trackId;
+        }
+
+        return null;
+    };
+
+    const trackId = extractTrackId(slug);
+    if (!trackId) {
+        notFound();
+    }
+    const track = await getTrackByIdAction(trackId);
 
     return {
         title: `${track.data?.title} • ${track.data?.artist}`,
