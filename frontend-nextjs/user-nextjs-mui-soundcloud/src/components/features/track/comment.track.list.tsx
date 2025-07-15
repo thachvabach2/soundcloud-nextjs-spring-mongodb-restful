@@ -4,6 +4,7 @@ import WaveSurfer from "wavesurfer.js";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { fetchDefaultImages } from "@/lib/utils/api";
 import Link from "next/link";
+import Image from "next/image";
 
 interface IProps {
     wavesurfer: WaveSurfer | null;
@@ -78,13 +79,21 @@ const CommentTrackList = (props: IProps) => {
                     return (
                         <Grid container component={'li'} className="commentsList__item" key={comment._id}>
                             <Grid size={1} component={'div'} className="commentItem__avatarWrapper">
-                                <IconButton sx={{ p: 0 }}>
-                                    <Avatar
-                                        alt="avatar"
-                                        src={fetchDefaultImages(comment.user.type)}
-                                        sx={{ width: '50px', height: '50px' }}
-                                    />
-                                </IconButton>
+                                <Link href={`/profile/${comment.user._id}`}>
+                                    <IconButton sx={{ p: 0 }}>
+                                        <Avatar sx={{ width: '50px', height: '50px' }}>
+                                            <Image
+                                                alt="avatar users comment"
+                                                src={fetchDefaultImages(comment.user.type)}
+                                                fill
+                                                sizes="(min-width: 808px) 50vw, 100vw"
+                                                style={{
+                                                    objectFit: 'cover', // cover, contain, none
+                                                }}
+                                            />
+                                        </Avatar>
+                                    </IconButton>
+                                </Link>
                             </Grid>
                             <Grid size={11} component={'div'} className="commentItem__content" sx={{ flexDirection: 'column' }}>
                                 <Stack direction={'row'} className="commentItem__commentInfo">

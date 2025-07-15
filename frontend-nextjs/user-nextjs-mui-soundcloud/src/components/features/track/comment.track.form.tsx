@@ -12,6 +12,7 @@ import { fetchDefaultImages } from "@/lib/utils/api";
 import { createACommentOnATrackAction } from "@/actions/actions.comment";
 import WaveSurfer from "wavesurfer.js";
 import LikeTrack from "@/components/features/track/like.track";
+import Image from "next/image";
 
 interface IProps {
     commentInputRef: RefObject<HTMLInputElement | null>;
@@ -76,12 +77,17 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
                         component={'div'}
                         className="commentForm__avatar"
                     >
-                        <IconButton sx={{ p: 0 }}>
-                            <Avatar
-                                alt="avatar"
-                                src={fetchDefaultImages(session?.user?.type ?? "USER")}
+                        <Avatar>
+                            <Image
+                                alt="avatar current user"
+                                src={fetchDefaultImages(track?.uploader?.type ?? "USER")}
+                                fill
+                                sizes="(min-width: 808px) 50vw, 100vw"
+                                style={{
+                                    objectFit: 'cover', // cover, contain, none
+                                }}
                             />
-                        </IconButton>
+                        </Avatar>
                     </Box>
                     <Stack
                         className="commentForm__newCommentWrapper"

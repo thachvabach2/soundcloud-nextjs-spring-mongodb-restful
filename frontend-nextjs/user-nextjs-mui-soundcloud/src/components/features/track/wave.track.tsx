@@ -15,6 +15,7 @@ import CommentTrackForm from "@/components/features/track/comment.track.form";
 import { useSession } from "next-auth/react";
 import { fetchDefaultImages } from "@/lib/utils/api";
 import { increaseCountPlay } from "@/actions/actions.track";
+import Image from "next/image";
 
 interface IProps {
     track: ITrackTop | null;
@@ -163,8 +164,13 @@ const WaveTrack = (props: IProps) => {
                     <div className="fullHero__foreground absolute left-0 top-0 w-full h-full box-border pt-8 pr-[574px] pb-8 pl-8">
                         <div className="fullHero_artwork absolute top-8 right-8 z-1">
                             <div className="image_lightOutline h-full w-full rounded-[3%] bg-linear-[135deg,#70929c,#e6846e]">
-                                <span className="h-80 w-80 rounded-[3%] bg-cover block"
-                                    style={{ backgroundImage: `url('${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track?.imgUrl}')` }}
+                                <Image
+                                    className="rounded-[3%] bg-cover block"
+                                    alt="track image"
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track?.imgUrl}`}
+                                    width={320}
+                                    height={320}
+                                    priority
                                 />
                             </div>
                         </div>
@@ -288,8 +294,8 @@ const WaveTrack = (props: IProps) => {
                                                     listComment?.result?.map(item => {
                                                         return (
                                                             <LightTooltip title={item.content} arrow key={item._id}>
-                                                                <img
-                                                                    className={`h-[24px] w-[24px] absolute top-[67px] z-40 rounded-[50%] cursor-pointer ${momentSecondComment != -1 && 'opacity-20'}`}
+                                                                <Image
+                                                                    className={`absolute top-[67px] z-40 rounded-[50%] cursor-pointer ${momentSecondComment != -1 && 'opacity-20'}`}
                                                                     onPointerMove={(e) => {
                                                                         hoverRef.current!.style.width = calLeft(item.moment)
                                                                     }}
@@ -299,6 +305,8 @@ const WaveTrack = (props: IProps) => {
                                                                     }}
                                                                     alt="tooltip"
                                                                     src={fetchDefaultImages(item.user.type)}
+                                                                    width={24}
+                                                                    height={24}
                                                                 />
                                                             </LightTooltip>
                                                         )
@@ -318,11 +326,13 @@ const WaveTrack = (props: IProps) => {
                                                     }}
                                                     onClick={(e) => { e.stopPropagation() }}
                                                 >
-                                                    <img
+                                                    <Image
                                                         className={`min-h-[24px] min-w-[24px] max-h-[24px] max-w-[24px] rounded-[50%] ${momentSecondComment == -1 ? 'cursor-pointer' : 'cursor-move'} `}
                                                         alt="avatar"
                                                         src={fetchDefaultImages(session ? session.user.type : "USER")}
                                                         onClick={(e) => { e.stopPropagation() }}
+                                                        width={24}
+                                                        height={24}
                                                     />
                                                 </div>
                                             </div>

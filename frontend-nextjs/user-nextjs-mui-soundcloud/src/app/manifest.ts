@@ -40,7 +40,7 @@ export default function manifest(): MetadataRoute.Manifest {
         "theme_color": "#121212",
         "background_color": "#121212",
         "start_url": "/",
-        "scope": "https://open.spotify.com/",
+        "scope": "http://localhost:3000/",
         "display": "standalone",
     }
 }

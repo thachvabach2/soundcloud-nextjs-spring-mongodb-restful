@@ -65,6 +65,7 @@ const DetailTrackPage = async ({ params }: { params: Promise<{ slug: string }> }
                 listTrackLikedByAUser={resGetTracksLikedByAUser?.data ?? null}
             />
             <Script
+                id={`track-schema-${trackId}`}
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify(createTrackSchema(res?.data ?? null))

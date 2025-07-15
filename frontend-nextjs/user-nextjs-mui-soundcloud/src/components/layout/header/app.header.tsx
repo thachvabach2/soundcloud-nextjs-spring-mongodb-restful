@@ -19,6 +19,7 @@ import { signOut, useSession } from "next-auth/react"
 import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import Link from 'next/link';
 import { fetchDefaultImages } from '@/lib/utils/api';
+import Image from 'next/image';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -212,12 +213,19 @@ const AppHeader = () => {
 
                                     {/* avatar */}
                                     <Box sx={{ flexGrow: 0 }}>
-                                        <Tooltip title="Open settings">
+                                        <Tooltip title={`${session.user.userName}`}>
                                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                                <Avatar
-                                                    alt='avatar'
-                                                    src={fetchDefaultImages(session.user.type)}
-                                                />
+                                                <Avatar>
+                                                    <Image
+                                                        alt="avatar login user"
+                                                        src={fetchDefaultImages(session.user.type)}
+                                                        fill
+                                                        sizes="(min-width: 808px) 50vw, 100vw"
+                                                        style={{
+                                                            objectFit: 'cover', // cover, contain, none
+                                                        }}
+                                                    />
+                                                </Avatar>
                                             </IconButton>
                                         </Tooltip>
                                         <Menu
