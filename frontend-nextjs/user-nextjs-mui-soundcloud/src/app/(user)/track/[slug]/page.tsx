@@ -57,6 +57,9 @@ const DetailTrackPage = async ({ params }: { params: Promise<{ slug: string }> }
     const resAllComments = await getCommentsByATrackAction(trackId);
     const resGetTracksLikedByAUser = await getTracksLikedByAUserAction();
 
+    if (!res?.data) {
+        notFound();
+    }
     return (
         <div className="content">
             <WaveTrack
