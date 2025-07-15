@@ -38,8 +38,10 @@ public class ResLoginDTO {
     public static class UserInsideToken {
 
         private String _id;
+        private String username;
         private String email;
         private String name;
+        private Boolean isVerify;
         private String role;
         private String type;
     }

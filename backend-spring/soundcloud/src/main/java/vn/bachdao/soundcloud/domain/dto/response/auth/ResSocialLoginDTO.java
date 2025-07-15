@@ -25,6 +25,7 @@ public class ResSocialLoginDTO {
 
         private String username;
         private String email;
+        private String name;
         private Boolean isVerify;
         private String type;
         private String role;
@@ -37,6 +38,7 @@ public class ResSocialLoginDTO {
         private String _id;
         private String username;
         private String email;
+        private String name;
         private Boolean isVerify;
         private String role;
         private String type;

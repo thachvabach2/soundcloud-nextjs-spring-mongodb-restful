@@ -54,8 +54,10 @@ public class SecurityUtils {
 
         ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken();
         userInsideToken.set_id(dto.getId());
+        userInsideToken.setUsername(dto.getUserName());
         userInsideToken.setEmail(dto.getEmail());
         userInsideToken.setName(dto.getName());
+        userInsideToken.setIsVerify(dto.getIsVerify());
         userInsideToken.setRole(dto.getRole());
         userInsideToken.setType(dto.getType());
 
@@ -84,6 +86,7 @@ public class SecurityUtils {
         userInsideToken.set_id(dto.getId());
         userInsideToken.setUsername(dto.getUsername());
         userInsideToken.setEmail(dto.getEmail());
+        userInsideToken.setName(dto.getName());
         userInsideToken.setIsVerify(dto.getIsVerify());
         userInsideToken.setRole(dto.getRole());
         userInsideToken.setType(dto.getType());
@@ -109,8 +112,10 @@ public class SecurityUtils {
 
         ResLoginDTO.UserInsideToken userInsideToken = new ResLoginDTO.UserInsideToken();
         userInsideToken.set_id(dto.getId());
+        userInsideToken.setUsername(dto.getUserName());
         userInsideToken.setEmail(dto.getEmail());
         userInsideToken.setName(dto.getName());
+        userInsideToken.setIsVerify(dto.getIsVerify());
         userInsideToken.setRole(dto.getRole());
         userInsideToken.setType(dto.getType());
 
@@ -136,6 +141,7 @@ public class SecurityUtils {
         userInsideToken.set_id(dto.getId());
         userInsideToken.setUsername(dto.getUsername());
         userInsideToken.setEmail(dto.getEmail());
+         userInsideToken.setName(dto.getName());
         userInsideToken.setIsVerify(dto.getIsVerify());
         userInsideToken.setRole(dto.getRole());
         userInsideToken.setType(dto.getType());
