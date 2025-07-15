@@ -14,7 +14,17 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
         <>
             <CssBaseline />
             <AppHeader />
-            <Box component={'div'} sx={{ paddingX: '24px', paddingTop: '24px', paddingBottom: '60px' }}>
+            <Box
+                component={'div'}
+                sx={{
+                    paddingX: '24px',
+                    paddingTop: '24px',
+                    paddingBottom: '60px',
+                    width: '100%',
+                    margin: '0 auto',
+                    maxWidth: '1248px',
+                }}
+            >
                 {children}
             </Box>
             <div style={{ marginBottom: '50px' }}></div>

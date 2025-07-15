@@ -41,8 +41,6 @@ const theme = createTheme({
                     '--custom-mui-width-container': '1248px',
                 },
                 body: {
-                    maxWidth: 'var(--custom-mui-width-container)',
-                    margin: '0 auto',
                     color: '#121212',
                 }
             }

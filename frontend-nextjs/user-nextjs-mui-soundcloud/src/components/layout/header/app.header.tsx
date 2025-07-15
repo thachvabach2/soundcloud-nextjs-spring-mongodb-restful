@@ -103,15 +103,14 @@ const AppHeader = () => {
             <Box sx={{ flexGrow: 1 }}>
                 <CustomAppBar
                     position='fixed'
-                    sx={{
-                        maxWidth: 'var(--custom-mui-width-container)',
-                        left: 0,
-                        right: 0,
-                        margin: '0 auto',
-                        background: '#ffffff',
-                    }}
                 >
-                    <Toolbar>
+                    <Toolbar
+                        sx={{
+                            width: '100%',
+                            margin: '0 auto',
+                            background: '#ffffff',
+                            maxWidth: '1248px',
+                        }}>
                         {/* Pages Mobile */}
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                             <IconButton

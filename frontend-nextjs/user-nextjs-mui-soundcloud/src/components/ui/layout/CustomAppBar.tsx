@@ -5,5 +5,6 @@ import { styled } from "@mui/material/styles";
 export const CustomAppBar = styled(AppBar)<AppBarProps>(({ theme }) => ({
     color: '#121212',
     boxShadow: 'none',
+    backgroundColor: '#fff',
 }),
 );
