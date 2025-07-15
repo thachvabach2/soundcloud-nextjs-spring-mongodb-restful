@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@bprogress/next": "3.2.12",
         "@emotion/cache": "11.14.0",
         "@emotion/react": "11.14.0",
         "@emotion/styled": "11.14.0",

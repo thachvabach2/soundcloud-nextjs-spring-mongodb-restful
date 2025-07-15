@@ -5,6 +5,7 @@ import theme from '@/theme';
 import NextAuthWrapper from "@/lib/auth/next.auth.wrapper";
 import { ToastProvider } from "@/hooks/toast";
 import { TrackContextProvider } from "@/context/track.context.provider";
+import BProgressProvider from "@/context/bprogress.provider";
 
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
@@ -15,11 +16,13 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                     <InitColorSchemeScript attribute=".encore-%s-theme" />
                     <ThemeProvider theme={theme} defaultMode="light">
                         <NextAuthWrapper>
-                            <ToastProvider>
-                                <TrackContextProvider>
-                                    {children}
-                                </TrackContextProvider>
-                            </ToastProvider>
+                            <BProgressProvider>
+                                <ToastProvider>
+                                    <TrackContextProvider>
+                                        {children}
+                                    </TrackContextProvider>
+                                </ToastProvider>
+                            </BProgressProvider>
                         </NextAuthWrapper>
                     </ThemeProvider>
                 </AppRouterCacheProvider>
