@@ -9,7 +9,7 @@ export const getTracksLikedByAUserAction = async () => {
     const session = await getServerSession(authOptions);
 
     const res = await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
-        url: "http://localhost:8080/api/v1/likes",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/likes`,
         method: "GET",
         queryParams: {
             page: 1,
@@ -33,7 +33,7 @@ export const likeOrDislikeATrack = async (trackId: string, trackLikes: ITrackLik
     const session = await getServerSession(authOptions);
 
     const res = await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
-        url: "http://localhost:8080/api/v1/likes",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/likes`,
         method: "POST",
         body: {
             track: trackId,

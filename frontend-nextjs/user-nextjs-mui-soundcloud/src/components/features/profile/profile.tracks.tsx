@@ -74,7 +74,7 @@ const TrackProfile = (props: IProps) => {
                     <CardMedia
                         component="img"
                         sx={{ width: 155, height: 155, objectFit: 'fill' }}
-                        image={`http://localhost:8080/images/${track.imgUrl}`}
+                        image={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
                         alt="Live from space album cover"
                     />
                 </Link>

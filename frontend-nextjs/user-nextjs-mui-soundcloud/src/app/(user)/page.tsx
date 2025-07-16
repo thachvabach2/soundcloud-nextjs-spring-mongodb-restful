@@ -4,19 +4,19 @@ import { sendRequest } from "@/lib/utils/api";
 
 export default async function Home() {
     const chills = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: "http://localhost:8080/api/v1/tracks/top",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
         method: "POST",
         body: { category: "CHILL", limit: 10 },
     })
 
     const workouts = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: "http://localhost:8080/api/v1/tracks/top",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
         method: "POST",
         body: { category: "WORKOUT", limit: 10 },
     })
 
     const hiphop = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: "http://localhost:8080/api/v1/tracks/top",
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
         method: "POST",
         body: { category: "HIPHOP", limit: 10 },
     })

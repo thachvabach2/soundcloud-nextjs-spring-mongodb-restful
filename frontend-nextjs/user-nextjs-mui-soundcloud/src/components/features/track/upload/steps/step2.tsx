@@ -98,7 +98,7 @@ const Step2 = (props: IProps) => {
             ...data
         }));
         const res = await sendRequest<IBackendRes<ITrackTop[]>>({
-            url: "http://localhost:8080/api/v1/tracks",
+            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks`,
             method: "POST",
             body: {
                 title: data.title,
