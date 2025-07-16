@@ -1,6 +1,5 @@
 package vn.bachdao.soundcloud.web.rest.user;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import vn.bachdao.soundcloud.domain.Track;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqGetTopTrackByCategory;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqIdTrack;
@@ -41,7 +39,7 @@ public class TrackResource {
 
     @PostMapping("/tracks/top")
     @ApiMessage("Get top tracks by category")
-    public ResponseEntity<List<Track>> getTopTracksByCategory(@Valid @RequestBody ReqGetTopTrackByCategory req) {
+    public ResponseEntity<ResPaginationDTO> getTopTracksByCategory(@Valid @RequestBody ReqGetTopTrackByCategory req) {
         return ResponseEntity.ok(this.trackService.getTopTrackByCategory(req));
     }
 

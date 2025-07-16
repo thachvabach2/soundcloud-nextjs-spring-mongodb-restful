@@ -137,7 +137,7 @@ public class TrackService {
         return result;
     }
 
-    public List<Track> getTopTrackByCategory(ReqGetTopTrackByCategory req) {
+    public ResPaginationDTO getTopTrackByCategory(ReqGetTopTrackByCategory req) {
         Sort desTrackByCountPlay = Sort.by(Sort.Direction.DESC, "countPlay");
         Sort desTrackByCountLike = Sort.by(Sort.Direction.DESC, "countLike");
 
@@ -149,7 +149,22 @@ public class TrackService {
                 .with(desTrackByCountLike);
 
         List<Track> tracks = mongoTemplate.query(Track.class).matching(query).all();
-        return tracks;
+
+        Page<Track> trackPage = PageableExecutionUtils.getPage(
+                tracks,
+                Pageable.unpaged(),
+                () -> mongoTemplate.count(Query.of(query).limit(-1).skip(-1), Track.class));
+
+        ResPaginationDTO res = new ResPaginationDTO();
+        ResPaginationDTO.Meta meta = new ResPaginationDTO.Meta();
+        meta.setPageNumber(trackPage.getNumber() + 1);
+        meta.setPageSize(trackPage.getSize());
+        meta.setTotalPage(trackPage.getTotalPages());
+        meta.setTotalElement(trackPage.getTotalElements());
+
+        res.setResult(tracks);
+        res.setMeta(meta);
+        return res;
     }
 
     public ResPaginationDTO getTrackCreatedByAUser(String id, Pageable pageable) {
