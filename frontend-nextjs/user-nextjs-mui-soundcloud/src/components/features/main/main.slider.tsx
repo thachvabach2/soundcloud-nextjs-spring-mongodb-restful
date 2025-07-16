@@ -10,22 +10,26 @@ import NavigateBefore from "@mui/icons-material/NavigateBefore";
 import Link from "next/link";
 import { convertSlugUrl } from "@/lib/utils/api";
 import Image from "next/image";
+import { useState } from "react";
 
 interface IPops {
     data: ITrackTop[],
-    title: string
+    title: string,
+    totalElement: number;
 }
 
 const MainSlider = (props: IPops) => {
-    const { data, title } = props;
+    const { data, title, totalElement: totalSlides } = props;
+    const [currentSlide, setCurrentSlide] = useState(0);
 
-    const NextArrow = (props: CustomArrowProps) => {
+    const NextArrow = (props: CustomArrowProps & { isDisabled: boolean }) => {
         return (
             <Button
                 color="inherit"
                 variant='contained'
                 onClick={props.onClick}
                 sx={{
+                    display: props.isDisabled ? 'none' : 'inline-flex',
                     position: "absolute",
                     right: 0,
                     top: "30%",
@@ -40,13 +44,14 @@ const MainSlider = (props: IPops) => {
         )
     }
 
-    const PrevArrow = (props: CustomArrowProps) => {
+    const PrevArrow = (props: CustomArrowProps & { isDisabled: boolean }) => {
         return (
             <Button
                 color="inherit"
                 variant='contained'
                 onClick={props.onClick}
                 sx={{
+                    display: props.isDisabled ? 'none' : 'inline-flex',
                     position: "absolute",
                     top: "30%",
                     zIndex: 2,
@@ -66,8 +71,9 @@ const MainSlider = (props: IPops) => {
         speed: 500,
         slidesToShow: 5,
         slidesToScroll: 5,
-        nextArrow: <NextArrow />,
-        prevArrow: <PrevArrow />,
+        nextArrow: <NextArrow isDisabled={currentSlide >= totalSlides - 5} />,
+        prevArrow: <PrevArrow isDisabled={currentSlide === 0} />,
+        afterChange: (index) => setCurrentSlide(index),
 
         responsive: [
             {
@@ -75,6 +81,7 @@ const MainSlider = (props: IPops) => {
                 settings: {
                     slidesToShow: 4,
                     slidesToScroll: 4,
+                    nextArrow: <NextArrow isDisabled={currentSlide >= totalSlides - 4} />,
                 }
             },
             {
@@ -82,14 +89,16 @@ const MainSlider = (props: IPops) => {
                 settings: {
                     slidesToShow: 3,
                     slidesToScroll: 3,
-                    initialSlide: 3
+                    initialSlide: 3,
+                    nextArrow: <NextArrow isDisabled={currentSlide >= totalSlides - 3} />,
                 }
             },
             {
                 breakpoint: 500,
                 settings: {
                     slidesToShow: 2,
-                    slidesToScroll: 2
+                    slidesToScroll: 2,
+                    nextArrow: <NextArrow isDisabled={currentSlide >= totalSlides - 2} />,
                 }
             }
         ]
@@ -100,21 +109,22 @@ const MainSlider = (props: IPops) => {
             sx={{
                 ".slick-track": {
                     marginLeft: 0,
-                }
+                    display: 'flex',
+                    gap: '20px',
+                },
             }}
         >
             <h2 className="text-2xl font-medium">{title}</h2>
 
             <Slider {...settings} className="pt-4">
                 {data.map((track, index) => (
-                    <div className="track-container pr-8" key={track._id}>
+                    <div className="track-container" key={track._id}>
                         <div className="track-main">
                             <Link href={`/track/${convertSlugUrl(track.title)}-${track._id}.html?audio=${track.trackUrl}`}>
                                 <div className="track-image w-full cursor-pointer">
                                     <div className="relative h-[160px] w-full">
                                         <Image
                                             src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
-                                            // src={a}
                                             alt="track image"
                                             fill
                                             sizes="(min-width: 808px) 50vw, 100vw"
