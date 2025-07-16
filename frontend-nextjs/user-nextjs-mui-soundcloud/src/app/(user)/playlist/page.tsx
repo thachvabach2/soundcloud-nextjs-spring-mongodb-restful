@@ -5,7 +5,9 @@ export const metadata: Metadata = {
     description: 'Play User and discover followers on SoundCloud | Stream tracks, albums, playlists on desktop and mobile.',
 }
 
-const PlaylistPage = () => {
+const PlaylistPage = async () => {
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate a delay
+
     return (
         <div>
             playlist page
