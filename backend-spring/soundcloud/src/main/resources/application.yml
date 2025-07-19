@@ -16,6 +16,7 @@ server:
     max-swallow-size: 50MB
 
 soundcloud:
+    mongo-uri: mongodb+srv://ngocbach12a1:VXL2QqwQcpRSIrzX@cluster0.qfttq.mongodb.net/
     security:
         authentication:
             jwt:

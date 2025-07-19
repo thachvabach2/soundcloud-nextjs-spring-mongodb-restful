@@ -1,0 +1,27 @@
+services:
+    db-mymongo:
+        image: mongo:8.0.11
+        restart: always
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=123456
+        ports:
+            - "27017:27017"
+        expose:
+            - "27017"
+
+    backend-spring:
+        build:
+            context: ./soundcloud
+            dockerfile: Dockerfile
+        ports:
+            - "8080:8080"
+        environment:
+            - SOUNDCLOUD_MONGOURI=mongodb://root:123456@db-mymongo:27017
+            # - SOUNDCLOUD_MONGO_URI=mongodb+srv://ngocbach12a1:VXL2QqwQcpRSIrzX@cluster0.qfttq.mongodb.net/
+            - SOUNDCLOUD_UPLOAD_UPLOADFILE_BASEURI=file:///uploads/
+        depends_on:
+            - db-mymongo
+        volumes:
+            - ./upload-docker/:/uploads/
+        # docker compose -p devtaycode-soundcloud up -d
