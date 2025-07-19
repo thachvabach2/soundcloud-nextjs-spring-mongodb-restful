@@ -3,6 +3,7 @@ package vn.bachdao.soundcloud.util.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import vn.bachdao.soundcloud.domain.Track;
@@ -15,6 +16,9 @@ public interface TrackMapper {
     Track toTrack(ReqCreateTrackDTO reqCreateTrackDTO);
 
     Track toTrack(ReqUpdateTrackDTO reqUpdateTrackDTO);
+
+    @Mapping(ignore = true, target = "uploader")
+    ResGetTrackDTO toResGetTrackDTO(Track track);
 
     List<ResGetTrackDTO> toResGetTrackDTOs(List<Track> tracks);
 }

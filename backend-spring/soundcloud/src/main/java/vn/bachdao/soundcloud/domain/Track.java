@@ -40,7 +40,7 @@ public class Track {
 
     private Integer countLike;
     private Integer countPlay;
-    private Uploader uploader;
+    private String uploader;
     private Boolean isDeleted;
 
     @CreatedDate
@@ -48,16 +48,4 @@ public class Track {
 
     @LastModifiedDate
     private Instant updatedAt;
-
-    @Getter
-    @Setter
-    public static class Uploader {
-        @JsonProperty(value = "_id", index = 0)
-        private String id;
-
-        private String email;
-        private String name;
-        private String role;
-        private String type;
-    }
 }

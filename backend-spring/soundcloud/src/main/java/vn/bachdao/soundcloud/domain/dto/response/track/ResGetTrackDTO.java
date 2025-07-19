@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
-import vn.bachdao.soundcloud.domain.Track;
 
 @Getter
 @Setter
@@ -23,9 +22,21 @@ public class ResGetTrackDTO {
 
     private Integer countLike;
     private Integer countPlay;
-    private Track.Uploader uploader;
+    private Uploader uploader;
     private Boolean isDeleted;
 
     private Instant createdAt;
     private Instant updatedAt;
+
+    @Getter
+    @Setter
+    public static class Uploader {
+        @JsonProperty(value = "_id", index = 0)
+        private String id;
+
+        private String email;
+        private String name;
+        private String role;
+        private String type;
+    }
 }

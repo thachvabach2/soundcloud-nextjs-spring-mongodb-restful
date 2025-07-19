@@ -39,7 +39,8 @@ public class TrackResource {
 
     @PostMapping("/tracks/top")
     @ApiMessage("Get top tracks by category")
-    public ResponseEntity<ResPaginationDTO> getTopTracksByCategory(@Valid @RequestBody ReqGetTopTrackByCategory req) {
+    public ResponseEntity<ResPaginationDTO> getTopTracksByCategory(
+            @Valid @RequestBody ReqGetTopTrackByCategory req) {
         return ResponseEntity.ok(this.trackService.getTopTrackByCategory(req));
     }
 

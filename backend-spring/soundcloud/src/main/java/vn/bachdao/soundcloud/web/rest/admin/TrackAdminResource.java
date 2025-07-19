@@ -22,9 +22,11 @@ import vn.bachdao.soundcloud.domain.Track;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqCreateTrackDTO;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqUpdateTrackDTO;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
+import vn.bachdao.soundcloud.domain.dto.response.track.ResGetTrackDTO;
 import vn.bachdao.soundcloud.service.TrackService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
 import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
+import vn.bachdao.soundcloud.web.rest.errors.UserNotAuthenticatedException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -38,7 +40,8 @@ public class TrackAdminResource {
 
     @PostMapping("/tracks")
     @ApiMessage("Create a new track")
-    public ResponseEntity<Track> createTrack(@Valid @RequestBody ReqCreateTrackDTO reqTrack) {
+    public ResponseEntity<ResGetTrackDTO> createTrack(@Valid @RequestBody ReqCreateTrackDTO reqTrack)
+            throws IdInvalidException, UserNotAuthenticatedException {
         return ResponseEntity.ok(trackService.createTrack(reqTrack));
     }
 
