@@ -215,7 +215,7 @@ public class TrackService {
 
     public ResPaginationDTO getTrackCreatedByAUser(String id, Pageable pageable) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("uploader.id").is(id)).with(pageable);
+        query.addCriteria(Criteria.where("uploader").is(id)).with(pageable);
 
         List<Track> tracks = mongoTemplate.query(Track.class).matching(query).all();
 
