@@ -144,7 +144,7 @@ const MainSlider = (props: IPops) => {
                                 </Link>
 
                                 <div className="track-artist overflow-hidden whitespace-nowrap text-ellipsis">
-                                    <span className="text-gray-400 text-xs">{track.uploader.name}</span>
+                                    <span className="text-gray-400 text-xs">{track?.uploader?.name}</span>
                                 </div>
                             </div>
                         </div>

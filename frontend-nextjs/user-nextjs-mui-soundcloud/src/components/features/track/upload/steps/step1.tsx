@@ -62,7 +62,7 @@ const Step1 = (props: IProp) => {
                 }))
             } catch (error) {
                 //@ts-expect-error: error
-                alert(error?.response?.data?.message)
+                alert(error?.response?.data?.message ?? 'Backend error')
             }
         }
     }, [session, setIsUploaded, setTrackUpload])
