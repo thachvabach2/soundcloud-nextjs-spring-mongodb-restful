@@ -11,9 +11,11 @@ spring:
 
 
 server:
-  tomcat:
-    ### handle when fe request large file (>2MB) and wrong bearer token
-    max-swallow-size: 50MB
+    tomcat:
+        ### handle when fe request large file (>2MB) and wrong bearer token
+        max-swallow-size: 50MB
+    port: 8080
+
 
 soundcloud:
     mongo-uri: mongodb+srv://ngocbach12a1:VXL2QqwQcpRSIrzX@cluster0.qfttq.mongodb.net/
