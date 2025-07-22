@@ -98,4 +98,9 @@ declare global {
         countLike: number;
         countPlay: number;
     }
+
+    interface IUpload {
+        fileName: string;
+        uploadedAt: string;
+    }
 }

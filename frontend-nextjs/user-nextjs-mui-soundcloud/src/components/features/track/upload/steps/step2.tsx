@@ -12,6 +12,7 @@ import { LinearProgressWithLabel } from "@/components/ui/track/upload/LinearProg
 import { sendRequest } from "@/lib/utils/api";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/toast";
+import { createANewTrackAfterUploadAction } from "@/actions/actions.track";
 
 interface IProps {
     trackUpload: {
@@ -31,7 +32,7 @@ export interface INewTrack {
     category: string
 }
 
-interface ITrackForm {
+export interface ITrackForm {
     title: string,
     artist: string,
     description: string,
@@ -97,21 +98,8 @@ const Step2 = (props: IProps) => {
             ...prev,
             ...data
         }));
-        const res = await sendRequest<IBackendRes<ITrackTop[]>>({
-            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks`,
-            method: "POST",
-            body: {
-                title: data.title,
-                artist: data.artist,
-                description: data.description,
-                trackUrl: info.trackUrl,
-                imgUrl: info.imgUrl,
-                category: data.category
-            },
-            headers: {
-                'Authorization': `Bearer ${session?.access_token}`,
-            },
-        })
+
+        const res = await createANewTrackAfterUploadAction(data, info);
         if (res.data) {
             onBack();
             setInfo({

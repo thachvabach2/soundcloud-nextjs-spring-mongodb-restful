@@ -1,7 +1,8 @@
 'use server'
 
+import { INewTrack, ITrackForm } from "@/components/features/track/upload/steps/step2";
 import { authOptions } from "@/lib/auth/auth";
-import { sendRequest } from "@/lib/utils/api"
+import { sendRequest, sendRequestFile } from "@/lib/utils/api"
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
 
@@ -33,4 +34,42 @@ export const increaseCountPlay = async (trackId: string) => {
         }
     })
     revalidateTag('getTrackById');
+}
+
+export const uploadFileAction = async (formData: FormData, targetType: string) => {
+    const session = await getServerSession(authOptions);
+
+    const res = await sendRequestFile<IBackendRes<IUpload>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/files/upload`,
+        method: "POST",
+        body: formData,
+        headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            'target_type': targetType,
+        },
+    })
+
+    return res;
+}
+
+export const createANewTrackAfterUploadAction = async (data: ITrackForm, info: INewTrack) => {
+    const session = await getServerSession(authOptions);
+
+    const res = await sendRequest<IBackendRes<ITrackTop[]>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks`,
+        method: "POST",
+        body: {
+            title: data.title,
+            artist: data.artist,
+            description: data.description,
+            trackUrl: info.trackUrl,
+            imgUrl: info.imgUrl,
+            category: data.category
+        },
+        headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+        },
+    })
+
+    return res;
 }

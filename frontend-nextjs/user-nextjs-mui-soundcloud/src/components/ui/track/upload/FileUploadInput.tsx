@@ -14,6 +14,8 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Theme } from "@emotion/react";
 import { useToast } from "@/hooks/toast";
+import { uploadFileAction } from "@/actions/actions.track"
+import Image from "next/image"
 
 interface IProps {
     info: INewTrack
@@ -32,17 +34,10 @@ const FileUploadInput = (props: IProps) => {
             const formData = new FormData();
             formData.append('fileUpload', image);
             try {
-                const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/files/upload`, formData,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${session?.access_token}`,
-                            'target_type': 'images',
-                        },
-                    }
-                )
+                const res = await uploadFileAction(formData, 'images');
                 setInfo(prev => ({
                     ...prev,
-                    imgUrl: res.data?.data?.fileName,
+                    imgUrl: res?.data?.fileName ?? ""
                 }))
             } catch (error) {
                 //@ts-expect-error: error: error
@@ -96,13 +91,17 @@ const FileUploadInput = (props: IProps) => {
                         border: 'none',
                         cursor: 'default',
                     }}>
-                        <Box component={'img'}
-                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${info.imgUrl}`}
-                            sx={{
-                                height: '100%',
-                                width: '100%',
-                            }}
-                        />
+                        <div className="relative h-full w-full">
+                            <Image
+                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${info.imgUrl}`}
+                                alt="track image"
+                                fill
+                                sizes="(min-width: 808px) 50vw, 100vw"
+                                style={{
+                                    objectFit: 'contain', // cover, contain, none
+                                }}
+                            />
+                        </div>
                         <Stack spacing={2}
                             sx={{
                                 position: 'absolute',

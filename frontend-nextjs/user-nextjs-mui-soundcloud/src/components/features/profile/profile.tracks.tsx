@@ -13,6 +13,7 @@ import { useTrackContext } from '@/hooks/use.track.context';
 import PauseTwoToneIcon from '@mui/icons-material/PauseTwoTone';
 import Link from 'next/link';
 import { convertSlugUrl } from '@/lib/utils/api';
+import Image from 'next/image';
 
 interface IProps {
     track: ITrackTop
@@ -71,12 +72,21 @@ const TrackProfile = (props: IProps) => {
                     </Box>
                 </Box>
                 <Link href={`/track/${track._id}?audio=${track.trackUrl}&id=${track._id}`} onClick={() => setCurrentTrack({ ...track, isPlaying: false })}>
-                    <CardMedia
-                        component="img"
-                        sx={{ width: 155, height: 155, objectFit: 'fill' }}
-                        image={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
-                        alt="Live from space album cover"
-                    />
+                    <CardMedia component="div"
+                        sx={{ width: 155, height: 155 }}
+                    >
+                        <div className="relative h-full w-full">
+                            <Image
+                                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track.imgUrl}`}
+                                alt="track image"
+                                fill
+                                sizes="(min-width: 808px) 50vw, 100vw"
+                                style={{
+                                    objectFit: 'contain', // cover, contain, none
+                                }}
+                            />
+                        </div>
+                    </CardMedia>
                 </Link>
             </Card>
 
