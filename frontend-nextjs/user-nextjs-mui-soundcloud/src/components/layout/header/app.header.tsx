@@ -20,6 +20,8 @@ import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import Link from 'next/link';
 import { fetchDefaultImages } from '@/lib/utils/api';
 import Image from 'next/image';
+import { Stack } from '@mui/material';
+import { useHasMounted } from '@/hooks/use.has.mounted';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -66,6 +68,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const AppHeader = () => {
     const { data: session } = useSession()
+    const hasMounted = useHasMounted();
 
     //
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -97,6 +100,8 @@ const AppHeader = () => {
     if (!mode) {
         return null;
     }
+
+    if (!hasMounted) return (<></>);
 
     return (
         <>
@@ -177,37 +182,17 @@ const AppHeader = () => {
                                 <>
                                     {/* Pages PC */}
                                     <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-                                        <Tabs
-                                            value={value}
-                                            onChange={handleChange}
-                                            // slotProps={{
-                                            //     indicator: {
-                                            //         style: { display: 'none' }
-                                            //     }
-                                            // }}
-                                            aria-label="basic tabs example"
-                                            sx={{
-                                                paddingRight: '20px',
-                                                "button": {
-                                                    textTransform: 'none',
-                                                    fontSize: '1rem',
-                                                }
-                                            }}
-                                        >
-                                            <Tab
-                                                value={'playlist'}
-                                                label={<Link href={'/playlist'}>Playlists</Link>}
-                                            />
-                                            <Tab
-                                                value={'like'}
-                                                label={<Link href={'/like'}>Likes</Link>}
-                                            />
-                                            <Tab
-                                                value={'upload'}
-                                                label={<Link href={'/track/upload'}>Upload</Link>}
-                                            // sx={{ textTransform: 'none', fontSize: '1rem' }}
-                                            />
-                                        </Tabs>
+                                        <Stack direction={'row'} spacing={4} sx={{ pr: '20px' }}>
+                                            <div>
+                                                <Link href={'/playlist'}>Playlists</Link>
+                                            </div>
+                                            <div>
+                                                <Link href={'/like'}>Likes</Link>
+                                            </div>
+                                            <div>
+                                                <Link href={'/track/upload'}>Upload</Link>
+                                            </div>
+                                        </Stack>
                                     </Box>
 
                                     {/* avatar */}
@@ -273,7 +258,7 @@ const AppHeader = () => {
 
                                             <MenuItem
                                                 onClick={() => {
-                                                    handleCloseUserMenu;
+                                                    handleCloseUserMenu();
                                                     signOut({ callbackUrl: '/' });
                                                 }}
                                             >
@@ -304,10 +289,6 @@ const AppHeader = () => {
                                             value={'create-account'}
                                             label={<Link href={'/auth/signup'}>Create Account</Link>}
 
-                                        />
-                                        <Tab
-                                            value={'upload'}
-                                            label={<Link href={'/track/upload'}>Upload</Link>}
                                         />
                                     </Tabs>
                                 </Box>
