@@ -2,6 +2,8 @@ import MainSlider from "@/components/features/main/main.slider";
 import Stack from "@mui/material/Stack";
 import { sendRequest } from "@/lib/utils/api";
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
     const chills = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
