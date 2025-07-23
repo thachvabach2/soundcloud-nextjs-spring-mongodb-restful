@@ -9,10 +9,10 @@ declare global {
         url: string;
         method: string;
         body?: { [key: string]: any };
-        queryParams?: any;
+        queryParams?: Record<string, any>;
         useCredentials?: boolean;
-        headers?: any;
-        nextOption?: any;
+        headers?: Record<string, string>;
+        nextOption?: Omit<RequestInit, 'method' | 'body' | 'queryParams' | 'useCredentials' | 'headers'>
     }
 
     interface IBackendRes<T> {

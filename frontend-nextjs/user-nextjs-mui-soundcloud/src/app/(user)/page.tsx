@@ -1,27 +1,14 @@
 import MainSlider from "@/components/features/main/main.slider";
 import Stack from "@mui/material/Stack";
-import { sendRequest } from "@/lib/utils/api";
+import { getTopTrackByCategory } from "@/actions/actions.track";
 
+// avoid pre render '/' when build
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
-    const chills = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
-        method: "POST",
-        body: { category: "CHILL", limit: 10 },
-    })
-
-    const workouts = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
-        method: "POST",
-        body: { category: "WORKOUT", limit: 10 },
-    })
-
-    const hiphop = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
-        method: "POST",
-        body: { category: "HIPHOP", limit: 10 },
-    })
+    const chills = await getTopTrackByCategory("CHILL", 10);
+    const workouts = await getTopTrackByCategory("WORKOUT", 10);
+    const hiphop = await getTopTrackByCategory("HIPHOP", 10);
 
     return (
         <Stack spacing={5}>

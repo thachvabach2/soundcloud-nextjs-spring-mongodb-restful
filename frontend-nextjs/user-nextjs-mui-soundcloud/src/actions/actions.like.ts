@@ -20,6 +20,7 @@ export const getTracksLikedByAUserAction = async () => {
             Authorization: `Bearer ${session?.access_token}`
         },
         nextOption: {
+            cache: 'force-cache',
             next: {
                 tags: [`getTracksLikedByAUser`],
             },

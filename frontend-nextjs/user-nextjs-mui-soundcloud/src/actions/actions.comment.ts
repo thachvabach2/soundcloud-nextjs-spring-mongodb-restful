@@ -22,8 +22,9 @@ export const getCommentsByATrackAction = async (trackId: string) => {
             trackId: trackId,
         },
         nextOption: {
+            cache: 'force-cache',
             next: {
-                tags: [`getCommentsByATrack`]
+                tags: [`getCommentsByATrack-${trackId}`],
             },
         }
     })
@@ -44,7 +45,7 @@ export const createACommentOnATrackAction = async (content: string, moment: numb
     })
 
     if (res?.data) {
-        revalidateTag(`getCommentsByATrack`);
+        revalidateTag(`getCommentsByATrack-${track}`);
     }
 
     return res;

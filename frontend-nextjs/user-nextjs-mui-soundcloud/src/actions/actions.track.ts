@@ -16,8 +16,9 @@ export const getTrackByIdAction = async (id: string) => {
             'Authorization': `Bearer ${session?.access_token}`,
         },
         nextOption: {
+            cache: 'force-cache',
             next: {
-                tags: [`getTrackById`],
+                tags: [`getTrackById-${id}`],
             },
         }
     })
@@ -33,7 +34,7 @@ export const increaseCountPlay = async (trackId: string) => {
             trackId: trackId
         }
     })
-    revalidateTag('getTrackById');
+    revalidateTag(`getTrackById-${trackId}`);
 }
 
 export const uploadFileAction = async (formData: FormData, targetType: string) => {
@@ -69,6 +70,22 @@ export const createANewTrackAfterUploadAction = async (data: ITrackForm, info: I
         headers: {
             'Authorization': `Bearer ${session?.access_token}`,
         },
+    })
+
+    return res;
+}
+
+export const getTopTrackByCategory = async (category: string, limit: number) => {
+    const res = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/top`,
+        method: "POST",
+        body: { category: category, limit: limit },
+        nextOption: {
+            cache: 'force-cache',
+            next: {
+                tags: [`getTopTrackByCategory-${category}`],
+            },
+        }
     })
 
     return res;
