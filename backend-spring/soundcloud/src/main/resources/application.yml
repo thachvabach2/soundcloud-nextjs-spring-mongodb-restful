@@ -28,3 +28,4 @@ soundcloud:
     upload:
         upload-file:
             base-uri: file:///E:/SelfLearingIT/PersonalProject/01-nextjs-spring-mongodb-restful-soundcloud/backend-spring/upload
+    delay-timeout: 0 #unit: milliseconds. eg: 3000 = 3000ms
