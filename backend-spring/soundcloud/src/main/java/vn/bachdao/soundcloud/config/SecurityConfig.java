@@ -22,7 +22,9 @@ public class SecurityConfig {
             "/images/**",
             "/api/v1/auth/social-media",
             "/api/v1/tracks/users",
-            "/api/v1/tracks/increase-view"
+            "/api/v1/tracks/increase-view",
+            "/api/v1/tracks/{id}",
+            "/api/v1/tracks/comments",
     };
 
     @Bean
