@@ -7,14 +7,10 @@ import { revalidateTag } from "next/cache";
 
 
 export const getCommentsByATrackAction = async (trackId: string) => {
-    const session = await getServerSession(authOptions);
 
     const res = await sendRequest<IBackendRes<IModelPaginate<ITrackComment>>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/comments`,
         method: "POST",
-        headers: {
-            'Authorization': `Bearer ${session?.access_token}`,
-        },
         queryParams: {
             page: 1,
             size: 10,

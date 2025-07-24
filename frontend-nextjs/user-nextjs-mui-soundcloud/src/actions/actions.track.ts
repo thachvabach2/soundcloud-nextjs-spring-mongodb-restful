@@ -7,14 +7,10 @@ import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
 
 export const getTrackByIdAction = async (id: string) => {
-    const session = await getServerSession(authOptions);
 
     const res = await sendRequest<IBackendRes<ITrackTop>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/${id}`,
         method: "GET",
-        headers: {
-            'Authorization': `Bearer ${session?.access_token}`,
-        },
         nextOption: {
             cache: 'force-cache',
             next: {
