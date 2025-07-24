@@ -8,11 +8,13 @@ services:
       - 3000:80 # port: 3000 for NEXTAUTH_URL
 
   backend-soundcloud:
-    image: thachvabach2/devtaycode-backend-soundcloud-spring:1.1
+    # run this first because use SSG
+    image: thachvabach2/devtaycode-backend-soundcloud-spring:1.2
     container_name: backend-soundcloud-spring
     environment:
       SERVER_PORT: 8081
       SOUNDCLOUD_MONGO_URI: mongodb+srv://ngocbach12a1:VXL2QqwQcpRSIrzX@cluster0.qfttq.mongodb.net/
+      SOUNDCLOUD_DELAY_TIMEOUT: 0
       SOUNDCLOUD_UPLOAD_UPLOAD_FILE_BASE_URI: file:///uploads/
     volumes:
       - ./upload-docker/:/uploads/

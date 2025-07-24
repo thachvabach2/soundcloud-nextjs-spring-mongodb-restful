@@ -52,7 +52,7 @@ export const uploadFileAction = async (formData: FormData, targetType: string) =
 export const createANewTrackAfterUploadAction = async (data: ITrackForm, info: INewTrack) => {
     const session = await getServerSession(authOptions);
 
-    const res = await sendRequest<IBackendRes<ITrackTop[]>>({
+    const res = await sendRequest<IBackendRes<ITrackTop>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks`,
         method: "POST",
         body: {
@@ -67,6 +67,11 @@ export const createANewTrackAfterUploadAction = async (data: ITrackForm, info: I
             'Authorization': `Bearer ${session?.access_token}`,
         },
     })
+
+    if (res?.data) {
+        revalidateTag(`getTopTrackByCategory-${data.category}`);
+        revalidateTag(`getTracksCreatedByAUser-by-profile-${res.data.uploader._id}`);
+    }
 
     return res;
 }
@@ -85,4 +90,24 @@ export const getTopTrackByCategory = async (category: string, limit: number) => 
     })
 
     return res;
+}
+
+export const getTracksCreatedByAUserAction = async (userId: string) => {
+    const tracks = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/users`,
+        method: "POST",
+        body: { id: userId },
+        queryParams: {
+            page: 1,
+            size: 30
+        },
+        nextOption: {
+            cache: 'force-cache',
+            next: {
+                tags: [`getTracksCreatedByAUser-by-profile-${userId}`],
+            }
+        }
+    })
+
+    return tracks;
 }

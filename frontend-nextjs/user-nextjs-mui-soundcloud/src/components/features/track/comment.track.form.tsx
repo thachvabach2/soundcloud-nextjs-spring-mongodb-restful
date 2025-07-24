@@ -1,18 +1,17 @@
 'use client'
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import React, { Dispatch, forwardRef, RefObject, SetStateAction, useImperativeHandle, useRef } from "react";
 import { CommentFormRef } from "@/components/features/track/wave.track";
-import { useSession } from "next-auth/react";
-import { fetchDefaultImages } from "@/lib/utils/api";
-import { createACommentOnATrackAction } from "@/actions/actions.comment";
+import { fetchDefaultImages, sendRequest } from "@/lib/utils/api";
 import WaveSurfer from "wavesurfer.js";
 import LikeTrack from "@/components/features/track/like.track";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface IProps {
     commentInputRef: RefObject<HTMLInputElement | null>;
@@ -20,13 +19,13 @@ interface IProps {
     momentSecondComment: number;
     setMomentSecondComment: Dispatch<SetStateAction<number>>;
     wavesurfer: WaveSurfer | null;
-    listTrackLikedByAUser: IModelPaginate<ITrackLike> | null;
 }
 
 const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
-    const { commentInputRef, track, momentSecondComment, setMomentSecondComment, wavesurfer, listTrackLikedByAUser } = props;
-    const { data: session } = useSession();
+    const { commentInputRef, track, momentSecondComment, setMomentSecondComment, wavesurfer } = props;
 
+    const { data: session } = useSession();
+    const router = useRouter();
     const wasAlreadyFocused = useRef(false);
 
     useImperativeHandle(ref, () => ({
@@ -39,9 +38,30 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
         const content = commentInputRef.current?.value;
 
         if (content && track?._id) {
-            const res = await createACommentOnATrackAction(content, momentSecondComment, track._id);
+            const res = await sendRequest<IBackendRes<ITrackComment>>({
+                url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/comments`,
+                method: "POST",
+                body: {
+                    content: content,
+                    moment: momentSecondComment,
+                    track: track._id
+                },
+                headers: {
+                    'Authorization': `Bearer ${session?.access_token}`,
+                },
+            })
 
             if (res?.data) {
+                await sendRequest<IBackendRes<any>>({
+                    url: '/api/revalidate',
+                    method: "POST",
+                    queryParams: {
+                        tag: `getCommentsByATrack-${track._id}`,
+                        secret: "justASecretForRevalidate",
+                    }
+                })
+                router.refresh();
+
                 setMomentSecondComment(-1);
                 commentInputRef.current!.value = '';
             }
@@ -146,7 +166,6 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
                 >
                     <LikeTrack
                         track={track}
-                        listTrackLikedByAUser={listTrackLikedByAUser}
                     />
                 </Stack>
             </Stack>

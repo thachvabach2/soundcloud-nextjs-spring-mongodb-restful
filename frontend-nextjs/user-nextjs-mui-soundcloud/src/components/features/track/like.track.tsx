@@ -2,21 +2,69 @@ import { Box, Chip, Stack } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { likeOrDislikeATrack } from "@/actions/actions.like";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { sendRequest } from "@/lib/utils/api";
+import { useRouter } from "next/navigation";
 
 interface IProps {
     track: ITrackTop | null;
-    listTrackLikedByAUser: IModelPaginate<ITrackLike> | null;
 }
 
 const LikeTrack = (props: IProps) => {
-    const { track, listTrackLikedByAUser } = props;
-    const trackLikes = listTrackLikedByAUser?.result;
+    const { track } = props;
+    const { data: session } = useSession();
+    const router = useRouter();
+    const [trackLikes, setTrackLikes] = useState<ITrackLike[] | null>(null);
+
+    useEffect(() => {
+        fetchData();
+    }, [session])
+
+    const fetchData = async () => {
+        if (session?.access_token) {
+            const res = await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
+                url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/likes`,
+                method: "GET",
+                queryParams: {
+                    page: 1,
+                    size: 100,
+                    sort: 'createdAt,desc'
+                },
+                headers: {
+                    Authorization: `Bearer ${session?.access_token}`
+                },
+            })
+            if (res?.data?.result) {
+                setTrackLikes(res?.data?.result);
+            }
+        }
+    }
 
     const handleLikeTrack = async () => {
-        if (track && trackLikes) {
-            await likeOrDislikeATrack(track?._id, trackLikes);
-        }
+        await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
+            url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/likes`,
+            method: "POST",
+            body: {
+                track: track?._id,
+                quantity: trackLikes?.some(t => t._id === track?._id) ? -1 : 1,
+            },
+            headers: {
+                Authorization: `Bearer ${session?.access_token}`
+            }
+        })
+
+        await sendRequest<IBackendRes<any>>({
+            url: '/api/revalidate',
+            method: "POST",
+            queryParams: {
+                tag: 'track-by-id',
+                secret: "justASecretForRevalidate",
+            }
+        })
+
+        fetchData();
+        router.refresh();
     }
 
     return (

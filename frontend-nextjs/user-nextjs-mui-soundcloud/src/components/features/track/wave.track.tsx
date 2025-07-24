@@ -1,7 +1,7 @@
 'use client'
 
 import { useWavesurfer } from "@/hooks/use.wavesurfer";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { WaveSurferOptions } from "wavesurfer.js";
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
@@ -13,14 +13,12 @@ import CommentTrackArtistInfo from "@/components/features/track/comment.track.ar
 import CommentTrackList from "@/components/features/track/comment.track.list";
 import CommentTrackForm from "@/components/features/track/comment.track.form";
 import { useSession } from "next-auth/react";
-import { fetchDefaultImages } from "@/lib/utils/api";
-import { increaseCountPlay } from "@/actions/actions.track";
+import { fetchDefaultImages, sendRequest } from "@/lib/utils/api";
 import Image from "next/image";
 
 interface IProps {
     track: ITrackTop | null;
     listComment: IModelPaginate<ITrackComment> | null;
-    listTrackLikedByAUser: IModelPaginate<ITrackLike> | null;
 }
 
 export interface CommentFormRef {
@@ -28,10 +26,11 @@ export interface CommentFormRef {
 }
 
 const WaveTrack = (props: IProps) => {
-    const { track, listComment, listTrackLikedByAUser } = props;
+    const { track, listComment } = props;
     const { data: session } = useSession();
     const searchParams = useSearchParams();
     const fileName = searchParams.get('audio');
+    const router = useRouter();
 
     const containerRef = useRef<HTMLDivElement>(null);
     const timeRef = useRef<HTMLDivElement>(null);
@@ -148,10 +147,27 @@ const WaveTrack = (props: IProps) => {
         childRef.current?.setFocused();
     }
 
-    const handleIncreasePlay = () => {
+    const handleIncreasePlay = async () => {
         if (firstPlayRef.current === true) {
-            track?._id && increaseCountPlay(track._id);
+            await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
+                url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/tracks/increase-view`,
+                method: "POST",
+                body: {
+                    trackId: track?._id
+                }
+            })
+
+            await sendRequest<IBackendRes<any>>({
+                url: '/api/revalidate',
+                method: "POST",
+                queryParams: {
+                    tag: 'track-by-id',
+                    secret: "justASecretForRevalidate",
+                }
+            })
+
             firstPlayRef.current = false;
+            router.refresh();
         }
     }
 
@@ -170,7 +186,7 @@ const WaveTrack = (props: IProps) => {
                                     src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${track?.imgUrl}`}
                                     width={320}
                                     height={320}
-                                    priority
+                                // priority
                                 />
                             </div>
                         </div>
@@ -363,7 +379,6 @@ const WaveTrack = (props: IProps) => {
                         momentSecondComment={momentSecondComment}
                         setMomentSecondComment={setMomentSecondComment}
                         wavesurfer={wavesurfer}
-                        listTrackLikedByAUser={listTrackLikedByAUser}
                     />
                     <Box className="list-comment artistInfo">
                         <Grid container>

@@ -1,10 +1,8 @@
-import { authOptions } from "@/lib/auth/auth";
 import TrackProfile from "@/components/features/profile/profile.tracks";
-import { sendRequest } from "@/lib/utils/api";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { getServerSession } from "next-auth";
 import type { Metadata, ResolvingMetadata } from 'next'
+import { getTracksCreatedByAUserAction } from "@/actions/actions.track";
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -26,18 +24,9 @@ export async function generateMetadata(
 }
 
 const ProfilePage = async ({ params }: { params: Promise<{ slug: string }> }) => {
-    const { slug } = await params;
-    const session = await getServerSession(authOptions);
+    const { slug: userId } = await params;
 
-    const tracks = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
-        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/users`,
-        method: "POST",
-        body: { id: slug },
-        queryParams: {
-            page: 1,
-            size: 30
-        }
-    })
+    const tracks = await getTracksCreatedByAUserAction(userId);
     const data = tracks?.data?.result ?? []
 
     return (
