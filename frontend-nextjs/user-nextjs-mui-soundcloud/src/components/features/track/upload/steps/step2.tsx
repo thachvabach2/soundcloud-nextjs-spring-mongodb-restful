@@ -9,8 +9,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { AutocompleteElement, TextFieldElement, useForm } from 'react-hook-form-mui'
 import FileUploadInput from "@/components/ui/track/upload/FileUploadInput";
 import { LinearProgressWithLabel } from "@/components/ui/track/upload/LinearProgressWithLabel";
-import { sendRequest } from "@/lib/utils/api";
-import { useSession } from "next-auth/react";
 import { useToast } from "@/hooks/toast";
 import { createANewTrackAfterUploadAction } from "@/actions/actions.track";
 
@@ -41,7 +39,6 @@ export interface ITrackForm {
 
 const Step2 = (props: IProps) => {
     const { trackUpload, onBack } = props;
-    const { data: session } = useSession();
     const toast = useToast();
 
     const [info, setInfo] = useState<INewTrack>({
