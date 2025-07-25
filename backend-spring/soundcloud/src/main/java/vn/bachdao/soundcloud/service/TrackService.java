@@ -20,7 +20,6 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
 import vn.bachdao.soundcloud.domain.Track;
@@ -88,7 +87,7 @@ public class TrackService {
 
     public Optional<Track> getTrackById(ObjectId id) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(id));
+        query.addCriteria(Criteria.where("_id").is(id).and("isDeleted").is(false));
 
         Optional<Track> result = mongoTemplate.query(Track.class)
                 .matching(query).one();
@@ -98,6 +97,7 @@ public class TrackService {
 
     public ResPaginationDTO getAllTracks(Query query, Pageable pageable) {
         Query newQuery = query.with(pageable);
+        newQuery.addCriteria(Criteria.where("isDeleted").is(false));
 
         List<Track> tracks = mongoTemplate.find(newQuery, Track.class);
 
@@ -123,7 +123,7 @@ public class TrackService {
 
     public UpdateResult updateTrack(ObjectId id, ReqUpdateTrackDTO reqTrack) {
 
-        Query query = new Query(Criteria.where("_id").is(id));
+        Query query = new Query(Criteria.where("_id").is(id).and("isDeleted").is(false));
 
         Update update = new Update();
 
@@ -136,11 +136,16 @@ public class TrackService {
         return result;
     }
 
-    public DeleteResult deleteTrackById(ObjectId id) {
+    public UpdateResult deleteTrackById(ObjectId id) {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(id));
 
-        DeleteResult result = mongoTemplate.remove(query, Track.class);
+        // force delete
+        // DeleteResult result = mongoTemplate.remove(query, Track.class);
+
+        // soft delete - cần dùng schedule để Cleanup job (xóa định kỳ)
+        Update update = new Update().set("isDeleted", true);
+        UpdateResult result = mongoTemplate.updateFirst(query, update, Track.class);
 
         return result;
     }
@@ -213,9 +218,9 @@ public class TrackService {
         return res;
     }
 
-    public ResPaginationDTO getTrackCreatedByAUser(String id, Pageable pageable) {
+    public ResPaginationDTO getTrackCreatedByAUser(ObjectId id, Pageable pageable) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("uploader").is(id)).with(pageable);
+        query.addCriteria(Criteria.where("uploader").is(id).and("isDeleted").is(false)).with(pageable);
 
         List<Track> tracks = mongoTemplate.query(Track.class).matching(query).all();
 
@@ -236,7 +241,7 @@ public class TrackService {
         return res;
     }
 
-    public void validateTrackExists(String trackId) throws IdInvalidException {
+    public void validateTrackExists(ObjectId trackId) throws IdInvalidException {
         Query query = new Query(Criteria.where("_id").is(trackId).and("isDeleted").is(false));
         boolean trackExists = mongoTemplate.exists(query, Track.class);
 

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.turkraft.springfilter.boot.Filter;
 
@@ -63,7 +62,7 @@ public class TrackAdminResource {
 
         // ### C2: functional
         Track track = this.trackService.getTrackById(objectId)
-                .orElseThrow(() -> new IdInvalidException("Track với id = " + id + " không tồn tại"));
+                .orElseThrow(() -> new IdInvalidException("Track với id = " + id + " không tồn tại hoặc đã bị xóa"));
 
         return ResponseEntity.ok(track);
     }
@@ -89,14 +88,14 @@ public class TrackAdminResource {
 
         // check exist id
         this.trackService.getTrackById(objectId)
-                .orElseThrow(() -> new IdInvalidException("Track với id = " + id + " không tồn tại"));
+                .orElseThrow(() -> new IdInvalidException("Track với id = " + id + " không tồn tại hoặc đã bị xóa"));
 
         return ResponseEntity.ok(this.trackService.updateTrack(objectId, reqTrack));
     }
 
     @DeleteMapping("/tracks/{id}")
     @ApiMessage("Delete a track")
-    public ResponseEntity<DeleteResult> deleteTrack(@PathVariable("id") String id) throws IdInvalidException {
+    public ResponseEntity<UpdateResult> deleteTrack(@PathVariable("id") String id) throws IdInvalidException {
         if (!ObjectId.isValid(id)) {
             throw new IdInvalidException("Track với id = " + id + " lỗi");
         }
@@ -104,7 +103,7 @@ public class TrackAdminResource {
 
         // check exist id
         this.trackService.getTrackById(objectId)
-                .orElseThrow(() -> new IdInvalidException("Track với id = " + id + " không tồn tại"));
+                .orElseThrow(() -> new IdInvalidException("Track với id = " + id + " không tồn tại hoặc đã bị xóa"));
 
         return ResponseEntity.ok(this.trackService.deleteTrackById(objectId));
     }

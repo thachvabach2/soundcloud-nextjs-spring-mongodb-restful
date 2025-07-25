@@ -58,7 +58,7 @@ public class TrackResource {
             throw new IdInvalidException("User với Id = " + req.getId() + " không tồn tại");
         }
 
-        return ResponseEntity.ok(this.trackService.getTrackCreatedByAUser(req.getId(), pageable));
+        return ResponseEntity.ok(this.trackService.getTrackCreatedByAUser(objectId, pageable));
     }
 
     @PostMapping("/tracks/increase-view")

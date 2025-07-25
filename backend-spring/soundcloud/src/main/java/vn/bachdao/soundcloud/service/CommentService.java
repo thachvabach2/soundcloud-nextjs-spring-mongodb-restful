@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +48,7 @@ public class CommentService {
             throw new UserNotAuthenticatedException("User not authenticated");
         }
 
-        this.trackService.validateTrackExists(req.getTrack());
+        this.trackService.validateTrackExists(new ObjectId(req.getTrack()));
 
         Comment comment = this.commentMapper.toComment(req);
         comment.setUser(currentUserIdLoginOptional.get());
