@@ -2,6 +2,7 @@ package vn.bachdao.soundcloud.domain;
 
 import java.time.Instant;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -40,7 +41,7 @@ public class Track {
 
     private Integer countLike;
     private Integer countPlay;
-    private String uploader;
+    private ObjectId uploader;
     private Boolean isDeleted;
 
     @CreatedDate

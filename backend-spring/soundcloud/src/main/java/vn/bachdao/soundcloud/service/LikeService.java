@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -80,8 +81,8 @@ public class LikeService {
         if (existingLike == null && reqQuantity == 1) {
             // Trường hợp chưa có Like và muốn Like → tạo mới
             Like newLike = new Like();
-            newLike.setUser(userId);
-            newLike.setTrack(trackId);
+            newLike.setUser(new ObjectId(userId));
+            newLike.setTrack(new ObjectId(trackId));
 
             resultLike = this.mongoTemplate.insert(newLike);
             countLikeChange = 1;

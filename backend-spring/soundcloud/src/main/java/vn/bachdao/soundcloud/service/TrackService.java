@@ -56,7 +56,7 @@ public class TrackService {
             throws IdInvalidException, UserNotAuthenticatedException {
         Track track = trackMapper.toTrack(reqTrack);
         User userInToken = getUserFromToken();
-        track.setUploader(userInToken.getId());
+        track.setUploader(new ObjectId(userInToken.getId()));
         track.setIsDeleted(false);
         track.setCountLike(0);
         track.setCountPlay(0);

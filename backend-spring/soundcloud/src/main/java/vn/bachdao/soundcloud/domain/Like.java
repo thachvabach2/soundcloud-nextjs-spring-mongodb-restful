@@ -1,5 +1,6 @@
 package vn.bachdao.soundcloud.domain;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -21,6 +22,6 @@ public class Like extends AbstractAuditingEntity {
     @JsonProperty(value = "_id", index = 0)
     private String id;
 
-    private String user;
-    private String track;
+    private ObjectId user;
+    private ObjectId track;
 }
