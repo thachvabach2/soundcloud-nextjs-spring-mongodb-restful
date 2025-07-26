@@ -8,10 +8,11 @@ import java.lang.annotation.Target;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import vn.bachdao.soundcloud.util.annotation.impl.ObjectIdListValidatorImpl;
 import vn.bachdao.soundcloud.util.annotation.impl.ObjectIdValidatorImpl;
 
 @Documented
-@Constraint(validatedBy = { ObjectIdValidatorImpl.class })
+@Constraint(validatedBy = { ObjectIdValidatorImpl.class, ObjectIdListValidatorImpl.class })
 @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ObjectIdValidator {
