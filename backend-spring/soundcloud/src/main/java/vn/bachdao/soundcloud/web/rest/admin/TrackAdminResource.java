@@ -46,7 +46,7 @@ public class TrackAdminResource {
 
     @GetMapping("/tracks/{id}")
     @ApiMessage("Get track by id")
-    public ResponseEntity<Track> getTrack(@PathVariable("id") String id) throws IdInvalidException {
+    public ResponseEntity<ResGetTrackDTO> getTrack(@PathVariable("id") String id) throws IdInvalidException {
         // check id is ObjectId
         if (!ObjectId.isValid(id)) {
             throw new IdInvalidException("Track với id = " + id + " lỗi");
@@ -61,10 +61,10 @@ public class TrackAdminResource {
         // Track track = dbTrack.get();
 
         // ### C2: functional
-        Track track = this.trackService.getTrackById(objectId)
+        ResGetTrackDTO resTrack = this.trackService.getTrackById(objectId)
                 .orElseThrow(() -> new IdInvalidException("Track với id = " + id + " không tồn tại hoặc đã bị xóa"));
 
-        return ResponseEntity.ok(track);
+        return ResponseEntity.ok(resTrack);
     }
 
     @GetMapping("/tracks")

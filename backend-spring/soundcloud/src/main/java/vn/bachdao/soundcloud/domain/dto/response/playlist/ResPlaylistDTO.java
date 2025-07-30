@@ -19,12 +19,12 @@ public class ResPlaylistDTO extends AbstractAuditingEntity {
     private String title;
     private Boolean isPublic;
     private UserInfo user;
-    private Set<TrackInfo> tracks;
+    private Set<TrackInfo<UserInfo>> tracks;
     private Boolean isDeleted;
 
     @Getter
     @Setter
-    public static class TrackInfo {
+    public static class TrackInfo<T> {
         @JsonProperty(value = "_id", index = 0)
         private String id;
 
@@ -36,6 +36,7 @@ public class ResPlaylistDTO extends AbstractAuditingEntity {
         private String trackUrl;
         private Integer countLike;
         private Integer countPlay;
+        private T uploader;
     }
 
     @Getter

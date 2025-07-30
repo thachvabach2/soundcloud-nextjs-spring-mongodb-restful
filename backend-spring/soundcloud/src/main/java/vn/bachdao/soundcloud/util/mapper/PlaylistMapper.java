@@ -15,11 +15,13 @@ import org.mapstruct.ReportingPolicy;
 
 import vn.bachdao.soundcloud.domain.Playlist;
 import vn.bachdao.soundcloud.domain.Track;
+import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.request.playlist.ReqUpdateAPlaylistDTO;
 import vn.bachdao.soundcloud.domain.dto.response.playlist.ResPlaylistDTO;
 
 @Mapper(componentModel = "spring")
 public interface PlaylistMapper {
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tracks", expression = "java(mapStringToObjectIdSet(reqUpdateAPlaylistDTO.getTracks()))")
@@ -34,7 +36,8 @@ public interface PlaylistMapper {
                 .collect(Collectors.toSet());
     }
 
-    ResPlaylistDTO.TrackInfo toTrackInfo(Track track);
+    @Mapping(target = "uploader", ignore = true)
+    ResPlaylistDTO.TrackInfo<ResPlaylistDTO.UserInfo> toTrackInfo(Track track);
 
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "tracks", ignore = true)
@@ -43,6 +46,8 @@ public interface PlaylistMapper {
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "user", ignore = true)
     ResPlaylistDTO toResPlaylistDTOForCreate(Playlist playlist);
+
+    ResPlaylistDTO.UserInfo toUserInfo(User user);
 
     // helper
     @Named("objectIdToString")

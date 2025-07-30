@@ -3,6 +3,8 @@ package vn.bachdao.soundcloud.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -101,15 +103,32 @@ public class PlaylistService {
 
         Set<ObjectId> trackObjectIds = updatedPlaylist.getTracks();
 
-        Set<ResPlaylistDTO.TrackInfo> trackInfos = null;
+        Set<ResPlaylistDTO.TrackInfo<ResPlaylistDTO.UserInfo>> trackInfos = null;
 
         if (trackObjectIds != null && !trackObjectIds.isEmpty()) {
             Set<Track> tracks = trackRepository.findByIdIn(trackObjectIds);
 
-            trackInfos = tracks.stream()
-                    .map(this.playlistMapper::toTrackInfo)
+            // Lấy tất cả uploader ids từ tracks
+            Set<ObjectId> uploaderIds = tracks.stream()
+                    .map(Track::getUploader)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
 
+            // Lấy tất cả users một lần thay vì query từng cái
+            Map<String, User> uploaderMap = this.userService.getUsersByIds(uploaderIds)
+                    .stream()
+                    .collect(Collectors.toMap(User::getId, user -> user));
+
+            trackInfos = tracks.stream()
+                    .map(track -> {
+                        User uploader = uploaderMap.get(track.getUploader().toHexString());
+                        ResPlaylistDTO.UserInfo uploaderInfo = this.playlistMapper.toUserInfo(uploader);
+                        ResPlaylistDTO.TrackInfo<ResPlaylistDTO.UserInfo> trackInfo = this.playlistMapper
+                                .toTrackInfo(track);
+                        trackInfo.setUploader(uploaderInfo);
+                        return trackInfo;
+                    })
+                    .collect(Collectors.toSet());
         }
 
         ResPlaylistDTO res = this.playlistMapper.toResPlaylistDTO(updatedPlaylist);
@@ -158,13 +177,31 @@ public class PlaylistService {
 
         Set<ObjectId> trackObjectIds = playlistDB.getTracks();
 
-        Set<ResPlaylistDTO.TrackInfo> trackInfos = null;
+        Set<ResPlaylistDTO.TrackInfo<ResPlaylistDTO.UserInfo>> trackInfos = null;
 
         if (trackObjectIds != null && !trackObjectIds.isEmpty()) {
             Set<Track> tracks = trackRepository.findByIdIn(trackObjectIds);
 
+            // Lấy tất cả uploader ids từ tracks
+            Set<ObjectId> uploaderIds = tracks.stream()
+                    .map(Track::getUploader)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            // Lấy tất cả users một lần thay vì query từng cái
+            Map<String, User> uploaderMap = this.userService.getUsersByIds(uploaderIds)
+                    .stream()
+                    .collect(Collectors.toMap(User::getId, user -> user));
+
             trackInfos = tracks.stream()
-                    .map(this.playlistMapper::toTrackInfo)
+                    .map(track -> {
+                        User uploader = uploaderMap.get(track.getUploader().toHexString());
+                        ResPlaylistDTO.UserInfo uploaderInfo = this.playlistMapper.toUserInfo(uploader);
+                        ResPlaylistDTO.TrackInfo<ResPlaylistDTO.UserInfo> trackInfo = this.playlistMapper
+                                .toTrackInfo(track);
+                        trackInfo.setUploader(uploaderInfo);
+                        return trackInfo;
+                    })
                     .collect(Collectors.toSet());
         }
 
@@ -186,13 +223,45 @@ public class PlaylistService {
 
     public ResPaginationDTO getPlaylistsWithPagination(Pageable pageable) {
         Aggregation aggregation = Aggregation.newAggregation(
-                // Lọc playlists chưa bị xóa
                 Aggregation.match(Criteria.where("isDeleted").is(false)),
 
                 Aggregation.lookup("users", "user", "_id", "user"),
                 Aggregation.lookup("tracks", "tracks", "_id", "trackArray"),
 
                 Aggregation.unwind("user", true),
+                Aggregation.unwind("trackArray", true),
+
+                // Lookup uploader cho từng track
+                Aggregation.lookup("users", "trackArray.uploader", "_id", "trackArray.uploaderInfo"),
+                Aggregation.unwind("trackArray.uploaderInfo", true),
+
+                // Group lại để gom các tracks vào array
+                Aggregation.group("_id")
+                        .first("title").as("title")
+                        .first("isPublic").as("isPublic")
+                        .first("user").as("user")
+                        .first("isDeleted").as("isDeleted")
+                        .first("createdAt").as("createdAt")
+                        .first("updatedAt").as("updatedAt")
+                        .first("createdBy").as("createdBy")
+                        .first("updatedBy").as("updatedBy")
+                        .push(
+                                new Document("_id", "$trackArray._id")
+                                        .append("title", "$trackArray.title")
+                                        .append("artist", "$trackArray.artist")
+                                        .append("description", "$trackArray.description")
+                                        .append("category", "$trackArray.category")
+                                        .append("imgUrl", "$trackArray.imgUrl")
+                                        .append("trackUrl", "$trackArray.trackUrl")
+                                        .append("countLike", "$trackArray.countLike")
+                                        .append("countPlay", "$trackArray.countPlay")
+                                        .append("uploader", new Document("_id", "$trackArray.uploaderInfo._id")
+                                                .append("username", "$trackArray.uploaderInfo.username")
+                                                .append("email", "$trackArray.uploaderInfo.email")
+                                                .append("name", "$trackArray.uploaderInfo.name")
+                                                .append("role", "$trackArray.uploaderInfo.role")
+                                                .append("type", "$trackArray.uploaderInfo.type")))
+                        .as("tracks"),
 
                 // Project các fields cần thiết
                 Aggregation.project()
@@ -201,12 +270,7 @@ public class PlaylistService {
                         .and("isPublic").as("isPublic")
 
                         .and("user").as("user")
-                        .and("trackArray").as("tracks")
-
-                        .and("track._id").as("track._id")
-                        .and("track.title").as("track.title")
-                        .and("track.description").as("track.description")
-                        .and("track.trackUrl").as("track.trackUrl")
+                        .and("tracks").as("tracks")
 
                         .and("isDeleted").as("isDeleted")
                         .and("createdAt").as("createdAt")
@@ -214,7 +278,6 @@ public class PlaylistService {
                         .and("createdBy").as("createdBy")
                         .and("updatedBy").as("updatedBy"),
 
-                // Sử dụng facet để count và paginate trong 1 query
                 Aggregation.facet(
                         Aggregation.skip(pageable.getOffset()),
                         Aggregation.limit(pageable.getPageSize())).as("data")
@@ -264,13 +327,45 @@ public class PlaylistService {
                 .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
 
         Aggregation aggregation = Aggregation.newAggregation(
-                // Lọc playlists chưa bị xóa
                 Aggregation.match(Criteria.where("isDeleted").is(false).and("user").is(new ObjectId(userId))),
 
                 Aggregation.lookup("users", "user", "_id", "user"),
                 Aggregation.lookup("tracks", "tracks", "_id", "trackArray"),
 
                 Aggregation.unwind("user", true),
+                Aggregation.unwind("trackArray", true),
+
+                // Lookup uploader cho từng track
+                Aggregation.lookup("users", "trackArray.uploader", "_id", "trackArray.uploaderInfo"),
+                Aggregation.unwind("trackArray.uploaderInfo", true),
+
+                // Group lại để gom các tracks vào array
+                Aggregation.group("_id")
+                        .first("title").as("title")
+                        .first("isPublic").as("isPublic")
+                        .first("user").as("user")
+                        .first("isDeleted").as("isDeleted")
+                        .first("createdAt").as("createdAt")
+                        .first("updatedAt").as("updatedAt")
+                        .first("createdBy").as("createdBy")
+                        .first("updatedBy").as("updatedBy")
+                        .push(
+                                new Document("_id", "$trackArray._id")
+                                        .append("title", "$trackArray.title")
+                                        .append("artist", "$trackArray.artist")
+                                        .append("description", "$trackArray.description")
+                                        .append("category", "$trackArray.category")
+                                        .append("imgUrl", "$trackArray.imgUrl")
+                                        .append("trackUrl", "$trackArray.trackUrl")
+                                        .append("countLike", "$trackArray.countLike")
+                                        .append("countPlay", "$trackArray.countPlay")
+                                        .append("uploader", new Document("_id", "$trackArray.uploaderInfo._id")
+                                                .append("username", "$trackArray.uploaderInfo.username")
+                                                .append("email", "$trackArray.uploaderInfo.email")
+                                                .append("name", "$trackArray.uploaderInfo.name")
+                                                .append("role", "$trackArray.uploaderInfo.role")
+                                                .append("type", "$trackArray.uploaderInfo.type")))
+                        .as("tracks"),
 
                 // Project các fields cần thiết
                 Aggregation.project()
@@ -279,12 +374,7 @@ public class PlaylistService {
                         .and("isPublic").as("isPublic")
 
                         .and("user").as("user")
-                        .and("trackArray").as("tracks")
-
-                        .and("track._id").as("track._id")
-                        .and("track.title").as("track.title")
-                        .and("track.description").as("track.description")
-                        .and("track.trackUrl").as("track.trackUrl")
+                        .and("tracks").as("tracks")
 
                         .and("isDeleted").as("isDeleted")
                         .and("createdAt").as("createdAt")
@@ -292,7 +382,6 @@ public class PlaylistService {
                         .and("createdBy").as("createdBy")
                         .and("updatedBy").as("updatedBy"),
 
-                // Sử dụng facet để count và paginate trong 1 query
                 Aggregation.facet(
                         Aggregation.skip(pageable.getOffset()),
                         Aggregation.limit(pageable.getPageSize())).as("data")

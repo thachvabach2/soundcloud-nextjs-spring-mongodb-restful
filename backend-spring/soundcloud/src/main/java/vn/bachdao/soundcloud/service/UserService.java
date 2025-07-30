@@ -3,6 +3,7 @@ package vn.bachdao.soundcloud.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -139,5 +140,9 @@ public class UserService {
             currentUser.setRefreshToken(token);
             this.userRepository.save(currentUser);
         }
+    }
+
+    public Set<User> getUsersByIds(Set<ObjectId> userIds) {
+        return this.userRepository.findByIdIn(userIds);
     }
 }

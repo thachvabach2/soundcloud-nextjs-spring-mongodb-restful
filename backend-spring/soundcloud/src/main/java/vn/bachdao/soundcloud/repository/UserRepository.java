@@ -2,8 +2,10 @@ package vn.bachdao.soundcloud.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -25,4 +27,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     Page<User> findAll(Document document, Pageable pageable);
 
     Optional<User> findOneByUsernameAndTypeAllIgnoreCase(String username, String type);
+
+    Set<User> findByIdIn(Set<ObjectId> ids);
 }

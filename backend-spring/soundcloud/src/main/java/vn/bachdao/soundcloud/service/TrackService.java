@@ -85,14 +85,23 @@ public class TrackService {
         return user;
     }
 
-    public Optional<Track> getTrackById(ObjectId id) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(id).and("isDeleted").is(false));
+    public Optional<ResGetTrackDTO> getTrackById(ObjectId id) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                // Lọc comments chưa bị xóa
+                Aggregation.match(Criteria.where("_id").is(id).and("isDeleted").is(false)),
 
-        Optional<Track> result = mongoTemplate.query(Track.class)
-                .matching(query).one();
+                // Lookup để join với users và tracks
+                Aggregation.lookup("users", "uploader", "_id", "uploader"),
 
-        return result;
+                // Unwind arrays
+                Aggregation.unwind("uploader", true));
+
+        AggregationResults<ResGetTrackDTO> results = mongoTemplate.aggregate(
+                aggregation, "tracks", ResGetTrackDTO.class);
+
+        Optional<ResGetTrackDTO> tracks = Optional.ofNullable(results.getUniqueMappedResult());
+
+        return tracks;
     }
 
     public ResPaginationDTO getAllTracks(Query query, Pageable pageable) {
