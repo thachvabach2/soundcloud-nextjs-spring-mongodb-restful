@@ -1,5 +1,7 @@
 package vn.bachdao.soundcloud.web.rest.user;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mongodb.client.result.UpdateResult;
 
 import jakarta.validation.Valid;
+import vn.bachdao.soundcloud.domain.Playlist;
 import vn.bachdao.soundcloud.domain.dto.request.playlist.ReqCreateAnEmptyPlaylist;
 import vn.bachdao.soundcloud.domain.dto.request.playlist.ReqUpdateAPlaylistDTO;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
@@ -75,7 +79,23 @@ public class PlaylistResource {
 
     @PostMapping("/playlists/by-user")
     @ApiMessage("Fetch User's playlists")
-    public ResponseEntity<ResPaginationDTO> getPlaylistsByUser(Pageable pageable) throws UserNotAuthenticatedException {
-        return ResponseEntity.ok(this.playlistService.getPlaylistsByUser(pageable));
+    public ResponseEntity<?> getPlaylistsByUser(
+            Pageable pageable,
+            @RequestParam(name = "isJoin", required = true) boolean isJoin) throws UserNotAuthenticatedException {
+        if (isJoin) {
+            return ResponseEntity.ok(this.playlistService.getPlaylistsByUserWithJoin(pageable));
+        } else {
+            return ResponseEntity.ok(this.playlistService.getPlaylistsByUserWithNoJoin());
+        }
+    }
+
+    @PostMapping("/playlists/{playlistId}/tracks")
+    @ApiMessage("Add track to playlist")
+    public ResponseEntity<Playlist> addTrackToPlaylist(
+            @PathVariable("playlistId") @ObjectIdValidator(message = "playlistId: lỗi format ObjectId") String playlistId,
+            @RequestBody Map<String, @ObjectIdValidator(message = "TrackId không phải dạng ObjectId") String> req)
+            throws IdInvalidException, UserNotAuthenticatedException {
+        String trackId = req.get("trackId");
+        return ResponseEntity.ok(this.playlistService.addTrackToPlaylist(playlistId, trackId));
     }
 }

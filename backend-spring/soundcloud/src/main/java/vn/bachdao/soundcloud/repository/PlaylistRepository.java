@@ -13,5 +13,9 @@ import org.bson.types.ObjectId;
 public interface PlaylistRepository extends MongoRepository<Playlist, String> {
     Optional<Playlist> findByIdAndIsDeletedFalse(String id);
 
+    Optional<Playlist> findByIdAndIsDeletedFalseAndUser(String id, ObjectId user);
+
     List<Playlist> findByUser(ObjectId user);
+
+    List<Playlist> findAllByUser(ObjectId user);
 }

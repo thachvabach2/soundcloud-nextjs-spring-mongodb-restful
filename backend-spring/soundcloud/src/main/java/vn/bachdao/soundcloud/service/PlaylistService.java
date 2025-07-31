@@ -322,7 +322,7 @@ public class PlaylistService {
         return res;
     }
 
-    public ResPaginationDTO getPlaylistsByUser(Pageable pageable) throws UserNotAuthenticatedException {
+    public ResPaginationDTO getPlaylistsByUserWithJoin(Pageable pageable) throws UserNotAuthenticatedException {
         String userId = SecurityUtils.getCurrentUserLogin()
                 .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
 
@@ -424,5 +424,29 @@ public class PlaylistService {
         res.setMeta(meta);
 
         return res;
+    }
+
+    public Playlist addTrackToPlaylist(String playlistId, String trackId)
+            throws IdInvalidException, UserNotAuthenticatedException {
+        String userId = SecurityUtils.getCurrentUserLogin()
+                .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
+
+        Playlist playlistDB = this.playlistRepository.findByIdAndIsDeletedFalseAndUser(playlistId, new ObjectId(userId))
+                .orElseThrow(() -> new IdInvalidException(
+                        "Playlist với id: '" + playlistId
+                                + "' không tồn tại hoặc đã bị xóa hoặc không có permission add track vào playlist này"));
+
+        playlistDB.getTracks().add(new ObjectId(trackId));
+
+        return this.playlistRepository.save(playlistDB);
+    }
+
+    public List<Playlist> getPlaylistsByUserWithNoJoin() throws UserNotAuthenticatedException {
+        String userId = SecurityUtils.getCurrentUserLogin()
+                .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
+
+        List<Playlist> playlists = this.playlistRepository.findAllByUser(new ObjectId(userId));
+
+        return playlists;
     }
 }
