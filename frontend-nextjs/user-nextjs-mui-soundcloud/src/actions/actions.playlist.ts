@@ -16,7 +16,8 @@ export const getUserPlaylist = async () => {
         queryParams: {
             page: 1,
             size: 100,
-            sort: 'createdAt,desc'
+            sort: 'createdAt,desc',
+            isJoin: true,
         },
     })
 

@@ -92,6 +92,7 @@ const DetailTrackPage = async ({ params }: { params: Promise<{ slug: string }> }
             next: { tags: ['track-by-id'] }
         }
     })
+
     const resAllComments = await sendRequest<IBackendRes<IModelPaginate<ITrackComment>>>({
         url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/comments`,
         method: "POST",
