@@ -107,6 +107,7 @@ const MainSlider = (props: IPops) => {
     return (
         <Box
             sx={{
+                paddingX: '24px',
                 ".slick-track": {
                     marginLeft: 0,
                     display: 'flex',

@@ -1,4 +1,7 @@
+import { getUserPlaylist } from "@/actions/actions.playlist";
+import PlaylistTrack from "@/components/features/playlist/playlist.track";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
     title: "Hear your own playlists and the playlists you’ve liked: on SoundCloud",
@@ -6,12 +9,18 @@ export const metadata: Metadata = {
 }
 
 const PlaylistPage = async () => {
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate a delay
+    const playlists = await getUserPlaylist();
+
+    if (!playlists?.data) {
+        notFound();
+    }
 
     return (
-        <div>
-            playlist page
-        </div>
+        <>
+            <PlaylistTrack
+                playlists={playlists?.data?.result}
+            />
+        </>
     )
 }
 

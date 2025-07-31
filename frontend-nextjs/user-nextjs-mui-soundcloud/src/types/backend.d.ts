@@ -39,9 +39,9 @@ declare global {
             role: string;
             type: string;
         },
-        isDeleted: boolean,
-        createdAt: string,
-        updatedAt: string
+        isDeleted?: boolean,
+        createdAt?: string,
+        updatedAt?: string
     }
 
     interface IModelPaginate<T> {
@@ -102,5 +102,47 @@ declare global {
     interface IUpload {
         fileName: string;
         uploadedAt: string;
+    }
+
+    interface IPlaylist {
+        _id: string;
+        title: string;
+        isPublic: boolean;
+        user: IPlaylistUser,
+        tracks: IPlaylistTrack[],
+        isDeleted: boolean,
+        createdAt: string;
+        createdBy: string;
+        updatedAt: string;
+        updatedBy: string;
+    }
+
+    interface IPlaylistTrack {
+        _id: string;
+        title: string;
+        artist: string;
+        description: string;
+        category: string;
+        imgUrl: string;
+        trackUrl: string;
+        countLike: number;
+        countPlay: number;
+        uploader: {
+            _id: string;
+            username: string;
+            email: string;
+            name: string;
+            role: string;
+            type: string;
+        }
+    }
+
+    interface IPlaylistUser {
+        _id: string;
+        username: string;
+        email: string;
+        name: string;
+        role: string;
+        type: string;
     }
 }

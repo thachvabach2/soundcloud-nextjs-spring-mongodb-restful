@@ -31,7 +31,7 @@ const ProfilePage = async ({ params }: { params: Promise<{ slug: string }> }) =>
 
     return (
         <>
-            <Box component={'div'} sx={{ paddingBottom: '20px' }}>
+            <Box component={'div'} sx={{ paddingBottom: '20px', paddingX: '24px' }}>
                 <Grid container spacing={5}>
                     {data.map((item: ITrackTop) => {
                         return (
