@@ -1,4 +1,4 @@
-import { getUserPlaylist } from "@/actions/actions.playlist";
+import { getUserPlaylistAction } from "@/actions/actions.playlist";
 import PlaylistTrack from "@/components/features/playlist/playlist.track";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 const PlaylistPage = async () => {
-    const playlists = await getUserPlaylist();
+    const playlists = await getUserPlaylistAction();
 
     if (!playlists?.data) {
         notFound();
