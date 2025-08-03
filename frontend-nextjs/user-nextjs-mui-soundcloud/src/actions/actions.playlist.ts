@@ -65,3 +65,21 @@ export const createEmptyPlaylistAction = async (title: string, isPublic: boolean
 
     return res;
 }
+
+export const deletePlaylistByIdAction = async (playlistId: string) => {
+    const session = await getServerSession(authOptions);
+
+    const res = await sendRequest<IBackendRes<IPlaylist>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/playlists/${playlistId}`,
+        method: "DELETE",
+        headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+        },
+    })
+
+    if (res.data) {
+        revalidateTag(`getUserPlaylist-${session?.user?._id}`)
+    }
+
+    return res;
+}

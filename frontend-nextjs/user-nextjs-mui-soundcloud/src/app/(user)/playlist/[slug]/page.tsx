@@ -9,7 +9,6 @@ const DetailPlaylistPage = async ({ params }: { params: Promise<{ slug: string }
     const resPlaylist = await getPlaylistByIdAction(playlistId);
 
     if (!resPlaylist?.data) {
-        alert('ahaha')
         notFound();
     }
 

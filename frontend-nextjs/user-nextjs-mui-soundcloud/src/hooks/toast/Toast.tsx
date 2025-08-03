@@ -39,7 +39,11 @@ export const Toast: FC<ToastProps> = ({
             key={message.key}
             open={open}
             onClose={handleClose}
-            TransitionProps={{ onExited }}
+            slotProps={{
+                transition: {
+                    onExited
+                }
+            }}
             anchorOrigin={{ vertical: "top", horizontal: "center" }}
             autoHideDuration={autoHideDuration ?? 3000}
             {...props}

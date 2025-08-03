@@ -6,8 +6,12 @@ import DownloadForOfflineOutlinedIcon from '@mui/icons-material/DownloadForOffli
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import PlaylistAddOutlinedIcon from '@mui/icons-material/PlaylistAddOutlined';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
-import { Chip, Stack } from "@mui/material";
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack } from "@mui/material";
 import PlaylistTable from "./playlist.table";
+import { useParams, useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/toast';
+import { deletePlaylistByIdAction } from '@/actions/actions.playlist';
+import { useState } from 'react';
 
 interface IProps {
     playlist: IPlaylist;
@@ -15,6 +19,26 @@ interface IProps {
 
 const PlaylistDetailListTrack = (props: IProps) => {
     const { playlist } = props;
+    const params = useParams();
+    const { slug: playlistId } = params;
+
+    const toast = useToast();
+    const router = useRouter();
+    const [openDialogDelete, setOpenDialogDelete] = useState(false);
+
+    const handleDeletePlaylist = async () => {
+        if (!playlistId) return;
+
+        const res = await deletePlaylistByIdAction(playlistId as string);
+
+        if (res.data) {
+            toast.success('Removed from Your Playlist');
+            router.push('/');
+            setOpenDialogDelete(false);
+        } else {
+            toast.error(res?.message);
+        }
+    }
 
     return (
         <>
@@ -72,12 +96,42 @@ const PlaylistDetailListTrack = (props: IProps) => {
                         color="default"
                         icon={<DeleteOutlineOutlinedIcon />}
                         sx={{ borderRadius: '5px' }}
+                        onClick={() => setOpenDialogDelete(true)}
                     />
                 </Stack>
             </div>
             <PlaylistTable
                 playlist={playlist}
             />
+
+            <Dialog
+                open={openDialogDelete}
+                onClose={() => setOpenDialogDelete(false)}
+            >
+                <DialogTitle>
+                    Delete from Your Playlist
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        <span className="text-[#000] font-light">
+                            This will delete
+                            <b>
+                                {` ${playlist?.title} `}
+                            </b>
+                            from&nbsp;
+                            <b>
+                                Your Playlist.
+                            </b>
+                        </span>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ pr: '20px', pb: '20px' }}>
+                    <Button onClick={() => setOpenDialogDelete(false)} sx={{ textTransform: 'none', mr: '10px' }}>Cancel</Button>
+                    <Button variant="contained" onClick={handleDeletePlaylist} autoFocus sx={{ textTransform: 'none' }}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }

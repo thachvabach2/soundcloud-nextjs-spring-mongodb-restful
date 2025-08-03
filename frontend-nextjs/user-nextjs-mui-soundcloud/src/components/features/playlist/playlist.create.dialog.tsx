@@ -39,13 +39,17 @@ const DialogCreatePlaylist = (props: IProps) => {
 
     const handleClose = () => {
         setOpenDialog(false);
+        setNewPlaylist({
+            title: '',
+            isPubic: true,
+        })
     };
 
     const handleCloseBackdrop = (event: any, reason: "backdropClick" | "escapeKeyDown") => {
         if (reason && reason === 'backdropClick') {
             return;
         }
-        setOpenDialog(false);
+        handleClose();
     }
 
     const handleCreateEmptyPlaylist = async () => {
@@ -110,6 +114,9 @@ const DialogCreatePlaylist = (props: IProps) => {
                                                 color: '#121212'
                                             },
                                         }
+                                    },
+                                    htmlInput: {
+                                        autoComplete: 'off',
                                     }
                                 }}
                                 sx={{
