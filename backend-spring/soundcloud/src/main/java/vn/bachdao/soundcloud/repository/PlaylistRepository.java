@@ -17,5 +17,5 @@ public interface PlaylistRepository extends MongoRepository<Playlist, String> {
 
     List<Playlist> findByUser(ObjectId user);
 
-    List<Playlist> findAllByUser(ObjectId user);
+    List<Playlist> findAllByUserAndIsDeletedFalse(ObjectId user);
 }

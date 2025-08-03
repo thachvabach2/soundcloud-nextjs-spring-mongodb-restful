@@ -445,7 +445,7 @@ public class PlaylistService {
         String userId = SecurityUtils.getCurrentUserLogin()
                 .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
 
-        List<Playlist> playlists = this.playlistRepository.findAllByUser(new ObjectId(userId));
+        List<Playlist> playlists = this.playlistRepository.findAllByUserAndIsDeletedFalse(new ObjectId(userId));
 
         return playlists;
     }
