@@ -53,7 +53,7 @@ public class LikeService {
         int reqQuantity = req.getQuantity();
 
         // Kiểm tra track có tồn tại không
-        Query trackQuery = new Query(Criteria.where("_id").is(trackId).and("isDeleted").is(false));
+        Query trackQuery = new Query(Criteria.where("_id").is(new ObjectId(trackId)).and("isDeleted").is(false));
         Track track = this.mongoTemplate.findOne(trackQuery, Track.class);
 
         if (track == null) {
@@ -61,7 +61,8 @@ public class LikeService {
         }
 
         // Tìm Like hiện tại của user cho track này
-        Query likeQuery = new Query(Criteria.where("user").is(userId).and("track").is(trackId));
+        Query likeQuery = new Query(
+                Criteria.where("user").is(new ObjectId(userId)).and("track").is(new ObjectId(trackId)));
         Like existingLike = this.mongoTemplate.findOne(likeQuery, Like.class);
 
         // Validation logic
