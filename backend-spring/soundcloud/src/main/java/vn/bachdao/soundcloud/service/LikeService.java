@@ -129,13 +129,9 @@ public class LikeService {
                 .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
 
         Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("user").is(currentUser.get_id())),
+                Aggregation.match(Criteria.where("user").is(new ObjectId(currentUser.get_id()))),
 
-                Aggregation.addFields()
-                        .addField("trackObjectId").withValue(ConvertOperators.ToObjectId.toObjectId("$track"))
-                        .build(),
-
-                Aggregation.lookup("tracks", "trackObjectId", "_id", "track"),
+                Aggregation.lookup("tracks", "track", "_id", "track"),
 
                 Aggregation.unwind("track", true),
 
