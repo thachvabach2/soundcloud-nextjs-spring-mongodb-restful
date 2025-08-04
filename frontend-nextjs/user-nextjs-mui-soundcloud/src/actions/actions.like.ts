@@ -30,7 +30,7 @@ export const getTracksLikedByAUserAction = async () => {
     return res;
 }
 
-export const likeOrDislikeATrack = async (trackId: string, trackLikes: ITrackLike[]) => {
+export const likeOrDislikeATrack = async (trackId: string, quantity: number) => {
     const session = await getServerSession(authOptions);
 
     const res = await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
@@ -38,7 +38,7 @@ export const likeOrDislikeATrack = async (trackId: string, trackLikes: ITrackLik
         method: "POST",
         body: {
             track: trackId,
-            quantity: trackLikes?.some(t => t._id === trackId) ? -1 : 1,
+            quantity: quantity,
         },
         headers: {
             Authorization: `Bearer ${session?.access_token}`
@@ -46,6 +46,9 @@ export const likeOrDislikeATrack = async (trackId: string, trackLikes: ITrackLik
     })
 
     if (res?.data) {
-        revalidateTag('getTracksLikedByAUser')
+        revalidateTag('getTracksLikedByAUser');
+        revalidateTag('track-by-id');
     }
+
+    return res;
 }

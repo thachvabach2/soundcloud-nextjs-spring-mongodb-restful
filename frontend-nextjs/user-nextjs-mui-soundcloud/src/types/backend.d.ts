@@ -32,7 +32,7 @@ declare global {
         trackUrl: string,
         countLike: number,
         countPlay: number,
-        uploader: {
+        uploader?: {
             _id: string;
             email: string;
             name: string;

@@ -70,8 +70,6 @@ const PlaylistMain = (props: IProps) => {
         setContextMenu(null);
     };
 
-    console.log('>>> check currPlaylistId: ', contextMenu?.playlistId)
-
     return (
         <>
             <div className="main-content px-[14px]" onContextMenu={(e) => e.preventDefault()}>
@@ -239,6 +237,14 @@ const PlaylistMain = (props: IProps) => {
             <Dialog
                 open={openDialogDelete}
                 onClose={handleClose}
+                slotProps={{
+                    transition: {
+                        timeout: {
+                            enter: 400,
+                            exit: 0,
+                        }
+                    },
+                }}
             >
                 <DialogTitle>
                     Delete from Your Playlist

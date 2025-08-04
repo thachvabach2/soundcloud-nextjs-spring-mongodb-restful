@@ -24,7 +24,9 @@ const LikeTrack = (props: IProps) => {
 
     useEffect(() => {
         fetchData();
-        fetchPlaylistsByUser();
+        if (session?.access_token) {
+            fetchPlaylistsByUser();
+        }
     }, [session])
 
     const fetchData = async () => {
@@ -84,6 +86,15 @@ const LikeTrack = (props: IProps) => {
             method: "POST",
             queryParams: {
                 tag: 'track-by-id',
+                secret: "justASecretForRevalidate",
+            }
+        })
+
+        await sendRequest<IBackendRes<any>>({
+            url: '/api/revalidate',
+            method: "POST",
+            queryParams: {
+                tag: 'getTracksLikedByAUser',
                 secret: "justASecretForRevalidate",
             }
         })
