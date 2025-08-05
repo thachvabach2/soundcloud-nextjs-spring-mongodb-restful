@@ -29,6 +29,7 @@ public class Track {
     private String id;
 
     @NotBlank(message = "Title không được để trống")
+    // tạo index bằng mongo shell
     private String title;
 
     private String artist;

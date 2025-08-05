@@ -1,9 +1,13 @@
 package vn.bachdao.soundcloud.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,10 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ConvertOperators;
+import org.springframework.data.mongodb.core.aggregation.FacetOperation;
+import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
@@ -274,6 +282,164 @@ public class TrackService {
         res.setUpsertId(updateResult.getUpsertedId());
         res.setUpsertCount(updateResult.getUpsertedId() != null ? 1 : 0);
         res.setMatchedCount(updateResult.getMatchedCount());
+
+        return res;
+    }
+
+    public ResPaginationDTO searchTracksWithName(Pageable pageable, String title) {
+        List<AggregationOperation> operations = new ArrayList<>();
+
+        // Stage 1: Text search PHẢI là stage đầu tiên nếu có
+        if (title != null && !title.trim().isEmpty()) {
+            TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(title);
+            operations.add(Aggregation.match(textCriteria));
+        }
+
+        // Stage 2: Match isDeleted = false
+        operations.add(Aggregation.match(Criteria.where("isDeleted").is(false)));
+
+        // Stage 3: Tính total count trước khi pagination
+        FacetOperation facetOperation = Aggregation.facet()
+                // Branch 1: Đếm tổng số documents
+                .and(Aggregation.count().as("totalCount"))
+                .as("totalCountResult")
+
+                // Branch 2: Xử lý pagination và join
+                .and(
+                        // Sort theo score nếu có text search
+                        title != null && !title.trim().isEmpty()
+                                ? Aggregation.sort(Sort.by(Sort.Direction.DESC, "score"))
+                                : Aggregation.sort(Sort.by(Sort.Direction.DESC, "createdAt")),
+
+                        // Pagination
+                        Aggregation.skip(pageable.getOffset()),
+                        Aggregation.limit(pageable.getPageSize()),
+
+                        // Lookup users
+                        LookupOperation.newLookup()
+                                .from("users")
+                                .localField("uploader")
+                                .foreignField("_id")
+                                .as("uploader"),
+
+                        // Unwind uploader
+                        Aggregation.unwind("uploader", true),
+
+                        // Project only needed fields
+                        Aggregation.project()
+                                .andInclude("_id", "title", "artist", "description", "category",
+                                        "imgUrl", "trackUrl", "countLike", "countPlay",
+                                        "uploader", "isDeleted", "createdAt", "updatedAt"))
+                .as("data");
+
+        operations.add(facetOperation);
+
+        // Execute aggregation
+        Aggregation aggregation = Aggregation.newAggregation(operations);
+        AggregationResults<Document> results = mongoTemplate.aggregate(
+                aggregation, "tracks", Document.class);
+
+        Document result = results.getUniqueMappedResult();
+
+        // Extract total count
+        List<Document> totalCountResult = (List<Document>) result.get("totalCountResult");
+        long totalElements = totalCountResult.isEmpty() ? 0L
+                : (long) totalCountResult.get(0).getInteger("totalCount", 0);
+
+        // Extract data
+        List<Document> dataResult = (List<Document>) result.get("data");
+        List<ResGetTrackDTO> tracks = dataResult.stream()
+                .map(doc -> mongoTemplate.getConverter().read(ResGetTrackDTO.class, doc))
+                .collect(Collectors.toList());
+
+        // Build response
+        return buildPaginationResponse(tracks, pageable, totalElements);
+    }
+
+    public ResPaginationDTO searchTracksWithNameNoIndex(Pageable pageable, String title) {
+        List<AggregationOperation> operations = new ArrayList<>();
+
+        // Stage 1: Match isDeleted = false đầu tiên để tận dụng index
+        operations.add(Aggregation.match(Criteria.where("isDeleted").is(false)));
+
+        // Stage 2: Regex search nếu có title
+        if (title != null && !title.trim().isEmpty()) {
+            String escapedTitle = Pattern.quote(title.trim());
+
+            Criteria regexCriteria = new Criteria().orOperator(
+                    Criteria.where("title").regex(escapedTitle, "i"),
+                    Criteria.where("artist").regex(escapedTitle, "i"));
+
+            operations.add(Aggregation.match(regexCriteria));
+        }
+
+        // Stage 3: Facet để tính count và lấy data
+        FacetOperation facetOperation = Aggregation.facet()
+                // Branch 1: Đếm tổng số documents
+                .and(Aggregation.count().as("totalCount"))
+                .as("totalCountResult")
+
+                // Branch 2: Pagination và join
+                .and(
+                        // Pagination
+                        Aggregation.skip(pageable.getOffset()),
+                        Aggregation.limit(pageable.getPageSize()),
+
+                        // Lookup users
+                        LookupOperation.newLookup()
+                                .from("users")
+                                .localField("uploader")
+                                .foreignField("_id")
+                                .as("uploader"),
+
+                        // Unwind uploader
+                        Aggregation.unwind("uploader", true),
+
+                        // Project only needed fields (loại bỏ titleMatch temporary field)
+                        Aggregation.project()
+                                .andInclude("_id", "title", "artist", "description", "category",
+                                        "imgUrl", "trackUrl", "countLike", "countPlay",
+                                        "uploader", "createdAt", "updatedAt"))
+                .as("data");
+
+        operations.add(facetOperation);
+
+        // Execute aggregation
+        Aggregation aggregation = Aggregation.newAggregation(operations);
+        AggregationResults<Document> results = mongoTemplate.aggregate(
+                aggregation, "tracks", Document.class);
+
+        Document result = results.getUniqueMappedResult();
+
+        // Extract total count
+        List<Document> totalCountResult = (List<Document>) result.get("totalCountResult");
+        long totalElements = totalCountResult.isEmpty() ? 0L
+                : (long) totalCountResult.get(0).getInteger("totalCount", 0);
+
+        // Extract data
+        List<Document> dataResult = (List<Document>) result.get("data");
+        List<ResGetTrackDTO> tracks = dataResult.stream()
+                .map(doc -> mongoTemplate.getConverter().read(ResGetTrackDTO.class, doc))
+                .collect(Collectors.toList());
+
+        // Build response
+        return buildPaginationResponse(tracks, pageable, totalElements);
+    }
+
+    private ResPaginationDTO buildPaginationResponse(List<ResGetTrackDTO> tracks,
+            Pageable pageable, long totalElements) {
+        int totalPages = (int) Math.ceil((double) totalElements / pageable.getPageSize());
+
+        ResPaginationDTO res = new ResPaginationDTO();
+        ResPaginationDTO.Meta meta = new ResPaginationDTO.Meta();
+
+        meta.setPageNumber(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setTotalPage(totalPages);
+        meta.setTotalElement(totalElements);
+
+        res.setResult(tracks);
+        res.setMeta(meta);
 
         return res;
     }

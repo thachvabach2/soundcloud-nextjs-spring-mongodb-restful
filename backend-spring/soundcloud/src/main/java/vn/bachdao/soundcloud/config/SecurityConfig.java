@@ -26,6 +26,7 @@ public class SecurityConfig {
             "/api/v1/tracks/increase-view",
             "/api/v1/tracks/{id}",
             "/api/v1/tracks/comments",
+            "/api/v1/tracks/search",
     };
 
     @Bean

@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqGetTopTrackByCategory;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqIdTrack;
+import vn.bachdao.soundcloud.domain.dto.request.track.ReqSearchTrackDTO;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.ResUpdateResultDTO;
 import vn.bachdao.soundcloud.service.TrackService;
@@ -69,5 +70,12 @@ public class TrackResource {
         String trackId = req.get("trackId");
 
         return this.trackService.increaseCountView(trackId);
+    }
+
+    @PostMapping("/tracks/search")
+    @ApiMessage("Search tracks")
+    public ResponseEntity<ResPaginationDTO> searchTracksWithName(Pageable pageable,
+            @RequestBody ReqSearchTrackDTO req) {
+        return ResponseEntity.ok(this.trackService.searchTracksWithNameNoIndex(pageable, req.getTitle()));
     }
 }
