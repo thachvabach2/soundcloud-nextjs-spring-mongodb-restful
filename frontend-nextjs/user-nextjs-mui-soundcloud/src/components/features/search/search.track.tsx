@@ -1,44 +1,26 @@
 'use client'
 
-import { Stack, Table, TableBody, TableCell, tableCellClasses, TableHead, TableRow } from '@mui/material';
-import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
-import Image from 'next/image';
-import { Key, useState } from 'react';
+import { Stack, Table, TableBody, TableCell, tableCellClasses, TableHead, TableRow } from "@mui/material";
+import { ColumnType } from "../playlist/slug/playlist.table";
+import Image from "next/image";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
-import { useTrackContext } from '@/hooks/use.track.context';
-
-
-interface ColumnSharedType {
-    title?: React.ReactNode;
-    key?: Key;
-    className?: string;
-    hidden?: boolean;
-    align?: AlignType;
-}
-
-export type AlignType = 'inherit' | 'left' | 'center' | 'right' | 'justify';
-export interface ColumnType<RecordType> extends ColumnSharedType {
-    dataIndex: 'stt' | 'title' | 'createdAt' | 'duration' | 'artist'
-    render?: (value: any, record: RecordType, index: number) => React.ReactNode
-    width?: number;
-    minWidth?: number;
-}
-
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import { useTrackContext } from "@/hooks/use.track.context";
+import Link from "next/link";
+import { convertSlugUrl } from "@/lib/utils/api";
 
 interface IProps {
-    playlist: IPlaylist;
+    dataSearch: ITrackTop[]
+    query: string
 }
 
-
-const PlaylistTable = (props: IProps) => {
-    const { playlist } = props;
+const SearchTrack = (props: IProps) => {
+    const { dataSearch, query } = props;
     const { currentTrack, setCurrentTrack } = useTrackContext();
 
-    const tracks = playlist?.tracks;
-    const [listTrack, setListTrack] = useState(tracks);
-
-    const handlePlay = (record: IPlaylistTrack) => {
+    // console.log('>>> check data Search: ', dataSearch)
+    const handlePlay = (record: ITrackTop) => {
         setCurrentTrack({
             ...record,
             isPlaying: true,
@@ -46,7 +28,7 @@ const PlaylistTable = (props: IProps) => {
         console.log('>>>> check onclick track: ', record)
     }
 
-    const handlePause = (record: IPlaylistTrack) => {
+    const handlePause = (record: ITrackTop) => {
         setCurrentTrack({
             ...record,
             isPlaying: false,
@@ -54,7 +36,7 @@ const PlaylistTable = (props: IProps) => {
         console.log('>>>> check onclick track: ', record)
     }
 
-    const columns: ColumnType<IPlaylistTrack>[] = [
+    const columns: ColumnType<ITrackTop>[] = [
         {
             dataIndex: 'stt',
             title: '#',
@@ -110,30 +92,22 @@ const PlaylistTable = (props: IProps) => {
                                     color: `${currentTrack._id === record._id ? '#1ed760' : ''} `,
                                 }}
                             >
-                                {record.title} - {record.artist}
+                                <Link href={`/track/${convertSlugUrl(record.title)}-${record._id}.html?audio=${record.trackUrl}`}>
+                                    {record.title} - {record.artist}
+                                </Link>
                             </div>
                             <div className='line-clamp-1 break-all text-ellipsis whitespace-normal'>
-                                <span className='track-uploader cursor-pointer text-[#9b9a9a] hover:underline hover:text-[#121212]'>
-                                    {record.uploader.name}
-                                </span>
+                                <Link href={`/profile/${record.uploader?._id}`}>
+                                    <span className='track-uploader cursor-pointer text-[#9b9a9a] hover:underline hover:text-[#121212]'>
+                                        {record?.uploader?.name ?? 'uploader'}
+                                    </span>
+                                </Link>
                             </div>
                         </Stack>
                     </Stack>
 
                 </div>
             )
-        },
-        {
-            dataIndex: 'createdAt',
-            title: 'Date added',
-            align: 'left',
-            render: (value, record, index) => {
-                return (
-                    <span style={{ whiteSpace: 'nowrap' }}>
-                        Jun 5, 2024
-                    </span>
-                )
-            }
         },
         {
             dataIndex: 'duration',
@@ -151,6 +125,14 @@ const PlaylistTable = (props: IProps) => {
 
     return (
         <>
+            <div className="text-2xl font-bold px-[24px] pb-6">
+                {
+                    dataSearch.length > 0 ?
+                        `Search results for “${query}”`
+                        :
+                        `Sorry we didn't find any results for “${query}”.`
+                }
+            </div>
             <div className="table-track px-[24px]">
                 <Table
                     stickyHeader
@@ -177,7 +159,7 @@ const PlaylistTable = (props: IProps) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {listTrack?.map((record, index) => {
+                        {dataSearch?.map((record, index) => {
                             return (
                                 <TableRow
                                     hover role="checkbox" tabIndex={index + 1} key={record._id}
@@ -213,4 +195,4 @@ const PlaylistTable = (props: IProps) => {
     )
 }
 
-export default PlaylistTable;
+export default SearchTrack;

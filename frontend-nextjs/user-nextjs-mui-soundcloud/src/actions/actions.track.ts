@@ -70,7 +70,7 @@ export const createANewTrackAfterUploadAction = async (data: ITrackForm, info: I
 
     if (res?.data) {
         revalidateTag(`getTopTrackByCategory-${data.category}`);
-        revalidateTag(`getTracksCreatedByAUser-by-profile-${res.data.uploader._id}`);
+        revalidateTag(`getTracksCreatedByAUser-by-profile-${res.data.uploader?._id}`);
     }
 
     return res;
@@ -110,4 +110,19 @@ export const getTracksCreatedByAUserAction = async (userId: string) => {
     })
 
     return tracks;
+}
+
+export const searchTracksWithName = async (title: string) => {
+
+    const res = await sendRequest<IBackendRes<IModelPaginate<ITrackTop>>>({
+        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/search`,
+        method: "POST",
+        body: { title },
+        queryParams: {
+            page: 1,
+            size: 30
+        }
+    })
+
+    return res;
 }

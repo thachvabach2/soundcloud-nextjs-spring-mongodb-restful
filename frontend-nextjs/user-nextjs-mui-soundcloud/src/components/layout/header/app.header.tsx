@@ -22,6 +22,7 @@ import { fetchDefaultImages } from '@/lib/utils/api';
 import Image from 'next/image';
 import { Stack } from '@mui/material';
 import { useHasMounted } from '@/hooks/use.has.mounted';
+import { useRouter } from 'next/navigation';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -68,6 +69,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const AppHeader = () => {
     const { data: session } = useSession()
+    const router = useRouter();
     const hasMounted = useHasMounted();
 
     //
@@ -102,6 +104,15 @@ const AppHeader = () => {
     }
 
     if (!hasMounted) return (<></>);
+
+
+    const handleEnterSearch = async (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (event.key === 'Enter') {
+            if (event.currentTarget.value) {
+                router.push(`/search?q=${event.currentTarget.value}`)
+            }
+        }
+    }
 
     return (
         <>
@@ -170,8 +181,9 @@ const AppHeader = () => {
                                 <SearchIcon />
                             </SearchIconWrapper>
                             <StyledInputBase
-                                placeholder="Search…"
+                                placeholder="What do you want to play?"
                                 inputProps={{ 'aria-label': 'search' }}
+                                onKeyDown={(e) => handleEnterSearch(e)}
                             />
                         </Search>
 
