@@ -399,7 +399,7 @@ public class TrackService {
                         Aggregation.project()
                                 .andInclude("_id", "title", "artist", "description", "category",
                                         "imgUrl", "trackUrl", "countLike", "countPlay",
-                                        "uploader", "createdAt", "updatedAt"))
+                                        "uploader", "isDeleted", "createdAt", "updatedAt"))
                 .as("data");
 
         operations.add(facetOperation);
