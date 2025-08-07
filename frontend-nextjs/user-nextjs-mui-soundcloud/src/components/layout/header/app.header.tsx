@@ -209,7 +209,7 @@ const AppHeader = () => {
 
                                     {/* avatar */}
                                     <Box sx={{ flexGrow: 0 }}>
-                                        <Tooltip title={`${session.user.userName}`}>
+                                        <Tooltip title={`${session.user?.email}`}>
                                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                                 <Avatar>
                                                     <Image

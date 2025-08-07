@@ -152,7 +152,7 @@ const AuthSignin = () => {
                                         Đăng nhập với Github
                                     </Box>
                                 </ProviderButton>
-                                <ProviderButton>
+                                <ProviderButton onClick={() => signIn('google')}>
                                     <Box component={'span'}>
                                         <GoogleIcon sx={{ width: '1.5rem', height: '1.5rem', color: '#ea4335' }} />
                                     </Box>
