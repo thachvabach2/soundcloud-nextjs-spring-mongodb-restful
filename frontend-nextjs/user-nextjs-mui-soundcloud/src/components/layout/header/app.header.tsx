@@ -11,8 +11,6 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Avatar from '@mui/material/Avatar';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
 import { useColorScheme } from '@mui/material/styles';
 import { signOut, useSession } from "next-auth/react"
@@ -23,6 +21,7 @@ import Image from 'next/image';
 import { Stack } from '@mui/material';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { useRouter } from 'next/navigation';
+import ActiveLink from './active.link';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -88,13 +87,6 @@ const AppHeader = () => {
     };
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
-    };
-
-    //
-    const [value, setValue] = React.useState('playlist');
-
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-        setValue(newValue);
     };
 
     // dark mode
@@ -193,17 +185,38 @@ const AppHeader = () => {
                                 ?
                                 <>
                                     {/* Pages PC */}
-                                    <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-                                        <Stack direction={'row'} spacing={4} sx={{ pr: '20px' }}>
-                                            <div>
-                                                <Link href={'/playlist'}>Playlists</Link>
-                                            </div>
-                                            <div>
-                                                <Link href={'/like'}>Likes</Link>
-                                            </div>
-                                            <div>
-                                                <Link href={'/track/upload'}>Upload</Link>
-                                            </div>
+                                    <Box
+                                        sx={{
+                                            flexGrow: 0,
+                                            display: { xs: 'none', md: 'flex' },
+                                        }}
+                                    >
+                                        <Stack
+                                            direction={'row'}
+                                            spacing={2}
+                                            sx={{
+                                                pr: '20px',
+                                                fontWeight: 500,
+                                                color: '#666',
+                                                '& a': {
+                                                    py: '6px',
+                                                    px: '10px',
+
+                                                    '&:hover': {
+                                                        transform: 'scale(1.04)',
+                                                        color: '#121212',
+                                                    }
+                                                },
+                                                '& a.active': {
+                                                    backgroundColor: '#121212',
+                                                    color: '#fff',
+                                                    borderRadius: '5px',
+                                                }
+                                            }}
+                                        >
+                                            <ActiveLink href={'/playlist'}>Playlists</ActiveLink>
+                                            <ActiveLink href={'/like'}>Likes</ActiveLink>
+                                            <ActiveLink href={'/track/upload'}>Upload</ActiveLink>
                                         </Stack>
                                     </Box>
 
@@ -281,28 +294,36 @@ const AppHeader = () => {
                                 </>
                                 :
                                 <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
-                                    <Tabs
-                                        value={'sign-in'}
-                                        // onChange={handleChange}
-                                        aria-label="basic tabs example"
+                                    <Stack
+                                        direction={'row'}
+                                        spacing={2}
                                         sx={{
-                                            // paddingRight: '20px',
-                                            "button": {
-                                                textTransform: 'none',
-                                                fontSize: '1rem',
-                                            }
+                                            pr: '20px',
+                                            '& a': {
+                                                py: '6px',
+                                                px: '10px',
+                                                borderRadius: '5px',
+                                                color: '#666',
+                                                fontWeight: 500,
+
+                                                '&:first-child': {
+                                                    color: '#fff',
+                                                    backgroundColor: '#121212',
+                                                },
+
+                                                '&:hover': {
+                                                    transform: 'scale(1.04)',
+
+                                                    '&:nth-child(2)': {
+                                                        color: '#121212'
+                                                    }
+                                                },
+                                            },
                                         }}
                                     >
-                                        <Tab
-                                            value={'sign-in'}
-                                            label={<Link href={'/auth/signin'}>Sign in</Link>}
-                                        />
-                                        <Tab
-                                            value={'create-account'}
-                                            label={<Link href={'/auth/signup'}>Create Account</Link>}
-
-                                        />
-                                    </Tabs>
+                                        <ActiveLink href={'/auth/signin'}>Sign in</ActiveLink>
+                                        <ActiveLink href={'/auth/signup'}>Sign up</ActiveLink>
+                                    </Stack>
                                 </Box>
                         }
                         <select
