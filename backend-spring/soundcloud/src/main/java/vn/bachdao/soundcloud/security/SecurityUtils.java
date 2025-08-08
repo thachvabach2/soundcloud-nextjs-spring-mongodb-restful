@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,12 +21,15 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.util.Base64;
 
 import vn.bachdao.soundcloud.domain.dto.response.auth.ResLoginDTO;
 import vn.bachdao.soundcloud.domain.dto.response.auth.ResSocialLoginDTO;
+import vn.bachdao.soundcloud.web.rest.errors.UserNotAuthenticatedException;
 
 @Service
 public class SecurityUtils {
@@ -158,6 +164,21 @@ public class SecurityUtils {
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
+    private SecretKey getSecretKey() {
+        byte[] keyBytes = Base64.from(jwtKey).decode();
+        return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWT_ALGORITHM.getName());
+    }
+
+    public Jwt checkValidRefreshToken(String token) throws UserNotAuthenticatedException {
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
+                getSecretKey()).macAlgorithm(JWT_ALGORITHM).build();
+        try {
+            return jwtDecoder.decode(token);
+        } catch (Exception e) {
+            throw new UserNotAuthenticatedException("Refresh_token không hợp lệ hoặc đã hết hạn");
+        }
     }
 
     public static Optional<String> getCurrentUserLogin() {

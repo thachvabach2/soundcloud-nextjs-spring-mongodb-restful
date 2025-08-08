@@ -27,6 +27,7 @@ public class SecurityConfig {
             "/api/v1/tracks/{id}",
             "/api/v1/tracks/comments",
             "/api/v1/tracks/search",
+            "/api/v1/auth/refresh"
     };
 
     @Bean

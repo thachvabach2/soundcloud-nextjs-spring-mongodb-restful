@@ -2,7 +2,9 @@ package vn.bachdao.soundcloud.domain.dto.response.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -19,6 +21,8 @@ public class ResLoginDTO {
 
     @Getter
     @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ResultResLoginDTO {
 
         @JsonProperty("_id")

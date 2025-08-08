@@ -1,5 +1,7 @@
 package vn.bachdao.soundcloud.web.rest;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,11 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.Valid;
 import vn.bachdao.soundcloud.config.Constants;
@@ -26,6 +32,8 @@ import vn.bachdao.soundcloud.security.SecurityUtils;
 import vn.bachdao.soundcloud.service.AuthService;
 import vn.bachdao.soundcloud.service.UserService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
+import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
+import vn.bachdao.soundcloud.web.rest.errors.UserNotAuthenticatedException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -38,16 +46,19 @@ public class AuthenticateController {
     private final SecurityUtils securityUtils;
     private final UserService userService;
     private final AuthService authService;
+    private final ObjectMapper objectMapper;
 
     public AuthenticateController(
             AuthenticationManagerBuilder authenticationManagerBuilder,
             SecurityUtils securityUtils,
             UserService userService,
-            AuthService authService) {
+            AuthService authService,
+            ObjectMapper objectMapper) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtils = securityUtils;
         this.userService = userService;
         this.authService = authService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping("/login")
@@ -110,6 +121,73 @@ public class AuthenticateController {
         ResSocialLoginDTO res = this.authService.socialLogin(req);
 
         ResponseCookie resCookies = ResponseCookie.from("refresh_token", res.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenValidityInSeconds)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, resCookies.toString())
+                .body(res);
+    }
+
+    @PostMapping("/refresh")
+    @ApiMessage("Get new token (refresh)")
+    public ResponseEntity<ResLoginDTO> createNewAccessTokenFromRefreshToken(
+            @RequestBody Map<String, String> req)
+            throws UserNotAuthenticatedException, IdInvalidException {
+        String refresh_token = req.get("refresh_token");
+        // Check valid
+        Jwt decodedToken = this.securityUtils.checkValidRefreshToken(refresh_token);
+        Object userClaim = decodedToken.getClaim("user");
+        if (userClaim == null) {
+            throw new UserNotAuthenticatedException("Không có claim user trong refresh token");
+        }
+        ResLoginDTO.UserInsideToken userInsideToken = objectMapper.convertValue(userClaim,
+                ResLoginDTO.UserInsideToken.class);
+        String username = userInsideToken.getUsername();
+
+        // check user by token + email
+        User currentUser = this.userService.getUserByRefreshTokenAndUsername(refresh_token, username);
+        if (currentUser == null) {
+            throw new UserNotAuthenticatedException("Refresh Token không hợp lệ");
+        }
+
+        // issue new token/set refresh token as cookies
+        ResLoginDTO res = new ResLoginDTO();
+        User currentUserDB = this.userService.handleGetUserByUsername(username);
+        ResLoginDTO.ResultResLoginDTO userLogin = null;
+        if (currentUserDB != null) {
+            userLogin = new ResLoginDTO.ResultResLoginDTO(
+                    currentUserDB.getId(),
+                    currentUserDB.getUsername(),
+                    currentUserDB.getEmail(),
+                    currentUserDB.getAddress(),
+                    currentUserDB.getIsVerify(),
+                    currentUserDB.getType(),
+                    currentUserDB.getName(),
+                    currentUser.getRole());
+            res.setUser(userLogin);
+        }
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userLogin.getUserName(), null,
+                List.of(new SimpleGrantedAuthority("ROLE_" + userLogin.getRole())));
+
+        // create access token
+        String access_token = this.securityUtils.createAccessToken(authentication, userLogin);
+        res.setAccessToken(access_token);
+
+        // create refresh token
+        String new_refresh_token = this.securityUtils.createRefreshToken(userLogin.getUserName(), userLogin);
+        res.setRefreshToken(new_refresh_token);
+
+        // update user
+        this.userService.updateUserToken(new_refresh_token, username);
+
+        // set cookies
+        ResponseCookie resCookies = ResponseCookie.from("refresh_token", new_refresh_token)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")

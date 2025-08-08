@@ -27,6 +27,7 @@ import vn.bachdao.soundcloud.domain.dto.response.user.ResGetUserDTO;
 import vn.bachdao.soundcloud.repository.UserRepository;
 import vn.bachdao.soundcloud.util.mapper.UserMapper;
 import vn.bachdao.soundcloud.web.rest.errors.EmailAlreadyUsedException;
+import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 
 @Service
 public class UserService {
@@ -144,5 +145,15 @@ public class UserService {
 
     public Set<User> getUsersByIds(Set<ObjectId> userIds) {
         return this.userRepository.findByIdIn(userIds);
+    }
+
+    public User getUserByRefreshTokenAndUsername(String token, String username) throws IdInvalidException {
+        return this.userRepository.findByRefreshTokenAndUsername(token, username)
+                .orElseThrow(() -> new IdInvalidException("Username: " + username + " hoắc refresh_token not found"));
+    }
+
+    public User handleGetUserByUsername(String username) throws IdInvalidException {
+        return this.userRepository.findOneByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new IdInvalidException("Username: " + username + " not found"));
     }
 }

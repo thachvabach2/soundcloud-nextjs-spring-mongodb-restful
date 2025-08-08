@@ -18,7 +18,8 @@ public class AuthService {
     private final UserMapper userMapper;
     private final SecurityUtils securityUtils;
 
-    public AuthService(UserRepository userRepository, UserMapper userMapper, SecurityUtils securityUtils) {
+    public AuthService(UserRepository userRepository, UserMapper userMapper, SecurityUtils securityUtils,
+            UserService userService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.securityUtils = securityUtils;
