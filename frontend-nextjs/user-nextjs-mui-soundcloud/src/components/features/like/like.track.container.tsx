@@ -7,7 +7,7 @@ import { convertSlugUrl } from "@/lib/utils/api";
 import Image from "next/image";
 import { useTrackContext } from "@/hooks/use.track.context";
 import PauseIcon from '@mui/icons-material/Pause';
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { useToast } from "@/hooks/toast";
@@ -15,6 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SpatialAudioOffOutlinedIcon from '@mui/icons-material/SpatialAudioOffOutlined';
 import { likeOrDislikeATrack } from "@/actions/actions.like";
+import { signOut, useSession } from "next-auth/react";
 
 interface IProps {
     tracksLiked: ITrackLike[]
@@ -30,9 +31,15 @@ const LikeTrackContainer = (props: IProps) => {
     const { tracksLiked } = props;
     const { currentTrack, setCurrentTrack } = useTrackContext();
     const toast = useToast();
+    const { data: session } = useSession();
     const [contextMenu, setContextMenu] = useState<IContextMenu | null>(null);
 
     const openContextMenu = Boolean(contextMenu);
+
+    useEffect(() => {
+        if (session?.error !== "RefreshTokenError") return
+        signOut() // Force sign in to obtain a new set of access and refresh tokens
+    }, [session?.error])
 
     const handlePause = (track: ITrackLike) => {
         setCurrentTrack({

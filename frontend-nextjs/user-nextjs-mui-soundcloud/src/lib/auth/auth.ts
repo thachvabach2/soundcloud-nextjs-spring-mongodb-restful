@@ -4,6 +4,7 @@ import { JWT } from "next-auth/jwt";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { add, isAfter } from "date-fns";
 
 export const authOptions: AuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -54,39 +55,93 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user, account, profile, trigger }) {
-            if (trigger === 'signIn' && account?.provider !== 'credentials') {
-                const res = await sendRequest<IBackendRes<JWT>>({
-                    url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/social-media`,
-                    method: 'POST',
-                    body: {
-                        type: account?.provider.toLocaleLowerCase(),
-                        username: user.email
+            const isTimeAfter = isAfter(new Date(), new Date((token?.expires_at ?? 0) * 1000));
+
+            if (account) {
+                if (trigger === 'signIn' && account?.provider !== 'credentials') {
+                    const res = await sendRequest<IBackendRes<JWT>>({
+                        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/social-media`,
+                        method: 'POST',
+                        body: {
+                            type: account?.provider.toLocaleLowerCase(),
+                            username: user.email
+                        }
+                    })
+                    if (res.data) {
+                        token.access_token = res.data?.access_token;
+                        token.expires_at = Math.floor(
+                            add(new Date(), {
+                                [process.env.TOKEN_EXPIRE_UNIT as string]: +(process.env.TOKEN_EXPIRE_NUMBER as string)
+                            }).getTime() / 1000
+                        );
+                        token.refresh_token = res.data.refresh_token;
+                        token.user = res.data.user;
                     }
-                })
-                if (res.data) {
-                    token.access_token = res.data?.access_token;
-                    token.refresh_token = res.data.refresh_token;
-                    token.user = res.data.user;
+                }
+                if (trigger === 'signIn' && account?.provider === 'credentials') {
+                    //@ts-expect-error: error
+                    token.access_token = user.access_token;
+                    token.expires_at = Math.floor(
+                        add(new Date(), {
+                            [process.env.TOKEN_EXPIRE_UNIT as string]: +(process.env.TOKEN_EXPIRE_NUMBER as string)
+                        }).getTime() / 1000
+                    )
+                    //@ts-expect-error: error
+                    token.refresh_token = user.refresh_token;
+                    //@ts-expect-error: error
+                    token.user = user.user;
+                }
+                return token;
+            } else if (!isTimeAfter) {
+                return token;
+            } else {
+                if (!token.refresh_token) throw new TypeError("Missing refresh_token")
+
+                try {
+                    console.log('>>> Refresh token in token: ', token?.refresh_token?.slice(-5) ?? "")
+
+                    const res = await sendRequest<IBackendRes<JWT>>({
+                        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/refresh`,
+                        method: "POST",
+                        body: { refresh_token: token?.refresh_token }
+                    })
+
+                    if (!res.data) throw Error();
+
+                    console.log(">>> should refresh: ", isTimeAfter)
+                    console.log('>>> Refresh token in DB: ', res.data?.refresh_token?.slice(-5) ?? "");
+                    console.log('>>> Refresh token in token: ', token?.refresh_token?.slice(-5) ?? "")
+
+                    const expires_at = Math.floor(
+                        add(new Date(), {
+                            [process.env.TOKEN_EXPIRE_UNIT as string]: +(process.env.TOKEN_EXPIRE_NUMBER as string)
+                        }).getTime() / 1000
+                    );
+
+                    return {
+                        ...token,
+                        access_token: res.data?.access_token ?? "",
+                        expires_at: expires_at,
+                        refresh_token: res.data?.refresh_token ?? "",
+                    }
+                } catch (error) {
+                    console.error(">>>>> Error refreshing access_token", error)
+                    // If we fail to refresh the token, return an error so we can handle it on the page
+                    token.error = "RefreshTokenError"
+                    return token
                 }
             }
-            if (trigger === 'signIn' && account?.provider === 'credentials') {
-                //@ts-expect-error: error
-                token.access_token = user.access_token;
-                //@ts-expect-error: error
-                token.refresh_token = user.refresh_token;
-                //@ts-expect-error: error
-                token.user = user.user;
-            }
-            return token;
         },
         async session({ session, token, user }) {
             if (token) {
                 session.access_token = token.access_token;
+                // session.expires_at = token.expires_at;
                 session.refresh_token = token.refresh_token;
                 session.user = token.user;
+                session.error = token.error;
             }
-            return session
-        },
+            return session;
+        }
     },
     // pages: {
     //     signIn: '/auth/signin',
