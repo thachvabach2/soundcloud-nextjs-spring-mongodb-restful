@@ -345,7 +345,7 @@ const WaveTrack = (props: IProps) => {
                                                     <Image
                                                         className={`min-h-[24px] min-w-[24px] max-h-[24px] max-w-[24px] rounded-[50%] ${momentSecondComment == -1 ? 'cursor-pointer' : 'cursor-move'} `}
                                                         alt="avatar"
-                                                        src={fetchDefaultImages(session ? session.user.type : "USER")}
+                                                        src={fetchDefaultImages(session ? session.user?.type : "USER")}
                                                         onClick={(e) => { e.stopPropagation() }}
                                                         width={24}
                                                         height={24}

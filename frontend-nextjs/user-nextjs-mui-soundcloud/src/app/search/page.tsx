@@ -24,10 +24,7 @@ export async function generateMetadata(
 const SearchPage = async ({
     params,
     searchParams,
-}: {
-    params: { slug: string };
-    searchParams?: { [key: string]: string | string[] | undefined };
-}) => {
+}: Props) => {
 
     const searchP = await searchParams;
     const query = searchP?.q as string;
