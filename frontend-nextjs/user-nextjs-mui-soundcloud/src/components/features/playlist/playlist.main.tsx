@@ -14,6 +14,7 @@ import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { deletePlaylistByIdAction } from "@/actions/actions.playlist";
 import { useToast } from "@/hooks/toast";
+import theme from "@/theme";
 
 interface IProps {
     playlists: IPlaylist[];
@@ -83,18 +84,25 @@ const PlaylistMain = (props: IProps) => {
                                 >
                                     <Stack
                                         className="p-[12px] cursor-pointer relative z-0"
-                                        sx={{
-                                            '&:hover': {
-                                                backgroundColor: '#dddddd',
-                                                borderRadius: '6px',
+                                        sx={[
+                                            {
+                                                '&:hover': {
+                                                    backgroundColor: '#dddddd',
+                                                    borderRadius: '6px',
 
-                                                '.player': {
-                                                    transform: 'translateY(-8px)',
-                                                    opacity: 1,
-                                                    transition: 'all .3s ease',
+                                                    '.player': {
+                                                        transform: 'translateY(-8px)',
+                                                        opacity: 1,
+                                                        transition: 'all .3s ease',
+                                                    }
                                                 }
-                                            }
-                                        }}
+                                            },
+                                            theme.applyStyles('dark', {
+                                                '&:hover': {
+                                                    backgroundColor: '#1f1f1f',
+                                                }
+                                            })
+                                        ]}
                                         spacing={1}
                                     >
                                         <div className="top-side">
@@ -123,12 +131,12 @@ const PlaylistMain = (props: IProps) => {
                                         <div className="bottom-side" style={{ display: 'flex', alignItems: 'center' }}>
                                             <Stack>
                                                 <div style={{ display: 'flex' }}>
-                                                    <span className="text-[1rem] font-medium hover:text-[hsla(0,0%,40%,0.4)] line-clamp-1 break-all text-ellipsis whitespace-normal">
+                                                    <span className="text-[1rem] dark:text-[#fff] font-medium hover:text-[hsla(0,0%,40%,0.4)] line-clamp-1 break-all text-ellipsis whitespace-normal">
                                                         {playlist?.title}
                                                     </span>
                                                 </div>
                                                 <div className="flex">
-                                                    <span className="text-[0.875rem] font-medium text-[#666] hover:text-[hsla(0,0%,40%,0.4)] line-clamp-1 break-all text-ellipsis whitespace-normal">
+                                                    <span className="text-[0.875rem] font-medium text-[#666] dark:text-[#b3b3b3] hover:text-[hsla(0,0%,40%,0.4)] line-clamp-1 break-all text-ellipsis whitespace-normal">
                                                         {playlist?.user?.name}
                                                     </span>
                                                 </div>

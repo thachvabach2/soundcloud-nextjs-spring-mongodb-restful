@@ -7,6 +7,7 @@ import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 
 import { FileWithPath, useDropzone } from 'react-dropzone'
 import { useSession } from "next-auth/react";
 import axios, { AxiosProgressEvent } from 'axios';
+import theme from "@/theme";
 
 interface ITrackUpload {
     fileName: string
@@ -80,75 +81,94 @@ const Step1 = (props: IProp) => {
     return (
         <>
             <Box component={'div'}>
-                <Typography
-                    variant="h4"
-                    component={'h1'}
-                    sx={{ fontWeight: 700, letterSpacing: '-1px', marginY: '24px', lineHeight: '32px' }}
-                >
-                    Upload your audio files.
-                </Typography>
-                <Box component={'p'}>
+                <div className="my-[24px]">
+                    <span className="text-3xl font-bold tracking-[-1px] leading-[32px] dark:text-[#fff]">
+                        Upload your audio files.
+                    </span>
+                </div>
+                <span className="dark:text-[#fff]">
                     For best quality, use WAV, FLAC, AIFF, or ALAC. The maximum file size is 4GB uncompressed. Learn more.
-                </Box>
+                </span>
                 <Box
                     component={'div'}
                     {...getRootProps()}
-                    sx={{
-                        textAlign: 'center',
-                        padding: '32px',
-                        border: '2px dashed',
-                        borderRadius: '4px',
-                        margin: '32px 0',
-                        minHeight: '320px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        transition: 'border-color .3s ease-in-out',
+                    sx={[
+                        {
+                            textAlign: 'center',
+                            padding: '32px',
+                            border: '2px dashed',
+                            borderRadius: '4px',
+                            margin: '32px 0',
+                            minHeight: '320px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            transition: 'border-color .3s ease-in-out',
 
-                        '&:hover': {
-                            borderColor: '#121212'
+                            '&:hover': {
+                                borderColor: '#121212'
+                            },
+                            borderColor: `${isDragActive ? '#121212' : isAcceptedFile ? 'rgba(0, 0, 0, 0.15)' : '#E61948'}`
                         },
-                        borderColor: `${isDragActive ? '#121212' : isAcceptedFile ? 'rgba(0, 0, 0, 0.15)' : '#E61948'}`
-                    }}>
+                        theme.applyStyles('dark', {
+                            '&:hover': {
+                                borderColor: '#fff'
+                            },
+                            borderColor: `${isDragActive ? '#121212' : isAcceptedFile ? 'rgba(255, 255, 255, 0.15)' : '#E61948'}`
+                        })
+                    ]}>
                     <input {...getInputProps()} />
-                    <Box component={'span'}>
-                        <CloudUploadIcon sx={{ fontSize: '72px' }} />
-                    </Box>
+                    <span>
+                        <CloudUploadIcon
+                            sx={[
+                                { fontSize: '72px' },
+                                theme.applyStyles('dark', {
+                                    color: '#fff',
+                                })
+                            ]}
+                        />
+                    </span>
                     {isAcceptedFile
                         ?
-                        <Box component={'p'} sx={{ marginY: '24px', fontWeight: 700 }}>
+                        <p className='my-[24px] font-bold dark:text-[#fff]'>
                             Drag and drop audio files to get started.
-                        </Box>
+                        </p>
                         :
-                        <Box component={'p'} sx={{ marginY: '24px', fontWeight: 700, color: '#E61948' }}>
+                        <p className='my-[24px] font-bold dark:text-[#E61948]'>
                             File type is not supported.
-                        </Box>
+                        </p>
                     }
 
                     <Button
                         variant="contained"
-                        sx={{
-                            textTransform: 'none',
-                            borderRadius: '100px',
-                            backgroundColor: '#121212',
-                            color: '#fff',
+                        sx={[
+                            {
+                                textTransform: 'none',
+                                borderRadius: '100px',
+                                backgroundColor: '#121212',
+                                color: '#fff',
 
-                            '&:hover': {
-                                backgroundColor: '#454545'
-                            },
+                                '&:hover': {
+                                    backgroundColor: '#454545'
+                                },
 
-                            '&:link': {
-                                backgroundColor: '#454545'
+                                '&:link': {
+                                    backgroundColor: '#454545'
+                                },
+                                paddingY: '8px',
                             },
-                            paddingY: '8px',
-                        }}
+                            theme.applyStyles('dark', {
+                                color: '#121212',
+                                backgroundColor: '#fff',
+                            })
+                        ]}
                     >
                         Choose files
                     </Button>
                 </Box>
-            </Box>
+            </Box >
         </>
     )
 }

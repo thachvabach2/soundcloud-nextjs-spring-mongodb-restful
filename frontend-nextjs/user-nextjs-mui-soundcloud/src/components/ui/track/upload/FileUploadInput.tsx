@@ -8,7 +8,6 @@ import InsertPhotoOutlinedIcon from '@mui/icons-material/InsertPhotoOutlined';
 import { DropzoneOptions, FileWithPath, useDropzone } from "react-dropzone";
 import React, { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 import { INewTrack } from "@/components/features/track/upload/steps/step2";
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -16,6 +15,7 @@ import { Theme } from "@emotion/react";
 import { useToast } from "@/hooks/toast";
 import { uploadFileAction } from "@/actions/actions.track"
 import Image from "next/image"
+import theme from "@/theme"
 
 interface IProps {
     info: INewTrack
@@ -58,39 +58,45 @@ const FileUploadInput = (props: IProps) => {
 
     const { getRootProps, getInputProps } = useDropzone(dropzoneConfig)
 
-    const uploadImgStyles: SxProps<Theme> = useMemo(() => ({
-        '@media (min-width: 480px)': {
-            height: '400px',
-            width: '400px',
-        },
-        height: '160px',
-        width: '160px',
-        backgroundColor: 'unset',
-        border: '2px dashed rgba(0, 0, 0, 0.15)',
-        borderRadius: '4px',
-        marginY: { xs: '24px', lg: 0 },
-        marginX: 'auto',
-        cursor: 'pointer',
+    const uploadImgStyles: SxProps<Theme> = useMemo(() => (
+        {
+            '@media (min-width: 480px)': {
+                height: '400px',
+                width: '400px',
+            },
+            height: '160px',
+            width: '160px',
+            backgroundColor: 'unset',
+            border: '2px dashed rgba(0, 0, 0, 0.15)',
+            borderRadius: '4px',
+            marginY: { xs: '24px', lg: 0 },
+            marginX: 'auto',
+            cursor: 'pointer',
 
-        '&:hover': {
-            borderColor: 'rgba(0, 0, 0, 0.5)',
+            '&:hover': {
+                borderColor: 'rgba(0, 0, 0, 0.5)',
 
-            '& svg': {
-                color: 'rgba(0, 0, 0, 0.8)'
+                '& svg': {
+                    color: 'rgba(0, 0, 0, 0.8)'
+                }
             }
         }
-    }), [])
+    ), [])
 
     return (
         <>
             {info.imgUrl
                 ?
                 <>
-                    <Box style={{ position: 'relative' }} sx={{
-                        ...uploadImgStyles,
-                        border: 'none',
-                        cursor: 'default',
-                    }}>
+                    <Box style={{ position: 'relative' }}
+                        sx={[
+                            {
+                                ...uploadImgStyles,
+                                border: 'none',
+                                cursor: 'default',
+                            }
+                        ]}
+                    >
                         <div className="relative h-full w-full">
                             <Image
                                 src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/${info.imgUrl}`}
@@ -131,7 +137,20 @@ const FileUploadInput = (props: IProps) => {
                 :
                 <Button
                     {...getRootProps()}
-                    sx={uploadImgStyles}
+                    sx={[
+                        uploadImgStyles
+                        ,
+                        theme.applyStyles('dark', {
+                            border: '2px dashed rgba(255, 255, 255, 0.15)',
+                            '&:hover': {
+                                borderColor: '#fff',
+
+                                '& svg': {
+                                    color: '#fff'
+                                }
+                            }
+                        })
+                    ]}
                 >
                     <input {...getInputProps()} />
                     <InsertPhotoOutlinedIcon sx={{ fontSize: '120px', color: '#ccc' }} />

@@ -61,7 +61,7 @@ const CommentTrackList = (props: IProps) => {
                         variant="h5"
                         sx={{ py: '8px' }}
                     >
-                        <span>{listComment?.meta?.totalElement} comments</span>
+                        <span className="dark:text-white">{listComment?.meta?.totalElement} comments</span>
                     </Typography>
                     <Box component={'div'} className="commentsList__sortSelect">
                         <Button
@@ -98,47 +98,58 @@ const CommentTrackList = (props: IProps) => {
                             <Grid size={11} component={'div'} className="commentItem__content" sx={{ flexDirection: 'column' }}>
                                 <Stack direction={'row'} className="commentItem__commentInfo">
                                     <Box
-                                        sx={{
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
+                                        sx={[
+                                            {
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
 
-                                            '&:hover': {
-                                                color: 'hsla(0,0%,40%,0.4)'
-                                            }
-                                        }}
+                                                '&:hover': {
+                                                    color: 'hsla(0,0%,40%,0.4)'
+                                                },
+                                            },
+                                            (theme) =>
+                                                theme.applyStyles('dark', {
+                                                    color: '#fff',
+                                                    '&:hover': {
+                                                        color: 'hsla(0,0%,100%,0.4)'
+                                                    },
+                                                }),
+                                        ]}
                                     >
                                         <Link href={`/profile/${comment.user._id}`}>
                                             {comment?.user?.name ?? comment?.user?.email}
                                         </Link>
                                     </Box>
-                                    <span>&nbsp;at&nbsp;</span>
+                                    <span className="dark:text-white">&nbsp;at&nbsp;</span>
                                     <Box component={'span'}
-                                        sx={{
-                                            fontWeight: 600,
-                                            color: '#666',
-                                            cursor: 'pointer',
+                                        sx={[
+                                            {
+                                                fontWeight: 600,
+                                                color: '#666',
+                                                cursor: 'pointer',
 
-                                            '&:hover': {
-                                                color: 'hsla(0,0%,40%,0.4)'
+                                                '&:hover': {
+                                                    color: 'hsla(0,0%,40%,0.4)'
+                                                }
                                             }
-                                        }}
+                                        ]}
                                         onClick={() => handleJumpTrack(comment.moment)}
                                     >
                                         {formatTime(comment?.moment)}
                                     </Box>
-                                    <span>&nbsp;- {formatTimeAgo(comment?.updatedAt)}</span>
+                                    <span className="dark:text-white">&nbsp;- {formatTimeAgo(comment?.updatedAt)}</span>
                                 </Stack>
-                                <Box component={'div'} className="commentItem__body" sx={{ mt: '6px' }}>
-                                    <span>
+                                <div className="mt-[6px]">
+                                    <span className="dark:text-white">
                                         {comment?.content}
                                     </span>
-                                </Box>
+                                </div>
                             </Grid>
                         </Grid>
                     )
                 })}
 
-            </Stack>
+            </Stack >
         </>
     )
 }

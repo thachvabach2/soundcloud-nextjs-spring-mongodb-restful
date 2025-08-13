@@ -25,7 +25,18 @@ const theme = createTheme({
             },
         },
         dark: {
-
+            palette: {
+                text: {
+                    primary: '#fff',
+                },
+                primary: {
+                    main: '#1ed760',
+                },
+                background: {
+                    default: '#121212',
+                    paper: '#1d1d1d',
+                },
+            },
         }
     },
     cssVariables: {
@@ -62,23 +73,30 @@ const theme = createTheme({
         },
         MuiInput: {
             styleOverrides: {
-                root: {
-                    // minHeight: '40px',
-                    '&::before': {
-                        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                root: ({ theme }) => [
+                    {
+                        '&::before': {
+                            borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                        },
+                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                            borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                        },
+                        '&.Mui-focused:after': {
+                            borderBottom: '1.5px solid #121212',
+                        },
                     },
-                    '&:hover:not(.Mui-disabled, .Mui-error):before': {
-                        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                    },
-                    '&.Mui-focused:after': {
-                        borderBottom: '1.5px solid #121212',
-                    },
-                    // override primary
-                    // unfocus
-                    '&::after': {
-                        borderBottom: '2px solid #121212',
-                    }
-                },
+                    theme.applyStyles('dark', {
+                        '&::before': {
+                            borderBottom: '1px solid grey',
+                        },
+                        '&:hover:not(.Mui-disabled, .Mui-error):before': {
+                            borderBottom: '1px solid #fff',
+                        },
+                        '&.Mui-focused:after': {
+                            borderBottom: '1.5px solid #fff',
+                        },
+                    })
+                ],
             },
         },
     },

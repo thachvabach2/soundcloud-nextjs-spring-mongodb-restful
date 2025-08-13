@@ -5,6 +5,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import GridViewIcon from '@mui/icons-material/GridView';
 import { useState } from "react";
 import DialogCreatePlaylist from "./playlist.create.dialog";
+import theme from "@/theme";
 
 const PlaylistHeader = () => {
     const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -15,9 +16,9 @@ const PlaylistHeader = () => {
                 <header className="header-nav">
                     <Stack direction={'row'} sx={{ justifyContent: 'space-between', textAlign: 'center', alignItems: 'center' }}>
                         <div>
-                            <Typography variant="h6" component={'h1'}>
+                            <span className="text-xl font-bold dark:text-[#fff]">
                                 Your Playlist
-                            </Typography>
+                            </span>
                         </div>
                         <div>
                             <Chip
@@ -56,27 +57,52 @@ const PlaylistHeader = () => {
                                 <Paper
                                     component="div"
                                     variant="outlined"
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        paddingLeft: '8px',
-                                        backgroundColor: '#f3f3f3',
-                                        border: 'none',
-                                        paddingY: '2px'
-                                    }}
+                                    sx={[
+                                        {
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            paddingLeft: '8px',
+                                            backgroundColor: '#f3f3f3',
+                                            border: 'none',
+                                            paddingY: '2px'
+                                        },
+                                        theme.applyStyles('dark', {
+                                            backgroundColor: 'hsla(0,0%,100%,.1)',
+                                        })
+                                    ]}
                                 >
                                     <IconButton type="button" aria-label="search" sx={{ padding: '0px' }}>
                                         <SearchIcon />
                                     </IconButton>
                                     <InputBase
-                                        sx={{ ml: 1, width: '188px', paddingRight: '32px', fontSize: '14px', '& input': { paddingY: '4px' } }}
+                                        sx={[
+                                            {
+                                                ml: 1,
+                                                width: '188px',
+                                                paddingRight: '32px',
+                                                fontSize: '14px',
+                                                '& input': { paddingY: '4px' }
+                                            },
+                                            theme.applyStyles('dark', {
+                                                color: 'hsla(0,0%,100%,.7)',
+                                            })
+                                        ]}
                                         placeholder="Search in Your Playlist"
                                         inputProps={{ 'aria-label': 'Type to filter your playlist. The list of content below will update as you type.' }}
                                     />
                                 </Paper>
                                 <Button
                                     variant="text"
-                                    endIcon={<GridViewIcon sx={{ mr: '4px' }} />}
+                                    endIcon={
+                                        <GridViewIcon
+                                            sx={[
+                                                { mr: '4px' },
+                                                theme.applyStyles('dark', {
+                                                    color: '#b3b3b3'
+                                                })
+                                            ]}
+                                        />
+                                    }
                                     sx={{
                                         textTransform: 'none',
                                         color: '#121212',
@@ -88,7 +114,9 @@ const PlaylistHeader = () => {
                                         }
                                     }}
                                 >
-                                    Creator
+                                    <span className="dark:text-[#b3b3b3]">
+                                        Creator
+                                    </span>
                                 </Button>
                             </Stack>
                         </div>

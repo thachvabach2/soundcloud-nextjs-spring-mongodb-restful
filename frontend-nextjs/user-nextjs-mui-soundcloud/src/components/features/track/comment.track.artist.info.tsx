@@ -43,11 +43,20 @@ const CommentTrackArtistInfo = (props: IProps) => {
                     variant="body1"
                     fontWeight={600}
 
-                    sx={{
-                        '&:hover': {
-                            color: 'hsla(0,0%,40%,0.4)',
-                        }
-                    }}
+                    sx={[
+                        (theme) => ({
+                            '&:hover': {
+                                color: 'hsla(0,0%,40%,0.4)',
+                            }
+                        }),
+                        (theme) =>
+                            theme.applyStyles('dark', {
+                                color: '#fff',
+                                '&:hover': {
+                                    color: 'hsla(0,0%,100%,0.4)',
+                                }
+                            }),
+                    ]}
                 >
                     <Link href={`/profile/${track?.uploader?._id}`}>
                         {track?.uploader?.name ?? track?.uploader?.email}

@@ -11,6 +11,7 @@ import FileUploadInput from "@/components/ui/track/upload/FileUploadInput";
 import { LinearProgressWithLabel } from "@/components/ui/track/upload/LinearProgressWithLabel";
 import { useToast } from "@/hooks/toast";
 import { createANewTrackAfterUploadAction } from "@/actions/actions.track";
+import theme from "@/theme";
 
 interface IProps {
     trackUpload: {
@@ -68,11 +69,16 @@ const Step2 = (props: IProps) => {
         width: '100%',
     }), []);
 
-    const labelStyles = useMemo(() => ({
-        fontSize: '14px',
-        fontWeight: 'bold',
-        color: '#121212'
-    }), []);
+    const labelStyles = useMemo(() => ([
+        {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#121212'
+        },
+        theme.applyStyles('dark', {
+            color: '#fff'
+        })
+    ]), []);
 
     const textFieldProps = useMemo(() => ({
         hiddenLabel: true,

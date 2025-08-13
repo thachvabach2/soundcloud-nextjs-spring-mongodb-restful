@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
 import { createEmptyPlaylistAction } from "@/actions/actions.playlist";
 import { useToast } from "@/hooks/toast";
+import theme from "@/theme";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -86,7 +87,17 @@ const DialogCreatePlaylist = (props: IProps) => {
                             padding: '6px'
                         })}
                     >
-                        <CloseIcon sx={{ fontSize: '20px', color: '#121212' }} />
+                        <CloseIcon
+                            sx={[
+                                {
+                                    fontSize: '20px',
+                                    color: '#121212',
+                                },
+                                theme.applyStyles('dark', {
+                                    color: 'hsla(0,0%,100%,.7)'
+                                })
+                            ]}
+                        />
                     </IconButton>
                 </div>
             </DialogTitle>
@@ -109,30 +120,46 @@ const DialogCreatePlaylist = (props: IProps) => {
                                 slotProps={{
                                     inputLabel: {
                                         // shrink: true,
-                                        sx: {
+                                        sx: [{
                                             '&.Mui-focused': {
                                                 color: '#121212'
                                             },
-                                        }
+                                        },
+                                        theme.applyStyles('dark', {
+                                            '&.Mui-focused': {
+                                                color: '#b3b3b3'
+                                            },
+                                        })
+                                        ]
                                     },
                                     htmlInput: {
                                         autoComplete: 'off',
                                     }
                                 }}
-                                sx={{
-                                    bgcolor: '#f3f3f3',
-                                    borderRadius: '4px',
-                                    // Ẩn outline khi chưa focus
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        border: 'none',
+                                sx={[
+                                    {
+                                        bgcolor: '#f3f3f3',
+                                        borderRadius: '4px',
+                                        // Ẩn outline khi chưa focus
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            border: 'none',
+                                        },
+                                        // Hiện outline khi focus vào
+                                        '& .MuiOutlinedInput-root': {
+                                            '&.Mui-focused fieldset': {
+                                                border: '1px solid #121212',
+                                            }
+                                        },
                                     },
-                                    // Hiện outline khi focus vào
-                                    '& .MuiOutlinedInput-root': {
-                                        '&.Mui-focused fieldset': {
-                                            border: '1px solid #121212',
-                                        }
-                                    }
-                                }}
+                                    theme.applyStyles('dark', {
+                                        bgcolor: 'hsla(0,0%,100%,.1)',
+                                        '& .MuiOutlinedInput-root': {
+                                            '&.Mui-focused fieldset': {
+                                                border: '1px solid #fff',
+                                            }
+                                        },
+                                    })
+                                ]}
                                 onChange={(e) =>
                                     setNewPlaylist(({ ...newPlaylist, title: e.target.value }))
                                     // setTitle(e.target.value)

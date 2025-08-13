@@ -22,25 +22,35 @@ import { Stack } from '@mui/material';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { useRouter } from 'next/navigation';
 import ActiveLink from './active.link';
+import theme from '@/theme';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
 // styled-component
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: '#f3f3f3',
-    '&:focus-within': {
-        border: '1px solid black',
+const Search = styled('div')(({ theme }) => [
+    {
+        position: 'relative',
+        borderRadius: theme.shape.borderRadius,
+        backgroundColor: '#f3f3f3',
+        '&:focus-within': {
+            border: '1px solid black',
+        },
+        marginRight: theme.spacing(2),
+        marginLeft: 0,
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            marginLeft: theme.spacing(3),
+            width: 'auto',
+        },
     },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(3),
-        width: 'auto',
-    },
-}));
+    theme.applyStyles('dark', {
+        backgroundColor: theme.palette.grey[900],
+        '&:focus-within': {
+            border: '1px solid #fff',
+        },
+    })
+
+]);
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 2),
@@ -113,12 +123,19 @@ const AppHeader = () => {
                     position='fixed'
                 >
                     <Toolbar
-                        sx={{
-                            width: '100%',
-                            margin: '0 auto',
-                            background: '#ffffff',
-                            maxWidth: '1248px',
-                        }}>
+                        sx={
+                            [
+                                {
+                                    width: '100%',
+                                    margin: '0 auto',
+                                    maxWidth: '1248px',
+                                },
+                                (theme) =>
+                                    theme.applyStyles('dark', {
+                                        backgroundColor: '#000000',
+                                    }),
+                            ]
+                        }>
                         {/* Pages Mobile */}
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                             <IconButton
@@ -194,25 +211,40 @@ const AppHeader = () => {
                                         <Stack
                                             direction={'row'}
                                             spacing={2}
-                                            sx={{
-                                                pr: '20px',
-                                                fontWeight: 500,
-                                                color: '#666',
-                                                '& a': {
-                                                    py: '6px',
-                                                    px: '10px',
+                                            sx={[
+                                                {
+                                                    pr: '20px',
+                                                    fontWeight: 500,
+                                                    color: '#666',
+                                                    '& a': {
+                                                        py: '6px',
+                                                        px: '10px',
 
-                                                    '&:hover': {
-                                                        transform: 'scale(1.04)',
-                                                        color: '#121212',
+                                                        '&:hover': {
+                                                            transform: 'scale(1.04)',
+                                                            color: '#121212',
+                                                        }
+                                                    },
+                                                    '& a.active': {
+                                                        backgroundColor: '#121212',
+                                                        color: '#fff',
+                                                        borderRadius: '5px',
                                                     }
                                                 },
-                                                '& a.active': {
-                                                    backgroundColor: '#121212',
-                                                    color: '#fff',
-                                                    borderRadius: '5px',
-                                                }
-                                            }}
+                                                (theme) =>
+                                                    theme.applyStyles('dark', {
+                                                        color: '#b3b3b3',
+                                                        '& a': {
+                                                            '&:hover': {
+                                                                color: '#fff',
+                                                            }
+                                                        },
+                                                        '& a.active': {
+                                                            backgroundColor: theme.palette.background.default,
+                                                            color: '#000',
+                                                        }
+                                                    }),
+                                            ]}
                                         >
                                             <ActiveLink href={'/playlist'}>Playlists</ActiveLink>
                                             <ActiveLink href={'/like'}>Likes</ActiveLink>
@@ -297,29 +329,49 @@ const AppHeader = () => {
                                     <Stack
                                         direction={'row'}
                                         spacing={2}
-                                        sx={{
-                                            pr: '20px',
-                                            '& a': {
-                                                py: '6px',
-                                                px: '10px',
-                                                borderRadius: '5px',
-                                                color: '#666',
-                                                fontWeight: 500,
+                                        sx={[
+                                            {
+                                                pr: '20px',
+                                                '& a': {
+                                                    py: '6px',
+                                                    px: '10px',
+                                                    borderRadius: '5px',
+                                                    color: '#666',
+                                                    fontWeight: 500,
 
-                                                '&:first-child': {
-                                                    color: '#fff',
-                                                    backgroundColor: '#121212',
-                                                },
+                                                    '&:first-child': {
+                                                        color: '#fff',
+                                                        backgroundColor: '#121212',
+                                                    },
 
-                                                '&:hover': {
-                                                    transform: 'scale(1.04)',
+                                                    '&:hover': {
+                                                        transform: 'scale(1.04)',
 
-                                                    '&:nth-child(2)': {
-                                                        color: '#121212'
-                                                    }
+                                                        '&:nth-child(2)': {
+                                                            color: '#121212'
+                                                        }
+                                                    },
                                                 },
                                             },
-                                        }}
+                                            theme.applyStyles('dark', {
+                                                '& a': {
+                                                    color: '#b3b3b3',
+
+                                                    '&:first-child': {
+                                                        color: '#000',
+                                                        backgroundColor: '#fff',
+                                                    },
+
+                                                    '&:hover': {
+                                                        transform: 'scale(1.04)',
+
+                                                        '&:nth-child(2)': {
+                                                            color: '#fff'
+                                                        }
+                                                    },
+                                                },
+                                            })
+                                        ]}
                                     >
                                         <ActiveLink href={'/auth/signin'}>Sign in</ActiveLink>
                                         <ActiveLink href={'/auth/signup'}>Sign up</ActiveLink>

@@ -16,6 +16,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SpatialAudioOffOutlinedIcon from '@mui/icons-material/SpatialAudioOffOutlined';
 import { likeOrDislikeATrack } from "@/actions/actions.like";
 import { signOut, useSession } from "next-auth/react";
+import theme from "@/theme";
 
 interface IProps {
     tracksLiked: ITrackLike[]
@@ -87,7 +88,7 @@ const LikeTrackContainer = (props: IProps) => {
         <>
             <div className="collectionSection">
                 <div className="collectionSection-top px-[24px] py-[8px]">
-                    <span className="text-xl font-medium">
+                    <span className="text-xl font-medium dark:text-[#fff]">
                         Hear the tracks you’ve liked:
                     </span>
                 </div>
@@ -102,17 +103,25 @@ const LikeTrackContainer = (props: IProps) => {
                                     >
                                         <Stack
                                             className="p-[12px] cursor-pointer relative z-0"
-                                            sx={{
-                                                '&:hover': {
-                                                    backgroundColor: '#dddddd',
-                                                    borderRadius: '6px',
+                                            sx={[
+                                                {
+                                                    backgroundColor: `${currentTrack._id === item._id ? '#1f1f1f' : ''}`,
+                                                    '&:hover': {
+                                                        backgroundColor: '#dddddd',
+                                                        borderRadius: '6px',
 
-                                                    '.player': {
-                                                        opacity: 1,
-                                                        bottom: '8px'
+                                                        '.player': {
+                                                            opacity: 1,
+                                                            bottom: '8px'
+                                                        }
                                                     }
-                                                }
-                                            }}
+                                                },
+                                                theme.applyStyles('dark', {
+                                                    '&:hover': {
+                                                        backgroundColor: '#1f1f1f',
+                                                    }
+                                                })
+                                            ]}
                                             spacing={1}
                                         >
                                             <div className="top-side">
@@ -174,7 +183,7 @@ const LikeTrackContainer = (props: IProps) => {
                                             <div className="bottom-side" style={{ display: 'flex', alignItems: 'center' }}>
                                                 <Stack>
                                                     <div className="flex">
-                                                        <span className="text-[0.875rem] font-medium hover:text-[hsla(0,0%,40%,0.4)] line-clamp-1 break-all text-ellipsis whitespace-normal"
+                                                        <span className="text-[0.875rem] dark:text-[#fff] font-medium hover:text-[hsla(0,0%,40%,0.4)] line-clamp-1 break-all text-ellipsis whitespace-normal"
                                                             style={{
                                                                 color: `${currentTrack._id === item._id ? '#1ed760' : ''} `,
                                                             }}

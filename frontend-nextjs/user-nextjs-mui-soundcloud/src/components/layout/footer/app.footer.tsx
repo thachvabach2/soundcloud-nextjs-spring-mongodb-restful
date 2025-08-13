@@ -51,15 +51,28 @@ const AppFooter = () => {
                             }}
                         >
                             <Grid size={9}
-                                sx={{
-                                    ".rhap_main": {
-                                        gap: '30px'
-                                    }
-                                }}
+                                sx={[
+                                    {
+                                        ".rhap_main": {
+                                            gap: '30px'
+                                        },
+                                        '& .audio-player': {
+                                            boxShadow: 'unset',
+                                            backgroundColor: '#f3f3f3',
+                                            padding: '10px 0',
+                                        }
+                                    },
+                                    (theme) =>
+                                        theme.applyStyles('dark', {
+                                            '& .audio-player': {
+                                                backgroundColor: '#000000',
+                                            }
+                                        }),
+                                ]}
                             >
                                 <AudioPlayer
                                     ref={playerRef}
-                                    className='text-black'
+                                    className='audio-player'
                                     // autoPlay
                                     volume={0.8}
                                     layout='horizontal-reverse'
@@ -72,11 +85,6 @@ const AppFooter = () => {
                                         ...prev,
                                         isPlaying: true,
                                     }))}
-                                    style={{
-                                        boxShadow: 'unset',
-                                        backgroundColor: '#f3f3f3',
-                                        padding: '10px 0',
-                                    }}
                                 />
                             </Grid>
                             <Grid size={3}>

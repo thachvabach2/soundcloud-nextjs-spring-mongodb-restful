@@ -12,6 +12,7 @@ import LikeTrack from "@/components/features/track/like.track";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import theme from "@/theme";
 
 interface IProps {
     commentInputRef: RefObject<HTMLInputElement | null>;
@@ -138,22 +139,37 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
                         />
                         <Box
                             component={'div'}
-                            sx={{
-                                display: "flex",
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                py: '3px',
-                                px: '12px',
-                                cursor: 'pointer',
-                                backgroundColor: '#f3f3f3',
+                            sx={[
+                                {
+                                    display: "flex",
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    py: '3px',
+                                    px: '12px',
+                                    cursor: 'pointer',
+                                    backgroundColor: '#f3f3f3',
 
-                                '&:hover svg': {
-                                    opacity: 0.5
-                                }
-                            }}
+                                    '&:hover svg': {
+                                        opacity: 0.5
+                                    }
+                                },
+                                theme.applyStyles('dark', {
+                                    backgroundColor: '#303030'
+                                })
+                            ]}
                             onClick={(e) => handleSubmitComment(e)}
                         >
-                            <SendOutlinedIcon sx={{ fontSize: '24px' }}
+                            <SendOutlinedIcon
+                                sx={
+                                    [
+                                        {
+                                            fontSize: '24px'
+                                        },
+                                        theme.applyStyles('dark', {
+                                            color: '#fff'
+                                        })
+                                    ]
+                                }
                             />
                         </Box>
                     </Stack>

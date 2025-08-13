@@ -115,7 +115,9 @@ const MainSlider = (props: IPops) => {
                 },
             }}
         >
-            <h2 className="text-2xl font-medium">{title}</h2>
+            <h2 className="text-black text-2xl font-medium dark:text-[#fff]">
+                {title}
+            </h2>
 
             <Slider {...settings} className="pt-4">
                 {data.map((track, index) => (
@@ -140,7 +142,7 @@ const MainSlider = (props: IPops) => {
                             <div className="track-footer mt-1 text-center select-text">
                                 <Link href={`/track/${convertSlugUrl(track.title)}-${track._id}.html?audio=${track.trackUrl}`}>
                                     <div className="track-title overflow-hidden whitespace-nowrap text-ellipsis">
-                                        <span className="text-sm font-light">{track.title}</span>
+                                        <span className="text-sm font-light dark:text-[#fff]">{track.title}</span>
                                     </div>
                                 </Link>
 

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.encore-dark-theme, .encore-dark-theme *));
 /* @theme {
     --breakpoint-*: initial;
     --breakpoint-sm: 480px;
