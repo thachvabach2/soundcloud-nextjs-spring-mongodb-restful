@@ -6,11 +6,15 @@ import NextAuthWrapper from "@/lib/auth/next.auth.wrapper";
 import { ToastProvider } from "@/hooks/toast";
 import { TrackContextProvider } from "@/context/track.context.provider";
 import BProgressProvider from "@/context/bprogress.provider";
+import { getLocale } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
 
 
-export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+export default async function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+    const locale = await getLocale();
+
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang={locale} suppressHydrationWarning>
             <body>
                 <AppRouterCacheProvider>
                     <InitColorSchemeScript attribute=".encore-%s-theme" />
@@ -19,7 +23,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                             <BProgressProvider>
                                 <ToastProvider>
                                     <TrackContextProvider>
-                                        {children}
+                                        <NextIntlClientProvider>
+                                            {children}
+                                        </NextIntlClientProvider>
                                     </TrackContextProvider>
                                 </ToastProvider>
                             </BProgressProvider>

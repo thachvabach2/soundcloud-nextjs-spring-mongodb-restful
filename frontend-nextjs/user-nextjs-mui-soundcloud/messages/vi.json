@@ -1,0 +1,17 @@
+{
+    "header": {
+        "search": {
+            "placeholder": "Bạn muốn phát nội dung gì?"
+        },
+        "playlists": "Danh Sách Phát",
+        "likes": "Thích",
+        "upload": "Đăng Nhạc",
+        "avatar": {
+            "profile": "Tài khoản",
+            "sign_out": "Đăng xuất"
+        }
+    },
+    "HomePage": {
+        "title": "Chào thế giới!"
+    }
+}

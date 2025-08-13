@@ -7,6 +7,7 @@ import { Key, useState } from 'react';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import { useTrackContext } from '@/hooks/use.track.context';
+import theme from '@/theme';
 
 
 interface ColumnSharedType {
@@ -182,13 +183,22 @@ const PlaylistTable = (props: IProps) => {
                                 <TableRow
                                     hover role="checkbox" tabIndex={index + 1} key={record._id}
                                     className='group'
-                                    sx={{
-                                        '&:hover': {
-                                            ".track-uploader": {
-                                                color: '#121212',
+                                    sx={[
+                                        {
+                                            '&:hover': {
+                                                ".track-uploader": {
+                                                    color: '#121212',
+                                                }
                                             }
-                                        }
-                                    }}
+                                        },
+                                        theme.applyStyles('dark', {
+                                            '&:hover': {
+                                                ".track-uploader": {
+                                                    color: '#fff',
+                                                }
+                                            }
+                                        })
+                                    ]}
                                 >
                                     {columns.map((column) => {
                                         const value = (column.dataIndex in record) ? (record as any)[`${column.dataIndex}`] : '';

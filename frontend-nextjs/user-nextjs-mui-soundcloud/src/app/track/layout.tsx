@@ -3,6 +3,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import AppHeader from "@/components/layout/header/app.header";
 import AppFooter from "@/components/layout/footer/app.footer";
 import { Metadata } from "next";
+import { getLanguageCookieAction } from "@/actions/actions.cookie";
 
 export const metadata: Metadata = {
     title: "SoundCloud - Web Player: Music for everyone",
@@ -10,10 +11,14 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+    const languageInCookie = getLanguageCookieAction();
+
+
     return (
         <>
             <CssBaseline />
-            <AppHeader />
+            <AppHeader languageInCookie={languageInCookie} />
+
             <Box
                 component={'div'}
                 sx={{

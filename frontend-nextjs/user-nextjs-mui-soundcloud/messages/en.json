@@ -1,0 +1,17 @@
+{
+    "header": {
+        "search": {
+            "placeholder": "What do you want to play?"
+        },
+        "playlists": "Playlists",
+        "likes": "Likes",
+        "upload": "Upload",
+        "avatar": {
+            "profile": "Profile",
+            "sign_out": "Sign out"
+        }
+    },
+    "HomePage": {
+        "title": "Hello world!"
+    }
+}

@@ -18,11 +18,13 @@ import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import Link from 'next/link';
 import { fetchDefaultImages } from '@/lib/utils/api';
 import Image from 'next/image';
-import { Stack } from '@mui/material';
+import { Divider, Stack } from '@mui/material';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { useRouter } from 'next/navigation';
 import ActiveLink from './active.link';
 import theme from '@/theme';
+import { changeLanguageCookieAction } from '@/actions/actions.cookie';
+import { useTranslations } from 'next-intl';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -76,14 +78,28 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const AppHeader = () => {
+interface IProps {
+    languageInCookie: Promise<string>;
+}
+
+const AppHeader = (props: IProps) => {
+    const { languageInCookie } = props;
     const { data: session } = useSession()
     const router = useRouter();
     const hasMounted = useHasMounted();
+    const t = useTranslations();
 
     //
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    const [language, setLanguage] = React.useState<string>('en');
+
+    React.useEffect(() => {
+        languageInCookie.then((lang) => {
+            setLanguage(lang);
+        });
+    }, [languageInCookie]);
+
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
@@ -190,7 +206,7 @@ const AppHeader = () => {
                                 <SearchIcon />
                             </SearchIconWrapper>
                             <StyledInputBase
-                                placeholder="What do you want to play?"
+                                placeholder={t('header.search.placeholder')}
                                 inputProps={{ 'aria-label': 'search' }}
                                 onKeyDown={(e) => handleEnterSearch(e)}
                             />
@@ -246,9 +262,9 @@ const AppHeader = () => {
                                                     }),
                                             ]}
                                         >
-                                            <ActiveLink href={'/playlist'}>Playlists</ActiveLink>
-                                            <ActiveLink href={'/like'}>Likes</ActiveLink>
-                                            <ActiveLink href={'/track/upload'}>Upload</ActiveLink>
+                                            <ActiveLink href={'/playlist'}>{t('header.playlists')}</ActiveLink>
+                                            <ActiveLink href={'/like'}>{t('header.likes')}</ActiveLink>
+                                            <ActiveLink href={'/track/upload'}>{t('header.upload')}</ActiveLink>
                                         </Stack>
                                     </Box>
 
@@ -309,7 +325,7 @@ const AppHeader = () => {
                                         >
                                             <Link href={`/profile/${session?.user?._id}`}>
                                                 <MenuItem>
-                                                    Profile
+                                                    {t('header.avatar.profile')}
                                                 </MenuItem>
                                             </Link>
 
@@ -319,7 +335,7 @@ const AppHeader = () => {
                                                     signOut({ callbackUrl: '/' });
                                                 }}
                                             >
-                                                Sign out
+                                                {t('header.avatar.sign_out')}
                                             </MenuItem>
                                         </Menu>
                                     </Box>
@@ -382,12 +398,21 @@ const AppHeader = () => {
                             value={mode}
                             onChange={(event) => {
                                 setMode(event.target.value as 'light' | 'dark' | 'system');
-                                // For TypeScript, cast `event.target.value as 'light' | 'dark' | 'system'`:
                             }}
                         >
                             <option value="system">System</option>
                             <option value="light">Light</option>
                             <option value="dark">Dark</option>
+                        </select>
+                        <select
+                            value={language}
+                            onChange={(event) => {
+                                setLanguage(event.target.value as 'en' | 'vi');
+                                changeLanguageCookieAction(event.target.value as 'en' | 'vi')
+                            }}
+                        >
+                            <option value="en">En</option>
+                            <option value="vi">Vi</option>
                         </select>
                     </Toolbar>
                 </CustomAppBar>

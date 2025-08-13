@@ -1,7 +1,6 @@
 'use client'
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import { FileWithPath, useDropzone } from 'react-dropzone'
@@ -26,6 +25,7 @@ const Step1 = (props: IProp) => {
     const [isAcceptedFile, setIsAcceptedFile] = useState<boolean>(true);
 
     const { data: session } = useSession();
+
     const onDrop = useCallback(async (acceptedFiles: FileWithPath[]) => {
         if (acceptedFiles.length === 0) {
             setIsAcceptedFile(false);
