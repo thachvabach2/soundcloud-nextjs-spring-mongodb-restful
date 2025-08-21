@@ -145,4 +145,12 @@ declare global {
         role: string;
         type: string;
     }
+
+    interface INotification {
+        _id: string;
+        type: string;
+        fromUserId: string;
+        toUserId: string;
+        entityId;
+    }
 }

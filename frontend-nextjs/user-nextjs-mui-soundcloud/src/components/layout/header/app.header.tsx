@@ -18,13 +18,14 @@ import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import Link from 'next/link';
 import { fetchDefaultImages } from '@/lib/utils/api';
 import Image from 'next/image';
-import { Divider, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { useRouter } from 'next/navigation';
 import ActiveLink from './active.link';
 import theme from '@/theme';
 import { changeLanguageCookieAction } from '@/actions/actions.cookie';
 import { useTranslations } from 'next-intl';
+import AppHeaderNotification from './app.header.notification';
 
 const pages = ['Playlists', 'Likes', 'Upload'];
 
@@ -99,7 +100,6 @@ const AppHeader = (props: IProps) => {
             setLanguage(lang);
         });
     }, [languageInCookie]);
-
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
@@ -265,6 +265,7 @@ const AppHeader = (props: IProps) => {
                                             <ActiveLink href={'/playlist'}>{t('header.playlists')}</ActiveLink>
                                             <ActiveLink href={'/like'}>{t('header.likes')}</ActiveLink>
                                             <ActiveLink href={'/track/upload'}>{t('header.upload')}</ActiveLink>
+                                            <AppHeaderNotification />
                                         </Stack>
                                     </Box>
 

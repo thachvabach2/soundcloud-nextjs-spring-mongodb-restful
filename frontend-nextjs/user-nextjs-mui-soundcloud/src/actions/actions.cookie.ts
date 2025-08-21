@@ -24,14 +24,6 @@ export const getLanguageCookieAction = async () => {
     if (localeCookie && languages.includes(localeCookie)) {
         return localeCookie;
     } else {
-        cookieStore.set({
-            name: 'sc_locale',
-            value: 'en',
-            secure: true,
-            sameSite: 'none',
-            httpOnly: false,
-            path: '/'
-        });
         return 'en';
     }
 }

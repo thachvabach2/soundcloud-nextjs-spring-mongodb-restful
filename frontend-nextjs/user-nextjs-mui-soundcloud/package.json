@@ -16,7 +16,9 @@
         "@mui/icons-material": "7.1.0",
         "@mui/material": "7.1.0",
         "@mui/material-nextjs": "7.1.0",
+        "@stomp/stompjs": "7.1.1",
         "@types/react-slick": "0.23.13",
+        "@types/sockjs-client": "1.5.4",
         "axios": "1.10.0",
         "date-fns": "4.1.0",
         "next": "15.3.3",
@@ -31,6 +33,7 @@
         "react-slick": "0.30.3",
         "slick-carousel": "1.8.1",
         "slugify": "1.6.6",
+        "sockjs-client": "1.6.1",
         "wavesurfer.js": "7.9.5"
     },
     "devDependencies": {

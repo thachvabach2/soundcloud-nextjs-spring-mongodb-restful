@@ -125,7 +125,7 @@ const AuthSignin = () => {
                     <Box sx={{ maxWidth: '734px', width: '100%' }}>
                         <Box className="login-container" style={{ backgroundColor: '#121212', color: '#ffffff', borderRadius: 8, paddingBottom: '32px' }}>
                             <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', paddingTop: '32px', paddingBottom: '8px' }}>
-                                <Link href={'/'}>
+                                <Link href={'/'} tabIndex={-1}>
                                     <Box component={'div'} sx={{ backgroundColor: '#ffff', borderRadius: '50%', cursor: 'pointer' }}>
                                         <GraphicEqOutlinedIcon style={{ fontSize: 36 }} sx={{ color: '#121212' }} />
                                     </Box>
