@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +22,12 @@ import org.springframework.stereotype.Service;
 import com.mongodb.client.result.DeleteResult;
 
 import vn.bachdao.soundcloud.domain.Comment;
+import vn.bachdao.soundcloud.domain.Track;
 import vn.bachdao.soundcloud.domain.dto.request.comment.ReqCreateCommentDTO;
 import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.comment.ResCommentDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
+import vn.bachdao.soundcloud.service.event.NotificationEvent;
 import vn.bachdao.soundcloud.util.mapper.CommentMapper;
 import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 import vn.bachdao.soundcloud.web.rest.errors.UserNotAuthenticatedException;
@@ -34,11 +37,16 @@ public class CommentService {
     private final MongoTemplate mongoTemplate;
     private final CommentMapper commentMapper;
     private final TrackService trackService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public CommentService(MongoTemplate mongoTemplate, CommentMapper commentMapper, TrackService trackService) {
+    public CommentService(MongoTemplate mongoTemplate,
+            CommentMapper commentMapper,
+            TrackService trackService,
+            ApplicationEventPublisher applicationEventPublisher) {
         this.mongoTemplate = mongoTemplate;
         this.commentMapper = commentMapper;
         this.trackService = trackService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public ResCommentDTO createACommentOnATrack(ReqCreateCommentDTO req)
@@ -48,11 +56,21 @@ public class CommentService {
             throw new UserNotAuthenticatedException("User not authenticated");
         }
 
-        this.trackService.validateTrackExists(new ObjectId(req.getTrack()));
+        Track trackDb = this.trackService.validateTrackExists(new ObjectId(req.getTrack()));
 
         Comment comment = this.commentMapper.toComment(req);
         comment.setUser(currentUserIdLoginOptional.get());
+
         Comment newComment = mongoTemplate.insert(comment);
+
+        NotificationEvent notificationEvent = new NotificationEvent(
+                this,
+                "COMMENT",
+                newComment.getUser(),
+                trackDb.getUploader().toHexString(),
+                newComment.getId());
+
+        applicationEventPublisher.publishEvent(notificationEvent);
 
         return getCommentWithPopulatedData(newComment.getId());
     }

@@ -258,13 +258,14 @@ public class TrackService {
         return res;
     }
 
-    public void validateTrackExists(ObjectId trackId) throws IdInvalidException {
+    public Track validateTrackExists(ObjectId trackId) throws IdInvalidException {
         Query query = new Query(Criteria.where("_id").is(trackId).and("isDeleted").is(false));
-        boolean trackExists = mongoTemplate.exists(query, Track.class);
+        Track trackExists = mongoTemplate.findOne(query, Track.class);
 
-        if (!trackExists) {
+        if (trackExists == null) {
             throw new IdInvalidException("Track với id = " + trackId + " không tồn tại");
         }
+        return trackExists;
     }
 
     public ResUpdateResultDTO increaseCountView(String trackId) {
