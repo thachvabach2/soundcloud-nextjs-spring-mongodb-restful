@@ -1,5 +1,7 @@
 package vn.bachdao.soundcloud.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -7,5 +9,5 @@ import vn.bachdao.soundcloud.domain.Notification;
 
 @Repository
 public interface NotificationRepository extends MongoRepository<Notification, String> {
-
+    Page<Notification> findAllByToUserId(String toUserId, Pageable pageable);
 }

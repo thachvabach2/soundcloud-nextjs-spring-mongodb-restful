@@ -1,14 +1,22 @@
 package vn.bachdao.soundcloud.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import vn.bachdao.soundcloud.domain.Notification;
+import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.repository.NotificationRepository;
+import vn.bachdao.soundcloud.security.SecurityUtils;
 import vn.bachdao.soundcloud.service.event.NotificationEvent;
+import vn.bachdao.soundcloud.web.rest.errors.UserNotAuthenticatedException;
 
 @Service
 public class NotificationService {
@@ -43,5 +51,29 @@ public class NotificationService {
             LOG.error("Failed to save and send notification for event: {}", event, e);
             // Có thể thêm logic retry hoặc gửi thông báo lỗi đến hệ thống monitoring
         }
+    }
+
+    public ResPaginationDTO getNotificationsByAUserWithPagination(Pageable pageable)
+            throws UserNotAuthenticatedException {
+        Optional<String> currentUserIdLoginOptional = SecurityUtils.getCurrentUserLogin();
+        if (currentUserIdLoginOptional.isEmpty()) {
+            throw new UserNotAuthenticatedException("User not authenticated");
+        }
+
+        Page<Notification> notificationPage = this.notificationRepository
+                .findAllByToUserId(currentUserIdLoginOptional.get(), pageable);
+
+        ResPaginationDTO res = new ResPaginationDTO();
+        ResPaginationDTO.Meta meta = new ResPaginationDTO.Meta();
+        meta.setPageNumber(notificationPage.getNumber() + 1);
+        meta.setPageSize(notificationPage.getSize());
+        meta.setTotalPage(notificationPage.getTotalPages());
+        meta.setTotalElement(notificationPage.getTotalElements());
+
+        List<Notification> notifications = notificationPage.getContent();
+
+        res.setResult(notifications);
+        res.setMeta(meta);
+        return res;
     }
 }
