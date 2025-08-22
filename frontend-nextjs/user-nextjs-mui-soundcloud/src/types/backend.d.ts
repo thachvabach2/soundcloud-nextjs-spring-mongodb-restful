@@ -151,6 +151,7 @@ declare global {
         type: string;
         fromUserId: string;
         toUserId: string;
-        entityId;
+        entityId: string;
+        createdAt: string;
     }
 }
