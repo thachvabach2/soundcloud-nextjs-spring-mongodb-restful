@@ -7,6 +7,8 @@ public final class Constants {
 
     public static final String ROLE_USER = "USER";
 
+    public static final int CHUNK_SIZE = 1024 * 180; // 180kb ~ 9s-129kps
+
     private Constants() {
     }
 }
