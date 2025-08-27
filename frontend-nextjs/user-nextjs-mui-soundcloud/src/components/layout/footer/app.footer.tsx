@@ -76,7 +76,7 @@ const AppFooter = () => {
                                     // autoPlay
                                     volume={0.8}
                                     layout='horizontal-reverse'
-                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/tracks/${currentTrack?.trackUrl}`}
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/stream/range/${currentTrack?.trackUrl}`}
                                     onPause={e => setCurrentTrack(prev => ({
                                         ...prev,
                                         isPlaying: false,
@@ -85,6 +85,7 @@ const AppFooter = () => {
                                         ...prev,
                                         isPlaying: true,
                                     }))}
+                                    crossOrigin='anonymous'
                                 />
                             </Grid>
                             <Grid size={3}>
