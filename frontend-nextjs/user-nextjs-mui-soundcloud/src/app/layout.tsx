@@ -8,7 +8,7 @@ import { TrackContextProvider } from "@/context/track.context.provider";
 import BProgressProvider from "@/context/bprogress.provider";
 import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
-
+import { SWRConfig } from 'swr'
 
 export default async function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
     const locale = await getLocale();
@@ -24,7 +24,15 @@ export default async function RootLayout({ children, }: Readonly<{ children: Rea
                                 <ToastProvider>
                                     <TrackContextProvider>
                                         <NextIntlClientProvider>
-                                            {children}
+                                            <SWRConfig value={{
+                                                refreshWhenHidden: false,
+                                                revalidateIfStale: true,
+                                                revalidateOnFocus: true,
+                                                revalidateOnMount: true,
+                                                errorRetryCount: 3,
+                                            }}>
+                                                {children}
+                                            </SWRConfig>
                                         </NextIntlClientProvider>
                                     </TrackContextProvider>
                                 </ToastProvider>

@@ -10,23 +10,50 @@ import { Stomp } from "@stomp/stompjs";
 import { getNotificationsByAUserWithPaginationAction } from "@/actions/actions.notification";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import PersonIcon from '@mui/icons-material/Person';
+import useSWR from "swr";
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const AppHeaderNotification = () => {
     const { data: session } = useSession();
     const toast = useToast();
     const [hasNotifications, setHasNotifications] = useState<boolean>(false);
     const [anchorElNotification, setAnchorElNotification] = useState<null | HTMLElement>(null);
-    const [resNotification, setResNotification] = useState<INotification[]>([]);
+
+    //
+    const [shouldFetch, setShouldFetch] = useState(false);
+
+    const fetcher = async () => {
+        if (!session?.access_token || !shouldFetch) return null;
+        return await getNotificationsByAUserWithPaginationAction();
+    };
+
+    const {
+        data: notificationResponse,
+        error,
+        mutate,
+        isLoading
+    } = useSWR(
+        shouldFetch && session?.user._id ? ['notifications', session.user._id] : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+            dedupingInterval: 60000,
+            errorRetryCount: 3,
+            onSuccess: () => {
+                setHasNotifications(false);
+            }
+        }
+    );
+
+    const notifications = notificationResponse?.data?.result || [];
 
     useEffect(() => {
         const connectWebSocket = () => {
 
             const sock = new SockJS(`http://localhost:8080/notification`);
-            // console.log('run here')
 
             const client = Stomp.over(sock);
-            // console.log('run here1')
-
 
             client.connect(
                 { Authorization: `Bearer ${session?.access_token}` },
@@ -37,8 +64,20 @@ const AppHeaderNotification = () => {
                         // console.log(">>> received notification: ", message);
                         const newNotification = JSON.parse(message.body);
                         toast.success('Có người comment kìa')
-                        setResNotification(prev => [newNotification, ...prev])
                         setHasNotifications(true);
+
+                        if (notificationResponse?.data?.result) {
+                            mutate(
+                                {
+                                    ...notificationResponse,
+                                    data: {
+                                        ...notificationResponse.data,
+                                        result: [newNotification, ...notificationResponse.data.result]
+                                    }
+                                },
+                                false // Không revalidate ngay lập tức
+                            );
+                        }
                     })
                     // console.log('subscribed: ', `/user/${session?.user?._id}/queue/notification`)
                 });
@@ -57,15 +96,13 @@ const AppHeaderNotification = () => {
                 client.disconnect();
             }
         };
-    }, [session?.user._id])
+    }, [session?.user._id, mutate, notificationResponse])
 
     const handleOpenNotificationMenu = async (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNotification(event.currentTarget);
-        const resNotification = await getNotificationsByAUserWithPaginationAction();
 
-        if (resNotification.data) {
-            setResNotification(resNotification.data.result)
-            setHasNotifications(false);
+        if (!shouldFetch || hasNotifications) {
+            setShouldFetch(true);
         }
     };
 
@@ -87,6 +124,11 @@ const AppHeaderNotification = () => {
             return 'unknown time';
         }
     }
+
+    const handleForceRefreshNotifications = () => {
+        mutate();
+        toast.success('Forced notifications');
+    };
 
     return (
         <>
@@ -132,12 +174,14 @@ const AppHeaderNotification = () => {
                             Notifications
                         </span>
                         <div className="cursor-not-allowed">
-                            Settings
+                            <IconButton onClick={handleForceRefreshNotifications}>
+                                <RefreshIcon />
+                            </IconButton>
                         </div>
                     </div>
                 </div>
                 <div className="overflow-y-auto max-h-[400px]">
-                    {resNotification.map((item) => (
+                    {notifications.map((item) => (
                         // <Link href={'/'} key={item._id}>
                         <MenuItem
                             key={item._id}
