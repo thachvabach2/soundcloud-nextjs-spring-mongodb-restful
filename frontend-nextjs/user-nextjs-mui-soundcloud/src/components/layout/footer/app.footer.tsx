@@ -1,4 +1,6 @@
 'use client'
+
+import HlsAudioPlayer from '@/components/features/track/hls.audio.player';
 import { CustomAppBar } from '@/components/ui/layout/CustomAppBar';
 import { useHasMounted } from '@/hooks/use.has.mounted';
 import { useTrackContext } from '@/hooks/use.track.context';
@@ -8,7 +10,6 @@ import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import H5AudioPlayer from 'react-h5-audio-player';
-import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 
 const AppFooter = () => {
@@ -24,6 +25,14 @@ const AppFooter = () => {
             playerRef?.current?.audio?.current?.play()
         }
     }, [currentTrack])
+
+    const handlePlay = () => {
+        setCurrentTrack(prev => ({ ...prev, isPlaying: true }));
+    };
+
+    const handlePause = () => {
+        setCurrentTrack(prev => ({ ...prev, isPlaying: false }));
+    };
 
     if (!hasMounted) return (<></>);
 
@@ -70,22 +79,11 @@ const AppFooter = () => {
                                         }),
                                 ]}
                             >
-                                <AudioPlayer
+                                <HlsAudioPlayer
                                     ref={playerRef}
-                                    className='audio-player'
-                                    // autoPlay
-                                    volume={0.8}
-                                    layout='horizontal-reverse'
-                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/stream/range/${currentTrack?.trackUrl}`}
-                                    onPause={e => setCurrentTrack(prev => ({
-                                        ...prev,
-                                        isPlaying: false,
-                                    }))}
-                                    onPlay={e => setCurrentTrack(prev => ({
-                                        ...prev,
-                                        isPlaying: true,
-                                    }))}
-                                    crossOrigin='anonymous'
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/${currentTrack._id}/master.m3u8`}
+                                    onPlay={handlePlay}
+                                    onPause={handlePause}
                                 />
                             </Grid>
                             <Grid size={3}>
