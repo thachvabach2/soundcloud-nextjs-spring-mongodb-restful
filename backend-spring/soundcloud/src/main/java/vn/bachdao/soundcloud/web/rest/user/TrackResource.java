@@ -52,6 +52,9 @@ public class TrackResource {
     @Value("${soundcloud.upload.upload-file.base-uri}")
     private String baseURI;
 
+    @Value("${soundcloud.track.hsl}")
+    private String HSL_DIR;
+
     private final TrackService trackService;
     private final UserService userService;
 
@@ -164,5 +167,44 @@ public class TrackResource {
         } catch (IOException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/tracks/{trackId}/{segment}.ts")
+    public ResponseEntity<Resource> serveSegments(
+            @PathVariable("trackId") String trackId,
+            @PathVariable("segment") String segment) {
+
+        // create path for segment
+        Path path = Paths.get(HSL_DIR, trackId, segment + ".ts");
+        if (!Files.exists(path)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Resource resource = new FileSystemResource(path);
+
+        return ResponseEntity
+                .ok()
+                .header(
+                        HttpHeaders.CONTENT_TYPE, "audio/mpeg")
+                .body(resource);
+
+    }
+
+    @GetMapping("/tracks/{trackId}/master.m3u8")
+    public ResponseEntity<Resource> serverMasterFile(
+            @PathVariable("trackId") String trackId) {
+
+        Path path = Paths.get(HSL_DIR, trackId, "master.m3u8");
+        if (!Files.exists(path)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Resource resource = new FileSystemResource(path);
+
+        return ResponseEntity
+                .ok()
+                .header(
+                        HttpHeaders.CONTENT_TYPE, "application/vnd.apple.mpegurl")
+                .body(resource);
     }
 }

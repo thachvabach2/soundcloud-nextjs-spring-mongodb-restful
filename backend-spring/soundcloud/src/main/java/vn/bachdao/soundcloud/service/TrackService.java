@@ -1,5 +1,11 @@
 package vn.bachdao.soundcloud.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +15,7 @@ import java.util.stream.Collectors;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +37,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.result.UpdateResult;
 
+import jakarta.annotation.PostConstruct;
 import vn.bachdao.soundcloud.domain.Track;
 import vn.bachdao.soundcloud.domain.User;
 import vn.bachdao.soundcloud.domain.dto.request.track.ReqCreateTrackDTO;
@@ -46,10 +54,33 @@ import vn.bachdao.soundcloud.web.rest.errors.UserNotAuthenticatedException;
 @Service
 public class TrackService {
 
+    @Value("${soundcloud.track.hsl}")
+    private String HSL_DIR;
+
+    @Value("${soundcloud.upload.upload-file.path}")
+    private String UPLOAD_DIR;
+
     private final MongoTemplate mongoTemplate;
     private final TrackMapper trackMapper;
     private final ObjectMapper objectMapper;
     private final UserService userService;
+
+    @PostConstruct
+    public void init() throws URISyntaxException {
+        Path path = Paths.get(HSL_DIR);
+
+        File tmpDir = new File(path.toString());
+        if (!tmpDir.isDirectory()) {
+            try {
+                Files.createDirectory(tmpDir.toPath());
+                System.out.println(">>> CREATE NEW DIRECTORY SUCCESSFUL, PATH = " + tmpDir.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println(">>> SKIP MAKING DIRECTORY, ALREADY EXISTS");
+        }
+    }
 
     public TrackService(MongoTemplate mongoTemplate, TrackMapper trackMapper, ObjectMapper objectMapper,
             UserService userService) {
@@ -60,7 +91,7 @@ public class TrackService {
     }
 
     public ResGetTrackDTO createTrack(ReqCreateTrackDTO reqTrack)
-            throws IdInvalidException, UserNotAuthenticatedException {
+            throws IdInvalidException, UserNotAuthenticatedException, URISyntaxException {
         Track track = trackMapper.toTrack(reqTrack);
         User userInToken = getUserFromToken();
         track.setUploader(new ObjectId(userInToken.getId()));
@@ -76,6 +107,9 @@ public class TrackService {
         resUploader.setName(userInToken.getName());
         resUploader.setRole(userInToken.getRole());
         resUploader.setType(userInToken.getType());
+
+        // process track
+        processTrack(trackDB.getId());
 
         resGetTrackDTO.setUploader(resUploader);
         return resGetTrackDTO;
@@ -443,5 +477,47 @@ public class TrackService {
         res.setMeta(meta);
 
         return res;
+    }
+
+    public String processTrack(String trackId) throws IdInvalidException, URISyntaxException {
+
+        ResGetTrackDTO track = getTrackById(new ObjectId(trackId))
+                .orElseThrow(
+                        () -> new IdInvalidException("Track với id = " + trackId + "không tồn tại hoặc đã bị xóa"));
+
+        Path trackPath = Paths.get(UPLOAD_DIR + "/tracks", track.getTrackUrl());
+
+        try {
+            Path outputPath = Paths.get(HSL_DIR, trackId);
+            Files.createDirectories(outputPath);
+
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command(
+                    "ffmpeg",
+                    "-i", trackPath.toString(),
+                    "-c:a", "aac",
+                    "-b:a", "128k",
+                    "-vn",
+                    "-hls_time", "10",
+                    "-hls_list_size", "0",
+                    "-hls_segment_filename", outputPath.toString() + "/segment_%03d.ts",
+                    outputPath.toString() + "/master.m3u8");
+
+            processBuilder.inheritIO();
+            Process process = processBuilder.start();
+            int exit = process.waitFor();
+
+            if (exit != 0) {
+                System.err.println("FFmpeg process failed with exit code: " + exit);
+                throw new RuntimeException("video processing failed!!");
+            }
+
+            return trackId;
+
+        } catch (IOException ex) {
+            throw new RuntimeException("Video processing fail!!");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

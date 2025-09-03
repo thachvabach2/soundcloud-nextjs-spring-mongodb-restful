@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.bachdao.soundcloud.domain.dto.response.file.ResUploadFileDTO;
 import vn.bachdao.soundcloud.service.FileService;
 import vn.bachdao.soundcloud.util.annotation.ApiMessage;
+import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 import vn.bachdao.soundcloud.web.rest.errors.InvalidHeaderFormatException;
 import vn.bachdao.soundcloud.web.rest.errors.StorageException;
 
@@ -39,7 +40,7 @@ public class FileController {
     public ResponseEntity<ResUploadFileDTO> upload(
             @RequestParam(name = "fileUpload", required = false) MultipartFile file,
             @RequestHeader("target_type") String targetType)
-            throws URISyntaxException, IOException, StorageException, InvalidHeaderFormatException {
+            throws URISyntaxException, IOException, StorageException, InvalidHeaderFormatException, IdInvalidException {
 
         // validate
         if (file == null || file.isEmpty()) {

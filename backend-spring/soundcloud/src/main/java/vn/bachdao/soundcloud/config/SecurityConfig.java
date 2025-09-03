@@ -28,7 +28,9 @@ public class SecurityConfig {
             "/api/v1/tracks/comments",
             "/api/v1/tracks/search",
             "/api/v1/auth/refresh",
-            "/api/v1/tracks/stream/range/{trackId}"
+            "/api/v1/tracks/stream/range/{trackId}",
+            "/api/v1/tracks/{trackId}/master.m3u8",
+            "/api/v1/tracks/{trackId}/{segment}.ts"
     };
 
     @Bean

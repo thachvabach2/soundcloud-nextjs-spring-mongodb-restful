@@ -1,4 +1,5 @@
 .vscode/
 
 /backend-spring/upload/
+/backend-spring/track_hsl
 /backend-spring/upload-docker/

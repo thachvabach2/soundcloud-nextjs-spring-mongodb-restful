@@ -1,5 +1,7 @@
 package vn.bachdao.soundcloud.web.rest.admin;
 
+import java.net.URISyntaxException;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
@@ -40,7 +42,7 @@ public class TrackAdminResource {
     @PostMapping("/tracks")
     @ApiMessage("Create a new track")
     public ResponseEntity<ResGetTrackDTO> createTrack(@Valid @RequestBody ReqCreateTrackDTO reqTrack)
-            throws IdInvalidException, UserNotAuthenticatedException {
+            throws IdInvalidException, UserNotAuthenticatedException, URISyntaxException {
         return ResponseEntity.ok(trackService.createTrack(reqTrack));
     }
 
