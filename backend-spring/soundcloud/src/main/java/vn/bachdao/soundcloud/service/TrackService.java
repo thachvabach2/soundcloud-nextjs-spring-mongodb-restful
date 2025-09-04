@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,7 @@ import vn.bachdao.soundcloud.domain.dto.response.ResPaginationDTO;
 import vn.bachdao.soundcloud.domain.dto.response.ResUpdateResultDTO;
 import vn.bachdao.soundcloud.domain.dto.response.track.ResGetTrackDTO;
 import vn.bachdao.soundcloud.security.SecurityUtils;
+import vn.bachdao.soundcloud.service.event.TrackCreatedEvent;
 import vn.bachdao.soundcloud.util.mapper.TrackMapper;
 import vn.bachdao.soundcloud.web.rest.errors.IdInvalidException;
 import vn.bachdao.soundcloud.web.rest.errors.UserNotAuthenticatedException;
@@ -64,6 +66,7 @@ public class TrackService {
     private final TrackMapper trackMapper;
     private final ObjectMapper objectMapper;
     private final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @PostConstruct
     public void init() throws URISyntaxException {
@@ -82,12 +85,16 @@ public class TrackService {
         }
     }
 
-    public TrackService(MongoTemplate mongoTemplate, TrackMapper trackMapper, ObjectMapper objectMapper,
-            UserService userService) {
+    public TrackService(MongoTemplate mongoTemplate,
+            TrackMapper trackMapper,
+            ObjectMapper objectMapper,
+            UserService userService,
+            ApplicationEventPublisher eventPublisher) {
         this.mongoTemplate = mongoTemplate;
         this.trackMapper = trackMapper;
         this.objectMapper = objectMapper;
         this.userService = userService;
+        this.eventPublisher = eventPublisher;
     }
 
     public ResGetTrackDTO createTrack(ReqCreateTrackDTO reqTrack)
@@ -109,7 +116,7 @@ public class TrackService {
         resUploader.setType(userInToken.getType());
 
         // process track
-        processTrack(trackDB.getId());
+        eventPublisher.publishEvent(new TrackCreatedEvent(this, trackDB.getId()));
 
         resGetTrackDTO.setUploader(resUploader);
         return resGetTrackDTO;
@@ -479,45 +486,4 @@ public class TrackService {
         return res;
     }
 
-    public String processTrack(String trackId) throws IdInvalidException, URISyntaxException {
-
-        ResGetTrackDTO track = getTrackById(new ObjectId(trackId))
-                .orElseThrow(
-                        () -> new IdInvalidException("Track với id = " + trackId + "không tồn tại hoặc đã bị xóa"));
-
-        Path trackPath = Paths.get(UPLOAD_DIR + "/tracks", track.getTrackUrl());
-
-        try {
-            Path outputPath = Paths.get(HSL_DIR, trackId);
-            Files.createDirectories(outputPath);
-
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command(
-                    "ffmpeg",
-                    "-i", trackPath.toString(),
-                    "-c:a", "aac",
-                    "-b:a", "128k",
-                    "-vn",
-                    "-hls_time", "10",
-                    "-hls_list_size", "0",
-                    "-hls_segment_filename", outputPath.toString() + "/segment_%03d.ts",
-                    outputPath.toString() + "/master.m3u8");
-
-            processBuilder.inheritIO();
-            Process process = processBuilder.start();
-            int exit = process.waitFor();
-
-            if (exit != 0) {
-                System.err.println("FFmpeg process failed with exit code: " + exit);
-                throw new RuntimeException("video processing failed!!");
-            }
-
-            return trackId;
-
-        } catch (IOException ex) {
-            throw new RuntimeException("Video processing fail!!");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

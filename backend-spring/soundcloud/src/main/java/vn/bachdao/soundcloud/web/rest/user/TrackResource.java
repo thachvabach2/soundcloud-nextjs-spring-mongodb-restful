@@ -183,7 +183,7 @@ public class TrackResource {
         Resource resource = new FileSystemResource(path);
 
         return ResponseEntity
-                .ok()
+                .status(HttpStatus.PARTIAL_CONTENT)
                 .header(
                         HttpHeaders.CONTENT_TYPE, "audio/mpeg")
                 .body(resource);
@@ -191,7 +191,7 @@ public class TrackResource {
     }
 
     @GetMapping("/tracks/{trackId}/master.m3u8")
-    public ResponseEntity<Resource> serverMasterFile(
+    public ResponseEntity<Resource> serveMasterFile(
             @PathVariable("trackId") String trackId) {
 
         Path path = Paths.get(HSL_DIR, trackId, "master.m3u8");
