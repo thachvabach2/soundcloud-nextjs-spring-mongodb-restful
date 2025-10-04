@@ -20,6 +20,7 @@ export interface IAppProvider {
 
 export const AppProvider: FC<IAppProvider> = (props) => {
     const { children, locale, messages } = props;
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     return (
         <>
@@ -30,7 +31,7 @@ export const AppProvider: FC<IAppProvider> = (props) => {
                         <BProgressProvider>
                             <ToastProvider>
                                 <TrackContextProvider>
-                                    <NextIntlClientProvider locale={locale} messages={messages}>
+                                    <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
                                         <SWRConfig value={SWR_CONFIG}>
                                             {children}
                                         </SWRConfig>
