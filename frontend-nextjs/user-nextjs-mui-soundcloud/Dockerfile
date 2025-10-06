@@ -26,7 +26,14 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
-# RUN yarn build
+
+# get value from docker-compose
+ARG NEXT_PUBLIC_BACKEND_URL
+ARG NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT
+
+# gán ARG vào ENV để Next.js dùng được khi build
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT=$NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT
 
 # If using npm comment out above and use below instead
 RUN npm run build

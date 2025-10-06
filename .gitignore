@@ -1,5 +1,9 @@
 .vscode/
 
-/backend-spring/upload/
-/backend-spring/track_hsl
-/backend-spring/upload-docker/
+.env
+/sample-data/init_data
+
+/sample-data/**/**
+!sample-data/**/
+!sample-data/**/**/
+!sample-data/**/**/*.example

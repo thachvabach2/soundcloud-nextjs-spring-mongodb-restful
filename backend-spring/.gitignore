@@ -1,0 +1,9 @@
+/upload/**
+!upload/
+!upload/**/
+!upload/**/*.example
+
+/track_hsl/**
+!track_hsl/
+!track_hsl/**/
+!track_hsl/**/*.example

@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/api/v1/auth/refresh",
             "/api/v1/tracks/stream/range/{trackId}",
             "/api/v1/tracks/{trackId}/master.m3u8",
-            "/api/v1/tracks/{trackId}/{segment}.ts"
+            "/api/v1/tracks/{trackId}/{segment}.ts",
+            "/actuator/health"
     };
 
     @Bean

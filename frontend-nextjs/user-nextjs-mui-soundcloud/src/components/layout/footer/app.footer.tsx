@@ -81,7 +81,7 @@ const AppFooter = () => {
                             >
                                 <HlsAudioPlayer
                                     ref={playerRef}
-                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/tracks/${currentTrack._id}/master.m3u8`}
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/tracks/${currentTrack._id}/master.m3u8`}
                                     onPlay={handlePlay}
                                     onPause={handlePause}
                                 />
