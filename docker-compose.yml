@@ -30,7 +30,7 @@ services:
       context: ./frontend-nextjs/user-nextjs-mui-soundcloud
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_BACKEND_URL: http://172.17.0.1:8081
+        NEXT_PUBLIC_BACKEND_URL: http://192.168.1.216:8081
         NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT: http://192.168.1.216:3000
     restart: unless-stopped
     depends_on:
