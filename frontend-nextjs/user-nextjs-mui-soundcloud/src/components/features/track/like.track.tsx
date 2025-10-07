@@ -51,7 +51,7 @@ const LikeTrack = (props: IProps) => {
 
     const fetchPlaylistsByUser = async () => {
         const resGetPlaylistsByUserNoJoin = await sendRequest<IBackendRes<IPlaylist[]>>({
-            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/playlists/by-user`,
+            url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/playlists/by-user`,
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${session?.access_token}`,
