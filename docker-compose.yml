@@ -13,10 +13,10 @@ services:
     volumes:
       - ./sample-data/upload-docker/:/uploads/
       - ./sample-data/track_hsl-docker/:/track_hsl/
-    ports:
-      - 8081:8081
+    expose:
+      - "8081"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://backend-soundcloud:8081/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 2
@@ -30,7 +30,7 @@ services:
       context: ./frontend-nextjs/user-nextjs-mui-soundcloud
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_BACKEND_URL: http://192.168.1.216:8081
+        NEXT_PUBLIC_BACKEND_URL: http://backend-soundcloud:8081
         NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT: ${NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}
     environment:
       NODE_ENV: ${NODE_ENV}
