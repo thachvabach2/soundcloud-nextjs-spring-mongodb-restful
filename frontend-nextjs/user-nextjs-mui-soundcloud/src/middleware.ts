@@ -4,6 +4,7 @@ export default withAuth({
     // Matches the pages config in `[...nextauth]`
     pages: {
         signIn: "/auth/signin",
+        signOut: '/',
     },
 })
 
