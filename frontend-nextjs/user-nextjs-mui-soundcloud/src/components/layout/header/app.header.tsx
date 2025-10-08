@@ -333,11 +333,7 @@ const AppHeader = (props: IProps) => {
                                             <MenuItem
                                                 onClick={() => {
                                                     handleCloseUserMenu();
-                                                    signOut({
-                                                        callbackUrl: '/',
-                                                        redirect: true
-                                                    });
-                                                    // signOut();
+                                                    signOut({ callbackUrl: '/' });
                                                 }}
                                             >
                                                 {t('header.avatar.sign_out')}

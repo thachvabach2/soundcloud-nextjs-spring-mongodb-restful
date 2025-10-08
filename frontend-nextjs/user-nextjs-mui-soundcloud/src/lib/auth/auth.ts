@@ -55,31 +55,6 @@ export const authOptions: AuthOptions = {
         })
     ],
     callbacks: {
-        async redirect({ url, baseUrl }) {
-
-            console.log('================================');
-            console.log('=== NextAuth Redirect Debug ===');
-            console.log('Request URL:', url);
-            console.log('Base URL:', baseUrl);
-            console.log('Headers:', {
-                host: (await headers()).get('host'),
-                xForwardedHost: (await headers()).get('x-forwarded-host'),
-                xForwardedProto: (await headers()).get('x-forwarded-proto'),
-            });
-            console.log('================================');
-
-            if (url.startsWith('/')) {
-                return `${baseUrl}${url}`;
-            }
-
-            // Same origin: allow
-            if (new URL(url).origin === baseUrl) {
-                return url;
-            }
-
-            // External: redirect to base
-            return baseUrl;
-        },
         async jwt({ token, user, account, profile, trigger }) {
             const isTimeAfter = isAfter(new Date(), new Date((token?.expires_at ?? 0) * 1000));
 
