@@ -5,6 +5,7 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { add, isAfter } from "date-fns";
+import { headers } from "next/headers";
 
 export const authOptions: AuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -55,8 +56,17 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async redirect({ url, baseUrl }) {
-            console.log('Redirect - url:', url);
-            console.log('Redirect - baseUrl:', baseUrl);
+
+            console.log('================================');
+            console.log('=== NextAuth Redirect Debug ===');
+            console.log('Request URL:', url);
+            console.log('Base URL:', baseUrl);
+            console.log('Headers:', {
+                host: (await headers()).get('host'),
+                xForwardedHost: (await headers()).get('x-forwarded-host'),
+                xForwardedProto: (await headers()).get('x-forwarded-proto'),
+            });
+            console.log('================================');
 
             if (url.startsWith('/')) {
                 return `${baseUrl}${url}`;
