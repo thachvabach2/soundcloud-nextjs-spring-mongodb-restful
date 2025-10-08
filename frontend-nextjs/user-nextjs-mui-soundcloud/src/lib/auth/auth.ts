@@ -54,6 +54,22 @@ export const authOptions: AuthOptions = {
         })
     ],
     callbacks: {
+        async redirect({ url, baseUrl }) {
+            console.log('Redirect - url:', url);
+            console.log('Redirect - baseUrl:', baseUrl);
+
+            if (url.startsWith('/')) {
+                return `${baseUrl}${url}`;
+            }
+
+            // Same origin: allow
+            if (new URL(url).origin === baseUrl) {
+                return url;
+            }
+
+            // External: redirect to base
+            return baseUrl;
+        },
         async jwt({ token, user, account, profile, trigger }) {
             const isTimeAfter = isAfter(new Date(), new Date((token?.expires_at ?? 0) * 1000));
 
