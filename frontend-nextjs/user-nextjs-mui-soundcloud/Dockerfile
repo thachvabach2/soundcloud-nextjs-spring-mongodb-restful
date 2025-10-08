@@ -29,11 +29,11 @@ ENV NODE_ENV production
 
 # get value from docker-compose
 ARG NEXT_PUBLIC_BACKEND_URL
-ARG NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT
+ARG NEXTAUTH_URL
 
 # gán ARG vào ENV để Next.js dùng được khi build
 ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
-# ENV NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT=$NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
 # If using npm comment out above and use below instead
 RUN npm run build
