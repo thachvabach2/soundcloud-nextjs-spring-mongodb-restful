@@ -33,7 +33,7 @@ services:
         NEXT_PUBLIC_BACKEND_URL: http://backend-soundcloud:8081
     environment:
       NODE_ENV: ${NODE_ENV}
-      NEXTAUTH_URL: http://192.168.1.216:3000
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
     restart: unless-stopped
     depends_on:
       backend-soundcloud:
