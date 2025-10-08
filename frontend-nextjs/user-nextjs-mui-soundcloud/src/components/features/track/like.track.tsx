@@ -32,7 +32,7 @@ const LikeTrack = (props: IProps) => {
     const fetchData = async () => {
         if (session?.access_token) {
             const res = await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
-                url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/likes`,
+                url: `/backend-for-client/api/v1/likes`,
                 method: "GET",
                 queryParams: {
                     page: 1,
@@ -51,7 +51,7 @@ const LikeTrack = (props: IProps) => {
 
     const fetchPlaylistsByUser = async () => {
         const resGetPlaylistsByUserNoJoin = await sendRequest<IBackendRes<IPlaylist[]>>({
-            url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/playlists/by-user`,
+            url: `/backend-for-client/api/v1/playlists/by-user`,
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${session?.access_token}`,
@@ -70,7 +70,7 @@ const LikeTrack = (props: IProps) => {
 
     const handleLikeTrack = async () => {
         await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
-            url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/likes`,
+            url: `/backend-for-client/api/v1/likes`,
             method: "POST",
             body: {
                 track: track?._id,
@@ -113,7 +113,7 @@ const LikeTrack = (props: IProps) => {
 
     const handleAddTrackToPlaylist = async (playlist: IPlaylist) => {
         const res = await sendRequest<IBackendRes<IPlaylist>>({
-            url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/playlists/${playlist._id}/tracks`,
+            url: `/backend-for-client/api/v1/playlists/${playlist._id}/tracks`,
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${session?.access_token}`,

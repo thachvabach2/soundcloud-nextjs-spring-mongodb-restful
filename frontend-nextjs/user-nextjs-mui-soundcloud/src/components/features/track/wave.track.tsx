@@ -150,7 +150,7 @@ const WaveTrack = (props: IProps) => {
     const handleIncreasePlay = async () => {
         if (firstPlayRef.current === true) {
             await sendRequest<IBackendRes<IModelPaginate<ITrackLike>>>({
-                url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/tracks/increase-view`,
+                url: `/backend-for-client/api/v1/tracks/increase-view`,
                 method: "POST",
                 body: {
                     trackId: track?._id

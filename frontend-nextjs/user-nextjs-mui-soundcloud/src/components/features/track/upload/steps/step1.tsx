@@ -41,7 +41,7 @@ const Step1 = (props: IProp) => {
             const formData = new FormData();
             formData.append('fileUpload', audio);
             try {
-                const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/files/upload`, formData,
+                const res = await axios.post(`/backend-for-client/api/v1/files/upload`, formData,
                     {
                         headers: {
                             'Authorization': `Bearer ${session?.access_token}`,
