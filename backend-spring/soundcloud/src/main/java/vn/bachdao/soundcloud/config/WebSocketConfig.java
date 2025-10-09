@@ -44,6 +44,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 // "http://discoverserver.devtaycode.click:3000",
                 // "http://discoverserver.devtaycode.click")
                 .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 
