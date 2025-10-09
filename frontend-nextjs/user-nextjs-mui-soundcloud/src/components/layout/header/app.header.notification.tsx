@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/toast";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import SockJS from "sockjs-client";
-import { Stomp } from "@stomp/stompjs";
+import { Client, Stomp } from "@stomp/stompjs";
 import { getNotificationsByAUserWithPaginationAction } from "@/actions/actions.notification";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import PersonIcon from '@mui/icons-material/Person';
@@ -49,28 +49,28 @@ const AppHeaderNotification = () => {
     const notifications = notificationResponse?.data?.result || [];
 
     useEffect(() => {
-        const connectWebSocket = () => {
+        if (!session?.user?._id || !session?.access_token) return;
 
-            console.log('>>>>>> run before SockJs')
-            const sock = new SockJS(`/backend-for-client/notification`);
-            console.log('>>>>>> run after SockJs')
+        const client = new Client({
+            // Dùng WebSocket gốc, không SockJS
+            brokerURL: "wss://spotify.devtaycode.click/backend-for-client/notification",
 
-            const client = Stomp.over(sock);
+            connectHeaders: {
+                Authorization: `Bearer ${session.access_token}`,
+            },
 
-            // debug
-            client.debug = (str) => {
-                console.log('🔍 >>>>>>>>>>>>> STOMP:', str);
-            };
+            reconnectDelay: 5000, // tự reconnect sau 5s nếu disconnect
+            heartbeatIncoming: 10000,
+            heartbeatOutgoing: 10000,
 
-            client.connect(
-                { Authorization: `Bearer ${session?.access_token}` },
-                () => {
-                    toast.success("connected stomp");
+            onConnect: () => {
+                toast.success("Connected to STOMP!");
 
-                    client.subscribe(`/user/queue/notification`, (message) => {
-                        console.log(">>>>>> received notification: ", message);
+                // Subscribe đến user queue
+                client.subscribe("/user/queue/notification", (message) => {
+                    try {
                         const newNotification = JSON.parse(message.body);
-                        toast.success('Có người comment kìa')
+                        toast.success("Có người comment kìa!");
                         setHasNotifications(true);
 
                         if (notificationResponse?.data?.result) {
@@ -79,35 +79,36 @@ const AppHeaderNotification = () => {
                                     ...notificationResponse,
                                     data: {
                                         ...notificationResponse.data,
-                                        result: [newNotification, ...notificationResponse.data.result]
-                                    }
+                                        result: [newNotification, ...notificationResponse.data.result],
+                                    },
                                 },
                                 false // Không revalidate ngay lập tức
                             );
                         }
-                    })
-                    // console.log('subscribed: ', `/user/${session?.user?._id}/queue/notification`)
-                },
-                (error: any) => {
-                    console.error("❌ STOMP connection error:", error);
-                    toast.error("Lỗi kết nối thông báo");
-                }
-            );
+                    } catch (err) {
+                        console.error("Error parsing message:", err);
+                    }
+                });
+            },
 
-            return client;
-        }
+            onStompError: (frame) => {
+                console.error("Broker error:", frame.headers["message"]);
+            },
 
-        let client: any;
-        if (session?.user._id) {
-            client = connectWebSocket();
-        }
+            onWebSocketError: (event) => {
+                console.error("WebSocket error:", event);
+            },
+        });
 
-        // Cleanup WebSocket connection
+        client.activate(); // kết nối WebSocket
+
+        // Cleanup khi component unmount
         return () => {
-            if (client) {
-                client.disconnect();
+            if (client.connected) {
+                client.deactivate();
             }
         };
+
     }, [session?.user._id, mutate, notificationResponse])
 
     const handleOpenNotificationMenu = async (event: React.MouseEvent<HTMLElement>) => {
