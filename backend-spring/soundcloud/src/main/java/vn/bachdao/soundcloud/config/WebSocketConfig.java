@@ -5,6 +5,7 @@ import java.security.Principal;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -51,29 +52,46 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message,
-                        StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
+                System.out.println("===== WebSocket Message Received =====");
+                System.out.println("Command: " + accessor.getCommand());
+                System.out.println("Headers: " + accessor.toNativeHeaderMap());
+
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    // Lấy JWT từ header custom
                     String token = accessor.getFirstNativeHeader("Authorization");
+                    System.out.println("Authorization header: " + (token != null ? "Present" : "Missing"));
+
                     if (token != null && token.startsWith("Bearer ")) {
                         token = token.substring(7);
+                        System.out.println(
+                                "Token (first 20 chars): " + token.substring(0, Math.min(20, token.length())) + "...");
 
-                        // Parse JWT lấy userId
-                        Jwt decodedToken = null;
                         try {
-                            decodedToken = securityUtils.checkValidRefreshToken(token);
+                            Jwt decodedToken = securityUtils.checkValidRefreshToken(token);
+
+                            if (decodedToken != null) {
+                                String userId = decodedToken.getSubject();
+                                System.out.println("✅ Authentication successful for user: " + userId);
+
+                                Principal principal = () -> userId;
+                                accessor.setUser(principal);
+                            } else {
+                                System.err.println("❌ decodedToken is null");
+                                throw new MessagingException("Invalid token");
+                            }
+
                         } catch (UserNotAuthenticatedException e) {
+                            System.err.println("❌ Authentication exception: " + e.getMessage());
                             e.printStackTrace();
+                            throw new MessagingException("Authentication failed");
                         }
-                        String userId = decodedToken.getSubject();
-
-                        // Gắn Principal
-                        Principal principal = () -> userId;
-                        accessor.setUser(principal);
+                    } else {
+                        System.err.println("❌ Missing or invalid Authorization header");
+                        throw new MessagingException("Missing Authorization header");
                     }
-
                 }
+
                 return message;
             }
         });
