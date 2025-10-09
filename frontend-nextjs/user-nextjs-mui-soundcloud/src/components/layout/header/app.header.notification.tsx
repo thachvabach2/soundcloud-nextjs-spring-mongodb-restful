@@ -53,7 +53,7 @@ const AppHeaderNotification = () => {
 
         const client = new Client({
             // Dùng WebSocket gốc, không SockJS
-            brokerURL: "wss://spotify.devtaycode.click/notification",
+            brokerURL: "ws://backend-for-client/notification",
 
             connectHeaders: {
                 Authorization: `Bearer ${session.access_token}`,
