@@ -38,7 +38,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         http
-                .cors(Customizer.withDefaults())
+                .cors(c -> c.disable())
                 .csrf(c -> c.disable())
                 .formLogin(f -> f.disable())
                 .authorizeHttpRequests(authorize -> authorize
