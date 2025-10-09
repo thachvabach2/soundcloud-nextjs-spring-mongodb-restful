@@ -43,9 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 // "http://171.227.196.104:3000", "http://171.227.196.104",
                 // "http://discoverserver.devtaycode.click:3000",
                 // "http://discoverserver.devtaycode.click")
-                .setAllowedOriginPatterns("*")
-                .withSockJS();
-        ;
+                .setAllowedOriginPatterns("*");
     }
 
     @Override
