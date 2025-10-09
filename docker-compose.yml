@@ -31,10 +31,10 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_BACKEND_URL: http://backend-soundcloud:8081
+        NEXT_PUBLIC_WS_URL: ws://spotify.devtaycode.click/ws/notification
     environment:
       NODE_ENV: ${NODE_ENV}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
-      NEXT_PUBLIC_WS_URL: ws://spotify.devtaycode.click/ws/notification
     restart: unless-stopped
     depends_on:
       backend-soundcloud:
