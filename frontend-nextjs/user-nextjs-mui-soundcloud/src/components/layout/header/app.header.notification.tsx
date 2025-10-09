@@ -48,11 +48,15 @@ const AppHeaderNotification = () => {
 
     const notifications = notificationResponse?.data?.result || [];
 
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/notification`;
+
     useEffect(() => {
         if (!session?.user?._id || !session?.access_token) return;
 
         const client = new Client({
-            brokerURL: process.env.NEXT_PUBLIC_WS_URL,
+            // brokerURL: process.env.NEXT_PUBLIC_WS_URL,
+            brokerURL: wsUrl,
 
             connectHeaders: {
                 Authorization: `Bearer ${session.access_token}`,
