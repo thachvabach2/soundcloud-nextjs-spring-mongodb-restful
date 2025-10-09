@@ -51,9 +51,16 @@ const AppHeaderNotification = () => {
     useEffect(() => {
         const connectWebSocket = () => {
 
+            console.log('>>>>>> run before SockJs')
             const sock = new SockJS(`/backend-for-client/notification`);
+            console.log('>>>>>> run after SockJs')
 
             const client = Stomp.over(sock);
+
+            // debug
+            client.debug = (str) => {
+                console.log('🔍 >>>>>>>>>>>>> STOMP:', str);
+            };
 
             client.connect(
                 { Authorization: `Bearer ${session?.access_token}` },
@@ -61,7 +68,7 @@ const AppHeaderNotification = () => {
                     toast.success("connected stomp");
 
                     client.subscribe(`/user/queue/notification`, (message) => {
-                        // console.log(">>> received notification: ", message);
+                        console.log(">>>>>> received notification: ", message);
                         const newNotification = JSON.parse(message.body);
                         toast.success('Có người comment kìa')
                         setHasNotifications(true);
@@ -80,7 +87,12 @@ const AppHeaderNotification = () => {
                         }
                     })
                     // console.log('subscribed: ', `/user/${session?.user?._id}/queue/notification`)
-                });
+                },
+                (error: any) => {
+                    console.error("❌ STOMP connection error:", error);
+                    toast.error("Lỗi kết nối thông báo");
+                }
+            );
 
             return client;
         }
