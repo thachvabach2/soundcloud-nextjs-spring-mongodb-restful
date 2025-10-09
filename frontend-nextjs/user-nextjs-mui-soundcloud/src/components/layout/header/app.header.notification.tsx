@@ -53,7 +53,7 @@ const AppHeaderNotification = () => {
 
         const client = new Client({
             // Dùng WebSocket gốc, không SockJS
-            brokerURL: "ws://backend-for-client/notification",
+            brokerURL: "wss://backend-for-client/notification",
 
             connectHeaders: {
                 Authorization: `Bearer ${session.access_token}`,
