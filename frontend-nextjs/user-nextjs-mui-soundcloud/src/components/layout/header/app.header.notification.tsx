@@ -49,28 +49,28 @@ const AppHeaderNotification = () => {
     const notifications = notificationResponse?.data?.result || [];
 
     useEffect(() => {
-        if (!session?.user?._id || !session?.access_token) return;
+        const connectWebSocket = () => {
 
-        const client = new Client({
-            // Dùng WebSocket gốc, không SockJS
-            brokerURL: "wss://http://backend-soundcloud:8081/notification",
+            console.log('>>>>>> run before SockJs')
+            const sock = new SockJS(`http://backend-soundcloud:8081/notification`);
+            console.log('>>>>>> run after SockJs')
 
-            connectHeaders: {
-                Authorization: `Bearer ${session.access_token}`,
-            },
+            const client = Stomp.over(sock);
 
-            reconnectDelay: 5000, // tự reconnect sau 5s nếu disconnect
-            heartbeatIncoming: 10000,
-            heartbeatOutgoing: 10000,
+            // debug
+            client.debug = (str) => {
+                console.log('🔍 >>>>>>>>>>>>> STOMP:', str);
+            };
 
-            onConnect: () => {
-                toast.success("Connected to STOMP!");
+            client.connect(
+                { Authorization: `Bearer ${session?.access_token}` },
+                () => {
+                    toast.success("connected stomp");
 
-                // Subscribe đến user queue
-                client.subscribe("/user/queue/notification", (message) => {
-                    try {
+                    client.subscribe(`/user/queue/notification`, (message) => {
+                        console.log(">>> received notification: ", message);
                         const newNotification = JSON.parse(message.body);
-                        toast.success("Có người comment kìa!");
+                        toast.success('Có người comment kìa')
                         setHasNotifications(true);
 
                         if (notificationResponse?.data?.result) {
@@ -79,36 +79,30 @@ const AppHeaderNotification = () => {
                                     ...notificationResponse,
                                     data: {
                                         ...notificationResponse.data,
-                                        result: [newNotification, ...notificationResponse.data.result],
-                                    },
+                                        result: [newNotification, ...notificationResponse.data.result]
+                                    }
                                 },
                                 false // Không revalidate ngay lập tức
                             );
                         }
-                    } catch (err) {
-                        console.error("Error parsing message:", err);
-                    }
+                    })
+                    console.log('subscribed: ', `/user/${session?.user?._id}/queue/notification`)
                 });
-            },
 
-            onStompError: (frame) => {
-                console.error("Broker error:", frame.headers["message"]);
-            },
+            return client;
+        }
 
-            onWebSocketError: (event) => {
-                console.error("WebSocket error:", event);
-            },
-        });
+        let client: any;
+        if (session?.user._id) {
+            client = connectWebSocket();
+        }
 
-        client.activate(); // kết nối WebSocket
-
-        // Cleanup khi component unmount
+        // Cleanup WebSocket connection
         return () => {
-            if (client.connected) {
-                client.deactivate();
+            if (client) {
+                client.disconnect();
             }
         };
-
     }, [session?.user._id, mutate, notificationResponse])
 
     const handleOpenNotificationMenu = async (event: React.MouseEvent<HTMLElement>) => {
