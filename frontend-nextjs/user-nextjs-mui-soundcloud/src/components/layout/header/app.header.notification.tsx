@@ -51,7 +51,7 @@ const AppHeaderNotification = () => {
     useEffect(() => {
         const connectWebSocket = () => {
 
-            const sock = new SockJS(`http://localhost:8080/notification`);
+            const sock = new SockJS(`/backend-for-client/notification`);
 
             const client = Stomp.over(sock);
 

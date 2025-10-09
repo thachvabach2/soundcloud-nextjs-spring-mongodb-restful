@@ -39,7 +39,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/notification") // connection establishment
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins("http://localhost:3000",
+                        "http://discoverserver.devtaycode.click:3000", "http://discoverserver.devtaycode.click")
                 // .setAllowedOrigins("*")
                 .withSockJS();
     }
