@@ -2,6 +2,7 @@ package vn.bachdao.soundcloud.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,9 +36,22 @@ public class SecurityConfig {
     };
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain websocketFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/notification/**", "/ws/**")
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .csrf(csrf -> csrf.disable())
+                .oauth2ResourceServer(oauth2 -> oauth2.disable()); // disable JWT cho WS
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         http
+                .securityMatcher("/**")
                 .cors(Customizer.withDefaults())
                 .csrf(c -> c.disable())
                 .formLogin(f -> f.disable())
