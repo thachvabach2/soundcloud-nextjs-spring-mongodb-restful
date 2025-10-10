@@ -13,10 +13,11 @@ public class CorsConfig {
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "http://192.168.1.216:3000",
-                "http://192.168.1.216"));
+                "http://localhost:5173", "http://localhost:3000",
+                "http://192.168.1.216:3000", "http://192.168.1.216",
+                "http://171.227.196.104:3000", "http://171.227.196.104",
+                "http://spotify.devtaycode.click:3000", "http://spotify.devtaycode.click",
+                "https://spotify.devtaycode.click:3000", "https://spotify.devtaycode.click"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(
                 Arrays.asList("Authorization", "Content-Type", "Accept", "x-no-retry", "target_type", "Range"));
