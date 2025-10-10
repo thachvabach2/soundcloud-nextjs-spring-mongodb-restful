@@ -60,8 +60,9 @@ public class SecurityConfig {
                         .requestMatchers("/notification/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                         .anyRequest().permitAll())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
-                        .authenticationEntryPoint(customAuthenticationEntryPoint))
+                .oauth2ResourceServer(oauth2 -> oauth2.disable())
+                // .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
+                // .authenticationEntryPoint(customAuthenticationEntryPoint))
 
                 // xử lý exception (wrong bearer token)
                 // .exceptionHandling(exceptions -> exceptions
