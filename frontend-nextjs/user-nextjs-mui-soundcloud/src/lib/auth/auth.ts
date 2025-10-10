@@ -5,6 +5,7 @@ import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { add, isAfter } from "date-fns";
+import { headers } from "next/headers";
 
 export const authOptions: AuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,

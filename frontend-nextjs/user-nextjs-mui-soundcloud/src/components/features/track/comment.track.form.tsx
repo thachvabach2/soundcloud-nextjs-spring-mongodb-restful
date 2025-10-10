@@ -40,7 +40,7 @@ const CommentTrackForm = forwardRef<CommentFormRef, IProps>((props, ref) => {
 
         if (content && track?._id) {
             const res = await sendRequest<IBackendRes<ITrackComment>>({
-                url: `${process.env.NEXT_PUBLIC_BACKEND_URL_FOR_CLIENT}/api/v1/comments`,
+                url: `/backend-for-client/api/v1/comments`,
                 method: "POST",
                 body: {
                     content: content,
