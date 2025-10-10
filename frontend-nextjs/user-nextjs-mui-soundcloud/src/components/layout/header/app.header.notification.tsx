@@ -55,7 +55,6 @@ const AppHeaderNotification = () => {
         if (!session?.user?._id || !session?.access_token) return;
 
         const client = new Client({
-            // brokerURL: process.env.NEXT_PUBLIC_WS_URL,
             brokerURL: wsUrl,
 
             connectHeaders: {
