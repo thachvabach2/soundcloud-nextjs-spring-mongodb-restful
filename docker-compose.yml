@@ -15,6 +15,7 @@ services:
       - ./sample-data/track_hsl-docker/:/track_hsl/
     ports:
       - 8081:8081
+    restart: unless-stopped
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
       interval: 30s
@@ -34,10 +35,10 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
-    restart: unless-stopped
     depends_on:
       backend-soundcloud:
         condition: service_healthy
+    restart: unless-stopped
     networks:
       - soundcloud-network
 
@@ -51,6 +52,7 @@ services:
     depends_on:
       frontend-soundcloud:
         condition: service_started
+    restart: unless-stopped
     networks:
       - soundcloud-network
 
