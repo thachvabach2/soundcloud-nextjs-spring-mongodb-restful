@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const nextConfig: NextConfig = {
     /* config options here */
     // docker
@@ -12,7 +14,19 @@ const nextConfig: NextConfig = {
         serverActions: {
             bodySizeLimit: '50mb',
         }
-    }
+    },
+    async rewrites() {
+        if (isDev) {
+            return [
+                {
+                    source: '/backend-for-client/:path*',
+                    destination: `${process.env.SPRING_BACKEND_URL || 'http://localhost:8080'}/:path*`,
+                },
+            ];
+        }
+
+        return [];
+    },
 };
 
 const withNextIntl = createNextIntlPlugin();
