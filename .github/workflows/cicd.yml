@@ -29,12 +29,6 @@ jobs:
         run: |
           docker compose -f docker-compose.yml build frontend-soundcloud
           docker compose -f docker-compose.yml push frontend-soundcloud
-      - name: Build and Push nginx images
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          docker compose -f docker-compose.yml build nginx
-          docker compose -f docker-compose.yml push nginx
 
   deploy:
     needs: build-and-push
@@ -54,3 +48,4 @@ jobs:
                 key: ${{ secrets.SERVER_KEY }}
                 port: ${{ secrets.SERVER_PORT }}
                 envs: DOCKER_USERNAME
+                script_path: scripts/deploy.sh

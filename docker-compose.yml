@@ -33,6 +33,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_BACKEND_URL: http://backend-soundcloud:8081
+    image: "${DOCKER_USERNAME}/soundcloud-nextjs:latest"
     environment:
       NODE_ENV: ${NODE_ENV}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
