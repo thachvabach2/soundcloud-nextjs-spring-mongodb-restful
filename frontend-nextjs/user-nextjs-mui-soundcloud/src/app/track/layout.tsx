@@ -33,7 +33,6 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
                 {children}
             </Box>
             <div style={{ marginBottom: '50px' }}></div>
-            <AppFooter />
         </>
     );
 }
