@@ -4,6 +4,7 @@ services:
     build:
       context: ./backend-spring/soundcloud
       dockerfile: Dockerfile
+    image: "${DOCKER_USERNAME}/soundcloud-spring:latest"
     environment:
       SERVER_PORT: 8081
       SOUNDCLOUD_MONGO_URI: ${MONGO_URI}
