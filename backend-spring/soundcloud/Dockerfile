@@ -7,7 +7,7 @@ WORKDIR /devtaycode/soundcloud
 RUN gradle clean build -x test --no-daemon
 
 # Stage 2: Run the application
-FROM openjdk:17-slim
+FROM openjdk:17.0.2-slim
 
 # instal ffmpeg (process track)
 # instal curl (healthcheck)
