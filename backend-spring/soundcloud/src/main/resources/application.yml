@@ -32,3 +32,12 @@ soundcloud:
     track:
         hsl: E:/SelfLearingIT/PersonalProject/01-nextjs-spring-mongodb-restful-soundcloud/backend-spring/track_hsl
     delay-timeout: 0 #unit: milliseconds. eg: 3000 = 3000ms
+    payment:
+        momo:
+            partner-code: MOMO
+            return-url: ${FE_URL:http://localhost:3000}
+            end-point: https://test-payment.momo.vn/v2/gateway/api
+            ipn-url: ${BASE_URL:https://floretty-julieta-lymphangial.ngrok-free.dev}/api/v1/payment/momo-ipn
+            access-key: F8BBA842ECF85
+            secret-key: K951B6PE1waDMi640xX08PD3vg6EkVlz
+            request-type: captureWallet

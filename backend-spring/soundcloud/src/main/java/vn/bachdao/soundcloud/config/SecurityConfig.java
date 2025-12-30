@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
@@ -31,7 +33,9 @@ public class SecurityConfig {
             "/api/v1/tracks/stream/range/{trackId}",
             "/api/v1/tracks/{trackId}/master.m3u8",
             "/api/v1/tracks/{trackId}/{segment}.ts",
-            "/actuator/health"
+            "/actuator/health",
+            "/api/v1/payment/momo-return",
+            "/api/v1/payment/momo-ipn",
     };
 
     @Bean
